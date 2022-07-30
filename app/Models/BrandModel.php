@@ -20,17 +20,18 @@ class BrandModel extends Model
 
     public function datatable($columns = array('*'), $filters = array())
     {
-        $data = $this->dbCanvazer->table('brand');
-        $data->select($columns)
+        $data = $this->dbCanvazer->table('brand')
+            ->select($columns)
             ->join("brand_category","brand_category.idcategorybrand = brand.idcategorybrand");
 
-        $total = $this->dbCanvazer->table('brand');
-        $total->select("COUNT(idbrand) as amount");
+        $total = $this->dbCanvazer->table('brand')
+            ->select("COUNT(brand.idbrand) as amount")
+            ->join("brand_category","brand_category.idcategorybrand = brand.idcategorybrand");
 
         if ($filters['search']!=null) {
             foreach($filters["searchable"] as $v){
-                $data->like($v,$filters['search']);
-                $total->like($v,$filters['search']);
+                $data->orLike($v,$filters['search']);
+                $total->orLike($v,$filters['search']);
             }
         }
 
