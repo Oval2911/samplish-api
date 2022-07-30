@@ -27,17 +27,11 @@ class BrandModel extends Model
         $total = $this->dbCanvazer->table('brand');
         $total->select("COUNT(idbrand) as amount");
 
-        if (isset($filters['filter'])) {
-            $data->where($filters['filter']);
-            $total->where($filters['filter']);
-        }
-        if (isset($filters['filternot'])) {
-            $data->where($filters['filternot']);
-            $total->where($filters['filternot']);
-        }
-        if (isset($filters['filterLike'])) {
-            $data->like($filters['filterLike']);
-            $total->like($filters['filterLike']);
+        if ($filters['search']!=null) {
+            foreach($filters["searchable"] as $v){
+                $data->like($v,$filters['search']);
+                $total->like($v,$filters['search']);
+            }
         }
 
         $data->limit($filters['limit']['n_item'], $filters['limit']['page'] * $filters['limit']['n_item']);

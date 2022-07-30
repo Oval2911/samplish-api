@@ -25,6 +25,12 @@ class Brand extends ResourceController
         $filters = array(
             "limit" => $this->request->getGet("limit"),
             "order" => $this->request->getGet("order"),
+            "search" => $this->request->getGet("search"),
+            "searchable" => array(
+                "brand.name",
+                "brand_category.name",
+                "brand.variant",
+            ),
         );
         $fields = array(
             "brand.idbrand",
