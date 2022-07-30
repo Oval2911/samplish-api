@@ -1393,7 +1393,7 @@ class User extends ResourceController
 
         $is_exists = $this->User_model->get_user('*', $filter);
 
-//        $r = $this->User_model->update_user_access_login_session($iduser, $access_token, $platform);
+        // $r = $this->User_model->update_user_access_login_session($iduser, $access_token, $platform);
         if ($is_exists) {
             
             $res = tempResponse('00103', null);
@@ -1492,7 +1492,6 @@ class User extends ResourceController
                 // $updateUser = $this->User_model->update_user($dataUpdate, $filterUpdate);
 
                 // create_session($userid, $platform, $fcmid)   6. post fcm
-                print_r($iduser);
                 if ($iduser) {
                     $access_token = $this->AuthModel->create_session($iduser, $data_json['platform'], $data_json['fcm_id'], $data_json['role']);
 
