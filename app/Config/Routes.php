@@ -63,7 +63,7 @@ $routes->group("User", function($routes){
 
 //Brand 
 $routes->group("Brand", function($routes){
-    $routes->get("/", "App\Brand::index");
+    $routes->get("/datatable", "App\Brand::datatable");
 });
 
 /*

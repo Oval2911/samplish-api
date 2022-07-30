@@ -40,7 +40,7 @@ class BrandModel extends Model
 
         if (isset($filter['sort'])) {
             foreach ($filter['sort'] as $key => $value) {
-                $builder->order_by($key, $value);
+                $builder->orderBy($key, $value);
             }
         }
 
@@ -51,6 +51,44 @@ class BrandModel extends Model
         } else {
             return false;
         }
+    }
+
+    public function datatable($columns = array('*'), $filter = array())
+    {
+        $data = $this->dbCanvazer->table('brand');
+        $data->select($columns);
+
+        $total = $this->dbCanvazer->table('brand');
+        $total->select("COUNT(idbrand) as amount");
+
+        if (isset($filter['filter'])) {
+            $data->where($filter['filter']);
+            $total->where($filter['filter']);
+        }
+        if (isset($filter['filternot'])) {
+            $data->where($filter['filternot']);
+            $total->where($filter['filternot']);
+        }
+        if (isset($filter['filterLike'])) {
+            $data->like($filter['filterLike']);
+            $total->like($filter['filterLike']);
+        }
+
+        $data->limit($filter['limit']['n_item'], $filter['limit']['page'] * $filter['limit']['n_item']);
+
+        // if (isset($filter['sort'])) {
+        //     foreach ($filter['sort'] as $key => $value) {
+        //         $data->orderBy($key, $value);
+        //     }
+        // }
+
+        $total = $total->get()->getResultArray()[0]['amount'];
+
+        return (object)[
+            "data" => $data->get()->getResultArray(),
+            "total" => $total,
+            "total_pages" => round($total / $filter['limit']['n_item']),
+        ];
     }
 
 // [END_GET_FUNCTIONS]

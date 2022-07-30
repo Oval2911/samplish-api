@@ -1,30 +1,45 @@
 <?php namespace App\Controllers;
  
 use CodeIgniter\RESTful\ResourceController;
-use CodeIgniter\API\ResponseTrait;
 use App\Models\BrandModel;
  
 class Brand extends ResourceController
 {
-    use ResponseTrait;
-    // get all product
-    public function index()
+    private $_exec_time_start;
+
+    public function __construct()
     {
-        $model = new BrandModel();
-        $data = $model->get(array('*'), array());
-        if($data){ 
-            $response = [
-                'status'   => 201,
-                'error'    => null,
-                'messages' => [
-                    'success' => 'Data Found'
-                ], 
-                'data'     => $data,
-            ];
-            return $this->respond($response, 200);
-        }else{
-            return $this->failNotFound('No Data Found ');
-        }
+        $this->request = \Config\Services::request();
+        
+        $this->brand  = new BrandModel();
+
+        helper(['custom', 'rsCode']);
+        
+        $this->_exec_time_start = microtime(true);
+        setlocale(LC_MONETARY, 'en_GB');
+        date_default_timezone_set('Asia/Jakarta');
+    }
+
+    public function datatable()
+    {
+        $filters = array(
+            "limit" => $this->request->getGet("limit"),
+        );
+
+        $data = $this->brand->datatable(array('*'), $filters);
+
+        return $this->respond(
+            tempResponse(
+                '00000',
+                array(
+                    'page' => $filters["limit"]["page"],
+                    'per_page' => $filters["limit"]["n_item"],
+                    'total' => $data->total,
+                    'total_pages' => $data->total_pages,
+                    'records' => $data->data,
+                )
+            )
+        );
     }
  
     // get single product
