@@ -18,7 +18,7 @@ class BrandModel extends Model
 
     }
 
-    public function datatable($columns = array('*'), $filter = array())
+    public function datatable($columns = array('*'), $filters = array())
     {
         $data = $this->dbCanvazer->table('brand');
         $data->select($columns)
@@ -27,33 +27,29 @@ class BrandModel extends Model
         $total = $this->dbCanvazer->table('brand');
         $total->select("COUNT(idbrand) as amount");
 
-        if (isset($filter['filter'])) {
-            $data->where($filter['filter']);
-            $total->where($filter['filter']);
+        if (isset($filters['filter'])) {
+            $data->where($filters['filter']);
+            $total->where($filters['filter']);
         }
-        if (isset($filter['filternot'])) {
-            $data->where($filter['filternot']);
-            $total->where($filter['filternot']);
+        if (isset($filters['filternot'])) {
+            $data->where($filters['filternot']);
+            $total->where($filters['filternot']);
         }
-        if (isset($filter['filterLike'])) {
-            $data->like($filter['filterLike']);
-            $total->like($filter['filterLike']);
+        if (isset($filters['filterLike'])) {
+            $data->like($filters['filterLike']);
+            $total->like($filters['filterLike']);
         }
 
-        $data->limit($filter['limit']['n_item'], $filter['limit']['page'] * $filter['limit']['n_item']);
+        $data->limit($filters['limit']['n_item'], $filters['limit']['page'] * $filters['limit']['n_item']);
 
-        if (isset($filter['sort'])) {
-            foreach ($filter['sort'] as $key => $value) {
-                $data->orderBy($key, $value);
-            }
-        }
+        if (is_array($filters['order'])) $data->orderBy($filters['order']['column'], $filters['order']['direction']);
 
         $total = $total->get()->getResultArray()[0]['amount'];
 
         return (object)[
             "data" => $data->get()->getResultArray(),
             "total" => $total,
-            "total_pages" => round($total / $filter['limit']['n_item']),
+            "total_pages" => round($total / $filters['limit']['n_item']),
         ];
     }
 }

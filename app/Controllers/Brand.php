@@ -24,6 +24,7 @@ class Brand extends ResourceController
     {
         $filters = array(
             "limit" => $this->request->getGet("limit"),
+            "order" => $this->request->getGet("order"),
         );
         $fields = array(
             "brand.idbrand",
