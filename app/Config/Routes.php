@@ -61,14 +61,11 @@ $routes->group("User", function($routes){
   
 });
 
-// $routes->resource('sellers');
+//Brand 
+$routes->group("Brand", function($routes){
+    $routes->get("/", "App\Brand::index");
+});
 
-
-// $routes->get('/sellers', "App\Sellers::index");
-// $routes->get('/sellers/show/{:id}', "App\Sellers::show");
-// $routes->post('/sellers/create', "App\Sellers::create");
-// $routes->update('/sellers/update/', "App\Sellers::update");
-// $routes->delete('/sellers/delete', "App\Sellers::delete");
 /*
  * --------------------------------------------------------------------
  * Additional Routing
