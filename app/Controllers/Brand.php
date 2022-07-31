@@ -2,6 +2,8 @@
  
 use CodeIgniter\RESTful\ResourceController;
 use App\Models\BrandModel;
+use App\Models\User_model;
+use CodeIgniter\HTTP\ResponseInterface;
  
 class Brand extends ResourceController
 {
@@ -11,7 +13,8 @@ class Brand extends ResourceController
     {
         $this->request = \Config\Services::request();
         
-        $this->brand  = new BrandModel();
+        $this->BrandModel  = new BrandModel();
+        $this->User_model  = new User_model();
 
         helper(['custom', 'rsCode']);
         
@@ -22,6 +25,12 @@ class Brand extends ResourceController
 
     public function datatable()
     {
+        $access = $this->User_model->update_user_access_login_session(
+            $this->request->getGet("u"),
+            $this->request->getGet("token")
+        );
+        if ($access == 0) return $this->respond( tempResponse("00102") );
+
         $filters = array(
             "limit" => $this->request->getGet("limit"),
             "order" => $this->request->getGet("order"),
@@ -40,7 +49,7 @@ class Brand extends ResourceController
             "brand.variant",
         );
 
-        $data = $this->brand->datatable($fields, $filters);
+        $data = $this->BrandModel->datatable($fields, $filters);
 
         return $this->respond(
             tempResponse(

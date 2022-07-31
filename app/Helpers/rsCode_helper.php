@@ -1,7 +1,7 @@
 <?php
 
 
-function tempResponse($errorcode, $data)
+function tempResponse($errorcode, $data = null)
 {
     
  $error_messages = [

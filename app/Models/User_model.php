@@ -366,9 +366,9 @@ class User_model extends Model
             $builder->where('status', '0');
             $query = $builder->get();
 
-            if ($query->num_rows() > 0) {
+            if ($query->getResultArray() > 0) {
                 //return $this->response('00000', NULL);
-                return $query->num_rows();
+                return $query->getResultArray();
             }
 
             //return $this->response('00102', NULL);
