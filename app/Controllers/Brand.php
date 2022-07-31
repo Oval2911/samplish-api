@@ -26,6 +26,7 @@ class Brand extends ResourceController
             "limit" => $this->request->getGet("limit"),
             "order" => $this->request->getGet("order"),
             "search" => $this->request->getGet("search"),
+            "user" => $this->request->getGet("u"),
             "searchable" => array(
                 "brand.name",
                 "brand_category.name",

@@ -35,6 +35,8 @@ class BrandModel extends Model
             }
         }
 
+        $data->where("brand.user",$filters["user"]);
+
         $data->limit($filters['limit']['n_item'], $filters['limit']['page'] * $filters['limit']['n_item']);
 
         if (is_array($filters['order'])) $data->orderBy($filters['order']['column'], $filters['order']['direction']);
