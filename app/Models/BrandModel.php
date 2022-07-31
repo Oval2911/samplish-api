@@ -35,7 +35,7 @@ class BrandModel extends Model
             }
         }
 
-        $data->where("brand.user",$filters["user"]);
+        $data->where("brand.iduser",$filters["user"]);
 
         $data->limit($filters['limit']['n_item'], $filters['limit']['page'] * $filters['limit']['n_item']);
 
