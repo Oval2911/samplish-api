@@ -25,6 +25,10 @@ class Brand extends ResourceController
 
     public function datatable()
     {
+        $user = $this->User_model->get_user(array('iduser'), array("filter" => array('related_id' => $this->request->getGet("u"))));
+        if ($user==null) return $this->respond( tempResponse("00102") );
+        $user = $user[0];
+
         $access = $this->User_model->update_user_access_login_session(
             $this->request->getGet("u"),
             $this->request->getGet("token")
@@ -35,7 +39,7 @@ class Brand extends ResourceController
             "limit" => $this->request->getGet("limit"),
             "order" => $this->request->getGet("order"),
             "search" => $this->request->getGet("search"),
-            "user" => $this->request->getGet("u"),
+            "user" => $user["iduser"],
             "searchable" => array(
                 "brand.name",
                 "brand_category.name",
