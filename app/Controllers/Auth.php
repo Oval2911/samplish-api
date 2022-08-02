@@ -6,7 +6,6 @@ namespace App\Controllers;
  use CodeIgniter\API\ResponseTrait;
  use App\Models\AuthModel;
  use App\Models\SamplersModel;
- use App\Models\BrandsModel;
   
 
 class Auth extends ResourceController
@@ -19,7 +18,6 @@ class Auth extends ResourceController
 
         $this->authModel  = new AuthModel();
         $this->samplersModel  = new SamplersModel();
-        $this->brandsModel  = new BrandsModel();
 
         helper(['custom', 'rsCode']);
         

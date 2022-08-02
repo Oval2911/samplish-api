@@ -67,6 +67,11 @@ $routes->group("Brand", function($routes){
     $routes->post("/save", "App\Brand::save");
 });
 
+//Brand Category
+$routes->group("Brand_Category", function($routes){
+    $routes->get("/get", "App\Brand_Category::get");
+});
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing

@@ -11,7 +11,6 @@ use App\Models\User_model;
 // use App\Models\Notif_model;
 
 use App\Models\SamplersModel;
-use App\Models\BrandsModel;
 
 class User extends ResourceController
 {
@@ -36,7 +35,6 @@ class User extends ResourceController
         // $this->Notif_model  = new Notif_model();
 
         $this->samplersModel  = new SamplersModel();
-        $this->brandsModel  = new BrandsModel();
 
         helper(['custom', 'rsCode']);
 
