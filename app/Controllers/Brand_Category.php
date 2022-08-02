@@ -23,7 +23,7 @@ class Brand_Category extends ResourceController
         date_default_timezone_set('Asia/Jakarta');
     }
 
-    public function get()
+    public function dropdown()
     {
         if(!isExist("get","u")) return $this->respond( tempResponse("00104") );
         if(!isExist("get","token")) return $this->respond( tempResponse("00104") );
@@ -38,7 +38,7 @@ class Brand_Category extends ResourceController
         );
         if ($access == 0) return $this->respond( tempResponse("00102") );
 
-        $data = $this->BrandCategoryModel->get_category();
+        $data = $this->BrandCategoryModel->get_category(array("idcategorybrand as value","name as label"));
 
         return $this->respond( tempResponse('00000',$data) );
     }

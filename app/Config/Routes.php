@@ -69,12 +69,12 @@ $routes->group("Brand", function($routes){
 
 //Brand Category
 $routes->group("Brand_Category", function($routes){
-    $routes->get("/get", "App\Brand_Category::get");
+    $routes->get("/dropdown", "App\Brand_Category::dropdown");
 });
 
 //Brand Category
 $routes->group("Tone_Manner", function($routes){
-    $routes->get("/get", "App\Tone_Manner::get");
+    $routes->get("/dropdown", "App\Tone_Manner::dropdown");
 });
 
 /*

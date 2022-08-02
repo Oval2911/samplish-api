@@ -23,7 +23,7 @@ class Tone_Manner extends ResourceController
         date_default_timezone_set('Asia/Jakarta');
     }
 
-    public function get()
+    public function dropdown()
     {
         if(!isExist("get","u")) return $this->respond( tempResponse("00104") );
         if(!isExist("get","token")) return $this->respond( tempResponse("00104") );
@@ -38,7 +38,7 @@ class Tone_Manner extends ResourceController
         );
         if ($access == 0) return $this->respond( tempResponse("00102") );
 
-        $data = $this->ToneMannerModel->get_tone_manner();
+        $data = $this->ToneMannerModel->get_tone_manner(array("idtonemanner as value","name as label"));
 
         return $this->respond( tempResponse('00000',$data) );
     }
