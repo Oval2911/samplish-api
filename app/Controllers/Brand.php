@@ -92,7 +92,7 @@ class Brand extends ResourceController
 
         $data = $this->BrandModel->store(array(
             "idcategorybrand" => $this->request->getPost("category"),
-            "iduser" => $this->request->getPost("u"),
+            "iduser" => $user["iduser"],
             "name" => $this->request->getPost("name"),
             "variant" => $this->request->getPost("variant"),
             "mission" => $this->request->getPost("mission"),
