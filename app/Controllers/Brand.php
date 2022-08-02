@@ -99,21 +99,12 @@ class Brand extends ResourceController
             "targetmarket" => $this->request->getPost("market"),
             "desc" => $this->request->getPost("desc"),
         ));
+        
+        $code = "0000";
 
-        return $data;
+        if($data==false) $code = "00002";
 
-        // return $this->respond(
-        //     tempResponse(
-        //         '00000',
-        //         array(
-        //             'page' => $filters["limit"]["page"],
-        //             'per_page' => $filters["limit"]["n_item"],
-        //             'total' => $data->total,
-        //             'total_pages' => $data->total_pages,
-        //             'records' => $data->data,
-        //         )
-        //     )
-        // );
+        return $this->respond( tempResponse($code, $data) );
     }
  
 }
