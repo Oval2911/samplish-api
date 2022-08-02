@@ -100,7 +100,7 @@ class Brand extends ResourceController
             "desc" => $this->request->getPost("desc"),
         ));
         
-        $code = "0000";
+        $code = "00000";
 
         if($data==false) $code = "00002";
 
