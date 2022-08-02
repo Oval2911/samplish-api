@@ -38,7 +38,7 @@ class Brand_Category extends ResourceController
         );
         if ($access == 0) return $this->respond( tempResponse("00102") );
 
-        $data = $this->BrandCategoryModel->data();
+        $data = $this->BrandCategoryModel->get_category();
 
         return $this->respond( tempResponse('00000',$data) );
     }

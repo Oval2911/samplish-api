@@ -18,7 +18,7 @@ class BrandCategoryModel extends Model
 
     }
 
-    public function data($columns = array('*'), $filter = array())
+    public function get_category($columns = array('*'), $filter = array())
     {
 
         $builder = $this->dbcanvazer->table('brand_category');
