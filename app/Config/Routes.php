@@ -72,6 +72,11 @@ $routes->group("Brand_Category", function($routes){
     $routes->get("/get", "App\Brand_Category::get");
 });
 
+//Brand Category
+$routes->group("Tone_Manner", function($routes){
+    $routes->get("/get", "App\Tone_Manner::get");
+});
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing
