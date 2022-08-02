@@ -152,3 +152,15 @@
         }
         return $string;
     }
+
+    /**
+     * check if parameter exist
+     */
+    function isExist($method,$key)
+    {
+        $request = \Config\Services::request();
+        
+        $data = $method=="get" ? $request->getGet($key) : $request->getPost($key);
+
+        return $data==null ? false : true;
+    }

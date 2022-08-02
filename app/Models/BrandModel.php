@@ -49,4 +49,32 @@ class BrandModel extends Model
             "total_pages" => round($total / $filters['limit']['n_item']),
         ];
     }
+    
+    public function store($data)
+    {
+        $id = uniqid();
+        $builder = $this->dbcanvazer->table('brand');
+        $builder->set('idbrand', $id);
+        $builder->set('idcategorybrand', $data["idcategorybrand"]);
+        $builder->set('iduser', $data["iduser"]);
+        $builder->set('name', $data["name"]);
+        $builder->set('variant', $data["variant"]);
+        $builder->set('mission', $data["mission"]);
+        $builder->set('targetmarket', $data["targetmarket"]);
+        $builder->set('desc', $data["desc"]);
+        $builder->insert($data);
+        return $this->dbcanvazer->affectedRows() ? $id : false;
+    }
+
+    public function update_user($data, $filter)
+    {
+        $builder = $this->dbcanvazer->table('user');
+        $builder->set($data);
+        $builder->where($filter);
+        $builder->update();
+        // echo $builder->last_query();
+
+        $n_affected_rows = $this->dbcanvazer->affectedRows();
+        return $n_affected_rows;
+    }
 }

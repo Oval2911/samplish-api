@@ -64,6 +64,7 @@ $routes->group("User", function($routes){
 //Brand 
 $routes->group("Brand", function($routes){
     $routes->get("/datatable", "App\Brand::datatable");
+    $routes->post("/save", "App\Brand::save");
 });
 
 /*
