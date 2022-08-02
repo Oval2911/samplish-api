@@ -21,7 +21,7 @@ class ToneMannerModel extends Model
     public function get_tone_manner($columns = array('*'), $filter = array())
     {
 
-        $builder = $this->dbCanvazer->table('brand_category');
+        $builder = $this->dbCanvazer->table('tone_manner');
         $builder->select($columns);
 
         if (isset($filter['filter'])) {
