@@ -53,7 +53,7 @@ class BrandModel extends Model
     public function store($data)
     {
         $id = uniqid();
-        $builder = $this->dbcanvazer->table('brand');
+        $builder = $this->dbCanvazer->table('brand');
         $builder->set('idbrand', $id);
         $builder->set('idcategorybrand', $data["idcategorybrand"]);
         $builder->set('iduser', $data["iduser"]);
@@ -63,18 +63,18 @@ class BrandModel extends Model
         $builder->set('targetmarket', $data["targetmarket"]);
         $builder->set('desc', $data["desc"]);
         $builder->insert($data);
-        return $this->dbcanvazer->affectedRows() ? $id : false;
+        return $this->dbCanvazer->affectedRows() ? $id : false;
     }
 
     public function update_user($data, $filter)
     {
-        $builder = $this->dbcanvazer->table('user');
+        $builder = $this->dbCanvazer->table('user');
         $builder->set($data);
         $builder->where($filter);
         $builder->update();
         // echo $builder->last_query();
 
-        $n_affected_rows = $this->dbcanvazer->affectedRows();
+        $n_affected_rows = $this->dbCanvazer->affectedRows();
         return $n_affected_rows;
     }
 }
