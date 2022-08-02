@@ -6,6 +6,7 @@ class BrandCategoryModel extends Model
 {
 
     protected $dbCanvazer;
+    protected $table   = 'brand_category';
 
     public function __construct()
     {
