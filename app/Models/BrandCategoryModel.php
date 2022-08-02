@@ -6,7 +6,6 @@ class BrandCategoryModel extends Model
 {
 
     protected $dbCanvazer;
-    protected $table   = 'brand_category';
 
     public function __construct()
     {
@@ -22,7 +21,7 @@ class BrandCategoryModel extends Model
     public function get_category($columns = array('*'), $filter = array())
     {
 
-        $builder = $this->dbcanvazer->table('brand_category');
+        $builder = $this->dbCanvazer->table('brand_category');
         $builder->select($columns);
 
         if (isset($filter['filter'])) {
@@ -41,7 +40,7 @@ class BrandCategoryModel extends Model
 
         if (isset($filter['sort'])) {
             foreach ($filter['sort'] as $key => $value) {
-                $builder->order_by($key, $value);
+                $builder->orderBy($key, $value);
             }
         }
 
