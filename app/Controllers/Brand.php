@@ -52,7 +52,7 @@ class Brand extends ResourceController
 
     public function data()
     {
-        if (!$this->validate($this->validation->datatable)) return $this->respond( tempResponse("00104") );
+        if (!$this->validate($this->validation->data)) return $this->respond( tempResponse("00104") );
 
         $user = $this->User_model->get_user(['iduser'], ["filter" => ['related_id' => $this->request->getGet("u")]]);
         if ($user==null) return $this->respond( tempResponse("00102") );
@@ -156,7 +156,7 @@ class Brand extends ResourceController
 
     public function amend()
     {
-        if (!$this->validate($this->validation->store)) return $this->respond( tempResponse("00104",false,$this->validator->getErrors()) );
+        if (!$this->validate($this->validation->amend)) return $this->respond( tempResponse("00104",false,$this->validator->getErrors()) );
 
         $user = $this->User_model->get_user(['iduser'], ["filter" => ['related_id' => $this->request->getPost("u")]]);
         if ($user==null) return $this->respond( tempResponse("00102") );
