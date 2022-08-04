@@ -109,7 +109,7 @@ class ResourceController extends BaseResource
     }
 
     /**
-     * Set/change the expected response representation for returned objects
+     * validate session login
      */
     public function validate_session($rules)
     {
@@ -118,14 +118,14 @@ class ResourceController extends BaseResource
         $request = \Config\Services::request();
         $user_model = new \App\Models\User_model();
 
-        if (!$this->validate($rules)) return $this->respond( tempResponse("00104") ); die;
+        if (!$this->validate($rules)) die(json_encode(tempResponse("00104")));
 
         $user = $user_model->get_user(['iduser'], ["filter" => ['related_id' => $request->getGet("u")]]);
-        if ($user==null) return $this->respond( tempResponse("00102") ); die;
+        if ($user==null) die(json_encode(tempResponse("00102")));
         $user = $user[0];
 
         $access = $user_model->update_user_access_login_session($request->getGet("u"), $request->getGet("token"));
-        if ($access == 0) return $this->respond( tempResponse("00102") ); die;
+        if ($access == 0) die(json_encode(tempResponse("00102")));
 
         return $user;
     }
