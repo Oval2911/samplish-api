@@ -17,7 +17,7 @@ function tempResponse($errorcode, $data=null, $msg="")
         '00101' => 'Email and password does not match',
         '00102' => 'Access token not granted',
         '00103' => 'Email already exists',
-        '00104' => 'Unknown Error',
+        '00104' => 'Internal server error',
     ];
 
     $errormsg = $error_messages[$errorcode];
