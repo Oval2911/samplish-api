@@ -47,6 +47,11 @@ class Brand extends ResourceController
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
             ],
+            "destroy" => [
+                'key' => ["label"=>"Key", "rules"=>"required",],
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+            ],
         ];
     }
 
@@ -193,6 +198,27 @@ class Brand extends ResourceController
         $data = $this->BrandModel->amend($this->request->getPost("key"), [$amend]);
         
         $code = $data==false ? "00003" : "00000";
+
+        return $this->respond( tempResponse($code, $data) );
+    }
+
+    public function destroy()
+    {
+        if (!$this->validate($this->validation->destroy)) return $this->respond( tempResponse("00104",false,$this->validator->getErrors()) );
+
+        $user = $this->User_model->get_user(['iduser'], ["filter" => ['related_id' => $this->request->getPost("u")]]);
+        if ($user==null) return $this->respond( tempResponse("00102") );
+        $user = $user[0];
+
+        $access = $this->User_model->update_user_access_login_session(
+            $this->request->getPost("u"),
+            $this->request->getPost("token")
+        );
+        if ($access == 0) return $this->respond( tempResponse("00102") );
+
+        $data = $this->BrandModel->destroy($this->request->getPost("key"));
+        
+        $code = $data==false ? "00007" : "00000";
 
         return $this->respond( tempResponse($code, $data) );
     }

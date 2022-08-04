@@ -13,6 +13,7 @@ function tempResponse($errorcode, $data=null, $msg="")
         '00004' => 'New data are succesfully added',
         '00005' => 'Success',
         '00006' => 'Failed login',
+        '00007' => 'Failed deleting data',
         '00101' => 'Email and password does not match',
         '00102' => 'Access token not granted',
         '00103' => 'Email already exists',

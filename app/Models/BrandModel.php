@@ -97,16 +97,19 @@ class BrandModel extends Model
     public function store($data)
     {
         $id = uniqid();
-        $builder = $this->dbCanvazer->table('brand');
-        $builder->insert($data);
+        $this->dbCanvazer->table('brand')->insert($data);
         return $this->dbCanvazer->affectedRows() ? $id : false;
     }
 
     public function amend($id, $data)
     {
-        $builder = $this->dbCanvazer->table('brand');
-        $builder->where("idbrand",$id);
-        $builder->update($data);
+        $this->dbCanvazer->table('brand')->where("idbrand",$id)->update($data);
         return $this->dbCanvazer->affectedRows() ? $id : false;
+    }
+    
+    public function destroy($id)
+    {
+        $this->dbCanvazer->table('brand')->delete(["idbrand",$id]);
+        return $this->dbCanvazer->affectedRows() ? true : false;
     }
 }
