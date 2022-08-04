@@ -25,10 +25,6 @@ class Brand extends ResourceController
         date_default_timezone_set('Asia/Jakarta');
 
         $this->validation = (object)[
-            'images' => [
-                'label' => 'Image File',
-                'rules' => 'uploaded[images]',
-            ],
             "datatable" => [
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
@@ -39,6 +35,7 @@ class Brand extends ResourceController
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
                 'category' => ["label"=>"Brand Category", "rules"=>"required",],
                 'name' => ["label"=>"Brand Name", "rules"=>"required",],
+                'image' => ['label'=>'Image', 'rules'=>'uploaded[image]|is_image[image]',],
             ],
         ];
     }
@@ -105,6 +102,13 @@ class Brand extends ResourceController
         );
         if ($access == 0) return $this->respond( tempResponse("00102") );
 
+        $img = $this->request->getFile('image');
+        if($img && !$img->hasMoved()) {
+            $store = $img->store();
+            $file = new File(WRITEPATH .'uploads/brand/'. $store);
+            $img = $store;
+        }
+
         $data = $this->BrandModel->store(array(
             "idcategorybrand" => $this->request->getPost("category"),
             "iduser" => $user["iduser"],
@@ -113,11 +117,10 @@ class Brand extends ResourceController
             "mission" => $this->request->getPost("mission"),
             "targetmarket" => $this->request->getPost("targetmarket"),
             "desc" => $this->request->getPost("desc"),
+            "image" => $img,
         ));
         
-        $code = "00000";
-
-        if($data==false) $code = "00002";
+        $code = $data==false ? "00002" : "00000";
 
         return $this->respond( tempResponse($code, $data) );
     }
