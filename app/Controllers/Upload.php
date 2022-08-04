@@ -2,10 +2,10 @@
  
 use CodeIgniter\RESTful\ResourceController;
  
-class Upload extends ResourceController
+class Resource extends ResourceController
 {
 
-    public function upload($folder,$file)
+    public function res($folder,$file)
     {
         $filepath = WRITEPATH . 'uploads/' . $folder . '/' . $file;
 
