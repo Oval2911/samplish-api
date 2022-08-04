@@ -70,6 +70,7 @@ $routes->group("Resource", function($routes){
 $routes->group("Brand", function($routes){
     $routes->get("/datatable", "App\Brand::datatable");
     $routes->get("/data", "App\Brand::data");
+    $routes->get("/dropdown", "App\Brand::dropdown");
     $routes->post("/store", "App\Brand::store");
     $routes->post("/amend", "App\Brand::amend");
     $routes->post("/destroy", "App\Brand::destroy");

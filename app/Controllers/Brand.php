@@ -25,15 +25,19 @@ class Brand extends ResourceController
         date_default_timezone_set('Asia/Jakarta');
 
         $this->validation = (object)[
+            "datatable" => [
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+                'limit' => ["label"=>"Pagination", "rules"=>"required",],
+            ],
             "data" => [
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
                 'key' => ["label"=>"Key", "rules"=>"required",],
             ],
-            "datatable" => [
+            "dropdown" => [
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
-                'limit' => ["label"=>"Pagination", "rules"=>"required",],
             ],
             "store" => [
                 'u' => ["label"=>"User", "rules"=>"required",],
@@ -55,28 +59,6 @@ class Brand extends ResourceController
         ];
     }
 
-    public function data()
-    {
-        if (!$this->validate($this->validation->data)) return $this->respond( tempResponse("00104") );
-
-        $user = $this->User_model->get_user(['iduser'], ["filter" => ['related_id' => $this->request->getGet("u")]]);
-        if ($user==null) return $this->respond( tempResponse("00102") );
-        $user = $user[0];
-
-        $access = $this->User_model->update_user_access_login_session(
-            $this->request->getGet("u"),
-            $this->request->getGet("token")
-        );
-        if ($access == 0) return $this->respond( tempResponse("00102") );
-
-        $data = $this->BrandModel->get_brand(["*"],["filter" => ["idbrand" => $this->request->getGet("key")]]);
-
-        $code = count($data)==1 ? '00000' : "00104";
-        $data = count($data)==1 ? $data[0] : false;
-
-        return $this->respond( tempResponse($code,$data) );
-    }
-
     public function datatable()
     {
         if (!$this->validate($this->validation->datatable)) return $this->respond( tempResponse("00104") );
@@ -96,19 +78,9 @@ class Brand extends ResourceController
             "order" => $this->request->getGet("order"),
             "search" => $this->request->getGet("search"),
             "user" => $user["iduser"],
-            "searchable" => [
-                "brand.name",
-                "brand_category.name",
-                "brand.variant",
-            ],
+            "searchable" => [ "brand.name", "brand_category.name", "brand.variant", ],
         ];
-        $fields = [
-            "brand.idbrand",
-            "brand.name",
-            "brand_category.name as category",
-            "brand.variant",
-        ];
-
+        $fields = [ "brand.idbrand", "brand.name", "brand_category.name as category", "brand.variant", ];
         $data = $this->BrandModel->datatable($fields, $filters);
 
         return $this->respond(
@@ -123,6 +95,51 @@ class Brand extends ResourceController
                 ]
             )
         );
+    }
+
+    public function data()
+    {
+        if (!$this->validate($this->validation->data)) return $this->respond( tempResponse("00104") );
+
+        $user = $this->User_model->get_user(['iduser'], ["filter" => ['related_id' => $this->request->getGet("u")]]);
+        if ($user==null) return $this->respond( tempResponse("00102") );
+        $user = $user[0];
+
+        $access = $this->User_model->update_user_access_login_session(
+            $this->request->getGet("u"),
+            $this->request->getGet("token")
+        );
+        if ($access == 0) return $this->respond( tempResponse("00102") );
+
+        $fields = ["idbrand", "idcategorybrand", "name", "image", "variant", "mission", "idtonemanner", "targetmarket", "desc"];
+        $filters = [ "filter" => ["idbrand" => $this->request->getGet("key")] ];
+        $data = $this->BrandModel->get_brand($fields,$filters);
+
+        $code = count($data)==1 ? '00000' : "00104";
+        $data = count($data)==1 ? $data[0] : false;
+
+        return $this->respond( tempResponse($code,$data) );
+    }
+
+    public function dropdown()
+    {
+        if (!$this->validate($this->validation->dropdown)) return $this->respond( tempResponse("00104") );
+
+        $user = $this->User_model->get_user(['iduser'], ["filter" => ['related_id' => $this->request->getGet("u")]]);
+        if ($user==null) return $this->respond( tempResponse("00102") );
+        $user = $user[0];
+
+        $access = $this->User_model->update_user_access_login_session(
+            $this->request->getGet("u"),
+            $this->request->getGet("token")
+        );
+        if ($access == 0) return $this->respond( tempResponse("00102") );
+
+        $fields = ["idbrand as value","name as label"];
+        $filters = [ "filter" => ["iduser" => $this->request->getGet("owner")] ];
+        $data = $this->BrandModel->get_brand($fields,$filters);
+
+        return $this->respond( tempResponse('00000',$data) );
     }
 
     public function store()
