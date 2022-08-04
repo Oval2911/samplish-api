@@ -34,6 +34,12 @@ class Brand extends ResourceController
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
                 'limit' => ["label"=>"Pagination", "rules"=>"required",],
             ],
+            "save" => [
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+                'category' => ["label"=>"Brand Category", "rules"=>"required",],
+                'name' => ["label"=>"Brand Name", "rules"=>"required",],
+            ],
         ];
     }
 
@@ -87,10 +93,7 @@ class Brand extends ResourceController
 
     public function save()
     {
-        if(!isExist("post","u")) return $this->respond( tempResponse("00104") );
-        if(!isExist("post","token")) return $this->respond( tempResponse("00104") );
-        if(!isExist("post","category")) return $this->respond( tempResponse("00104") );
-        if(!isExist("post","name")) return $this->respond( tempResponse("00104") );
+        if (!$this->validate($this->validation->save)) return $this->respond( tempResponse("00104") );
 
         $user = $this->User_model->get_user(array('iduser'), array("filter" => array('related_id' => $this->request->getPost("u"))));
         if ($user==null) return $this->respond( tempResponse("00102") );
@@ -108,7 +111,7 @@ class Brand extends ResourceController
             "name" => $this->request->getPost("name"),
             "variant" => $this->request->getPost("variant"),
             "mission" => $this->request->getPost("mission"),
-            "targetmarket" => $this->request->getPost("market"),
+            "targetmarket" => $this->request->getPost("targetmarket"),
             "desc" => $this->request->getPost("desc"),
         ));
         
