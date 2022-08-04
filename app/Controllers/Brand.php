@@ -124,5 +124,17 @@ class Brand extends ResourceController
 
         return $this->respond( tempResponse($code, $data) );
     }
+
+    public function resource(){
+        $file = $this->request->getGet("f");
+        $filepath = WRITEPATH . 'uploads/' .$file;
+
+        $mime = mime_content_type($filepath);
+        header('Content-Length: ' . filesize($filepath));
+        header("Content-Type: $mime");
+        header('Content-Disposition: inline; filename="' . $filepath . '";');
+        readfile($filepath);
+        exit();
+    }
  
 }

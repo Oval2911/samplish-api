@@ -46,11 +46,6 @@ $routes->group("Auth", function($routes){
     // $routes->match(["get", "post", ], "test", "Auth::test");
 });
 
-//Brand 
-$routes->group("Resource", function($routes){
-    $routes->get("/", "App\Resource::res");
-});
-
 $routes->group("Samplers", function($routes){
 
     $routes->get("/", "App\Samplers::index");
@@ -70,6 +65,7 @@ $routes->group("User", function($routes){
 $routes->group("Brand", function($routes){
     $routes->get("/datatable", "App\Brand::datatable");
     $routes->post("/save", "App\Brand::save");
+    $routes->get("/resource", "App\Brand::resource");
 });
 
 //Brand Category
