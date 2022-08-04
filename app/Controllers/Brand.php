@@ -66,8 +66,8 @@ class Brand extends ResourceController
 
         $data = $this->BrandModel->get_brand(["*"],["filter" => ["idbrand" => $this->request->getGet("key")]]);
 
-        $data = count($data)==1 ? $data[0] : false;
         $code = count($data)==1 ? '00000' : "00104";
+        $data = count($data)==1 ? $data[0] : false;
 
         return $this->respond( tempResponse($code,$data) );
     }
