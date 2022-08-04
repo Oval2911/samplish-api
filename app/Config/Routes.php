@@ -63,14 +63,13 @@ $routes->group("User", function($routes){
 
 // resource
 $routes->group("Resource", function($routes){
-    $routes->get("/", "App\Brand::resource");
+    $routes->get("/", "App\Resource::index");
 });
 
 //Brand 
 $routes->group("Brand", function($routes){
     $routes->get("/datatable", "App\Brand::datatable");
     $routes->post("/save", "App\Brand::save");
-    $routes->get("/resource", "App\Brand::resource");
 });
 
 //Brand Category
