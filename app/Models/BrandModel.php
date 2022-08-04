@@ -22,11 +22,13 @@ class BrandModel extends Model
     {
         $data = $this->dbCanvazer->table('brand')
             ->select($columns)
-            ->join("brand_category","brand_category.idcategorybrand = brand.idcategorybrand");
+            ->join("brand_category","brand_category.idcategorybrand = brand.idcategorybrand")
+            ->where("brand.iduser",$filters["user"]);
 
         $total = $this->dbCanvazer->table('brand')
             ->select("COUNT(brand.idbrand) as amount")
-            ->join("brand_category","brand_category.idcategorybrand = brand.idcategorybrand");
+            ->join("brand_category","brand_category.idcategorybrand = brand.idcategorybrand")
+            ->where("brand.iduser",$filters["user"]);
 
         if ($filters['search']!=null) {
             foreach($filters["searchable"] as $v){
@@ -35,11 +37,13 @@ class BrandModel extends Model
             }
         }
 
-        $data->where("brand.iduser",$filters["user"]);
-
         $data->limit($filters['limit']['n_item'], $filters['limit']['page'] * $filters['limit']['n_item']);
 
-        if (is_array($filters['order'])) $data->orderBy($filters['order']['column'], $filters['order']['direction']);
+        if (
+            is_array($filters['order'])
+            && array_key_exists("column",$filters['order'])
+            && array_key_exists("direction",$filters['order'])
+        ) $data->orderBy($filters['order']['column'], $filters['order']['direction']);
 
         $total = $total->get()->getResultArray()[0]['amount'];
 
