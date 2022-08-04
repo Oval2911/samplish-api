@@ -88,7 +88,7 @@ class Brand extends ResourceController
         );
     }
 
-    public function save()
+    public function store()
     {
         if (!$this->validate($this->validation->save)) return $this->respond( tempResponse("00104") );
 
