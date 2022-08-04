@@ -19,20 +19,19 @@ function tempResponse($errorcode, $data=null, $msg="")
         '00104' => 'Unknown Error',
     ];
 
-    if(is_object($msg)){
+    $errormsg = $error_messages[$errorcode];
+    if(is_object($msg) || is_array($msg)){
         foreach($msg as $k => $v){ // if error message from validation
-            $msg = $v;
+            $errormsg = $v;
             break;
         }
     }else if($msg!=""){ // if string
-        $msg = $msg;
-    }else{ // default
-        $msg = $error_messages[$errorcode];
+        $errormsg = $msg;
     }
 
     $resp = [
         'errorcode' => $errorcode,
-        'errormsg' => $msg,
+        'errormsg' => $errormsg,
         'data' => $data,
     ];
     return $resp;
