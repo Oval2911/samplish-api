@@ -30,16 +30,16 @@ class Brand extends ResourceController
                 'rules' => 'uploaded[images]',
             ],
             "datatable" => [
-                'u' => ["label"=>"Unknown 1", "rules"=>"required",],
-                'token' => ["label"=>"Unknown 2", "rules"=>"required",],
-                'limit' => ["label"=>"Unknown 3", "rules"=>"required",],
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+                'limit' => ["label"=>"Pagination", "rules"=>"required",],
             ],
         ];
     }
 
     public function datatable()
     {
-        if (!$this->validate($this->validation->datatable)) return $this->respond( tempResponse("00104",NULL,$this->validator->getErrors()) );
+        if (!$this->validate($this->validation->datatable)) return $this->respond( tempResponse("00104") );
 
         $user = $this->User_model->get_user(array('iduser'), array("filter" => array('related_id' => $this->request->getGet("u"))));
         if ($user==null) return $this->respond( tempResponse("00102") );
