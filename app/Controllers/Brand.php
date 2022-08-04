@@ -25,7 +25,7 @@ class Brand extends ResourceController
         date_default_timezone_set('Asia/Jakarta');
 
         $this->validation = (object)[
-            "datatable" => [
+            "data" => [
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
                 'key' => ["label"=>"Key", "rules"=>"required",],
