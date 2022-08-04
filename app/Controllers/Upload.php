@@ -5,9 +5,9 @@ use CodeIgniter\RESTful\ResourceController;
 class Brand extends ResourceController
 {
 
-    public function upload($filename)
+    public function upload($folder,$file)
     {
-        $filepath = WRITEPATH . 'uploads/' . $filename;
+        $filepath = WRITEPATH . 'uploads/' . $folder . '/' . $file;
 
         $mime = mime_content_type($filepath);
         header('Content-Length: ' . filesize($filepath));
