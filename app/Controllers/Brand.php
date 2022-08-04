@@ -30,7 +30,7 @@ class Brand extends ResourceController
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
                 'limit' => ["label"=>"Pagination", "rules"=>"required",],
             ],
-            "save" => [
+            "store" => [
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
                 'category' => ["label"=>"Brand Category", "rules"=>"required",],
@@ -90,7 +90,7 @@ class Brand extends ResourceController
 
     public function store()
     {
-        if (!$this->validate($this->validation->save)) return $this->respond( tempResponse("00104") );
+        if (!$this->validate($this->validation->store)) return $this->respond( tempResponse("00104",false,$this->validator->getErrors()) );
 
         $user = $this->User_model->get_user(array('iduser'), array("filter" => array('related_id' => $this->request->getPost("u"))));
         if ($user==null) return $this->respond( tempResponse("00102") );
