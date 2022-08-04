@@ -96,9 +96,9 @@ class BrandModel extends Model
     
     public function store($data)
     {
-        $id = uniqid();
+        $data["idbrand"] = uniqid();
         $this->dbCanvazer->table('brand')->insert($data);
-        return $this->dbCanvazer->affectedRows() ? $id : false;
+        return $this->dbCanvazer->affectedRows() ? $data["idbrand"] : false;
     }
 
     public function amend($id, $data)

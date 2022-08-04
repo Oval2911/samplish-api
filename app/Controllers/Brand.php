@@ -3,12 +3,10 @@
 use CodeIgniter\RESTful\ResourceController;
 use App\Models\BrandModel;
 use App\Models\User_model;
-use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\Files\File;
  
 class Brand extends ResourceController
 {
-    private $_exec_time_start;
     private $validation;
 
     public function __construct()
@@ -18,10 +16,8 @@ class Brand extends ResourceController
         $this->BrandModel  = new BrandModel();
         $this->User_model  = new User_model();
 
-        helper(['custom', 'rsCode', 'form']);
+        helper(['rsCode']);
         
-        $this->_exec_time_start = microtime(true);
-        setlocale(LC_MONETARY, 'en_GB');
         date_default_timezone_set('Asia/Jakarta');
 
         $this->validation = (object)[
@@ -89,17 +85,7 @@ class Brand extends ResourceController
 
     public function data()
     {
-        if (!$this->validate($this->validation->data)) return $this->respond( tempResponse("00104") );
-
-        $user = $this->User_model->get_user(['iduser'], ["filter" => ['related_id' => $this->request->getGet("u")]]);
-        if ($user==null) return $this->respond( tempResponse("00102") );
-        $user = $user[0];
-
-        $access = $this->User_model->update_user_access_login_session(
-            $this->request->getGet("u"),
-            $this->request->getGet("token")
-        );
-        if ($access == 0) return $this->respond( tempResponse("00102") );
+        $this->validate_session($this->validation->data);
 
         $fields = ["idbrand", "idcategorybrand", "name", "image", "variant", "mission", "idtonemanner", "targetmarket", "desc"];
         $filters = [ "filter" => ["idbrand" => $this->request->getGet("key")] ];
@@ -113,17 +99,7 @@ class Brand extends ResourceController
 
     public function dropdown()
     {
-        if (!$this->validate($this->validation->dropdown)) return $this->respond( tempResponse("00104") );
-
-        $user = $this->User_model->get_user(['iduser'], ["filter" => ['related_id' => $this->request->getGet("u")]]);
-        if ($user==null) return $this->respond( tempResponse("00102") );
-        $user = $user[0];
-
-        $access = $this->User_model->update_user_access_login_session(
-            $this->request->getGet("u"),
-            $this->request->getGet("token")
-        );
-        if ($access == 0) return $this->respond( tempResponse("00102") );
+        $user = $this->validate_session($this->validation->dropdown);
 
         $owner = $this->request->getGet("owner");
         if($owner=="true"){
@@ -146,17 +122,7 @@ class Brand extends ResourceController
 
     public function store()
     {
-        if (!$this->validate($this->validation->store)) return $this->respond( tempResponse("00104",false,$this->validator->getErrors()) );
-
-        $user = $this->User_model->get_user(['iduser'], ["filter" => ['related_id' => $this->request->getPost("u")]]);
-        if ($user==null) return $this->respond( tempResponse("00102") );
-        $user = $user[0];
-
-        $access = $this->User_model->update_user_access_login_session(
-            $this->request->getPost("u"),
-            $this->request->getPost("token")
-        );
-        if ($access == 0) return $this->respond( tempResponse("00102") );
+        $user = $this->validate_session($this->validation->store);
 
         $img = $this->request->getFile('image');
         if($img && !$img->hasMoved()) {
@@ -184,17 +150,7 @@ class Brand extends ResourceController
 
     public function amend()
     {
-        if (!$this->validate($this->validation->amend)) return $this->respond( tempResponse("00104",false,$this->validator->getErrors()) );
-
-        $user = $this->User_model->get_user(['iduser'], ["filter" => ['related_id' => $this->request->getPost("u")]]);
-        if ($user==null) return $this->respond( tempResponse("00102") );
-        $user = $user[0];
-
-        $access = $this->User_model->update_user_access_login_session(
-            $this->request->getPost("u"),
-            $this->request->getPost("token")
-        );
-        if ($access == 0) return $this->respond( tempResponse("00102") );
+        $this->validate_session($this->validation->amend);
 
         $img = $this->request->getFile('image');
         if($img && !$img->hasMoved()) {
@@ -214,7 +170,7 @@ class Brand extends ResourceController
         ];
         if($img!=null) $amend["image"] = $img;
 
-        $data = $this->BrandModel->amend($this->request->getPost("key"), [$amend]);
+        $data = $this->BrandModel->amend($this->request->getPost("key"), $amend);
         
         $code = $data==false ? "00003" : "00000";
 
@@ -223,17 +179,7 @@ class Brand extends ResourceController
 
     public function destroy()
     {
-        if (!$this->validate($this->validation->destroy)) return $this->respond( tempResponse("00104",false,$this->validator->getErrors()) );
-
-        $user = $this->User_model->get_user(['iduser'], ["filter" => ['related_id' => $this->request->getPost("u")]]);
-        if ($user==null) return $this->respond( tempResponse("00102") );
-        $user = $user[0];
-
-        $access = $this->User_model->update_user_access_login_session(
-            $this->request->getPost("u"),
-            $this->request->getPost("token")
-        );
-        if ($access == 0) return $this->respond( tempResponse("00102") );
+        $this->validate_session($this->validation->destroy);
 
         $data = $this->BrandModel->destroy($this->request->getPost("key"));
         

@@ -89,4 +89,23 @@ class BrandCategoryModel extends Model
             "total_pages" => round($total / $filters['limit']['n_item']),
         ];
     }
+    
+    public function store($data)
+    {
+        $data["idcategorybrand"] = uniqid();
+        $this->dbCanvazer->table('brand_category')->insert($data);
+        return $this->dbCanvazer->affectedRows() ? $data["idcategorybrand"] : false;
+    }
+
+    public function amend($id, $data)
+    {
+        $this->dbCanvazer->table('brand_category')->where("idcategorybrand",$id)->update($data);
+        return $this->dbCanvazer->affectedRows() ? $id : false;
+    }
+    
+    public function destroy($id)
+    {
+        $this->dbCanvazer->table('brand_category')->delete(["idcategorybrand",$id]);
+        return $this->dbCanvazer->affectedRows() ? true : false;
+    }
 }

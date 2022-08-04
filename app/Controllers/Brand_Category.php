@@ -2,24 +2,17 @@
  
 use CodeIgniter\RESTful\ResourceController;
 use App\Models\BrandCategoryModel;
-use App\Models\User_model;
-use CodeIgniter\HTTP\ResponseInterface;
  
 class Brand_Category extends ResourceController
 {
-    private $_exec_time_start;
-
     public function __construct()
     {
         $this->request = \Config\Services::request();
         
         $this->BrandCategoryModel  = new BrandCategoryModel();
-        $this->User_model  = new User_model();
 
-        helper(['custom', 'rsCode', 'form']);
+        helper(['rsCode']);
         
-        $this->_exec_time_start = microtime(true);
-        setlocale(LC_MONETARY, 'en_GB');
         date_default_timezone_set('Asia/Jakarta');
 
         $this->validation = (object)[
@@ -40,14 +33,13 @@ class Brand_Category extends ResourceController
             "store" => [
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
-                'category' => ["label"=>"Brand Category", "rules"=>"required",],
-                'name' => ["label"=>"Brand Name", "rules"=>"required",],
-                'image' => ['label'=>'Image', 'rules'=>'uploaded[image]|is_image[image]',],
+                'name' => ["label"=>"Category Name", "rules"=>"required",],
             ],
             "amend" => [
                 'key' => ["label"=>"Key", "rules"=>"required",],
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
+                'name' => ["label"=>"Category Name", "rules"=>"required",],
             ],
             "destroy" => [
                 'key' => ["label"=>"Key", "rules"=>"required",],
@@ -59,17 +51,7 @@ class Brand_Category extends ResourceController
 
     public function datatable()
     {
-        if (!$this->validate($this->validation->datatable)) return $this->respond( tempResponse("00104") );
-
-        $user = $this->User_model->get_user(['iduser'], ["filter" => ['related_id' => $this->request->getGet("u")]]);
-        if ($user==null) return $this->respond( tempResponse("00102") );
-        $user = $user[0];
-
-        $access = $this->User_model->update_user_access_login_session(
-            $this->request->getGet("u"),
-            $this->request->getGet("token")
-        );
-        if ($access == 0) return $this->respond( tempResponse("00102") );
+        $this->validate_session($this->validation->datatable);
 
         $filters = [
             "limit" => $this->request->getGet("limit"),
@@ -94,24 +76,62 @@ class Brand_Category extends ResourceController
         );
     }
 
+    public function data()
+    {
+        $this->validate_session($this->validation->data);
+
+        $fields = ["idcategorybrand", "name"];
+        $filters = [ "filter" => ["idcategorybrand" => $this->request->getGet("key")] ];
+        $data = $this->BrandCategoryModel->get_brand($fields,$filters);
+
+        $code = $data!=null && count($data)==1 ? '00000' : "00104";
+        $data = $data!=null && count($data)==1 ? $data[0] : false;
+
+        return $this->respond( tempResponse($code,$data) );
+    }
+
     public function dropdown()
     {
-        if(!isExist("get","u")) return $this->respond( tempResponse("00104") );
-        if(!isExist("get","token")) return $this->respond( tempResponse("00104") );
-
-        $user = $this->User_model->get_user(array('iduser'), array("filter" => array('related_id' => $this->request->getGet("u"))));
-        if ($user==null) return $this->respond( tempResponse("00102") );
-        $user = $user[0];
-
-        $access = $this->User_model->update_user_access_login_session(
-            $this->request->getGet("u"),
-            $this->request->getGet("token")
-        );
-        if ($access == 0) return $this->respond( tempResponse("00102") );
+        $this->validate_session($this->validation->dropdown);
 
         $data = $this->BrandCategoryModel->get_category(array("idcategorybrand as value","name as label"));
 
         return $this->respond( tempResponse('00000',$data) );
+    }
+
+    public function store()
+    {
+        $this->validate_session($this->validation->store);
+
+        $data = $this->BrandCategoryModel->store([
+            "name" => $this->request->getPost("name"),
+        ]);
+        
+        $code = $data==false ? "00002" : "00000";
+
+        return $this->respond( tempResponse($code, $data) );
+    }
+
+    public function amend()
+    {
+        $this->validate_session($this->validation->amend);
+
+        $data = $this->BrandCategoryModel->amend($this->request->getPost("key"), ["name" => $this->request->getPost("name")]);
+        
+        $code = $data==false ? "00003" : "00000";
+
+        return $this->respond( tempResponse($code, $data) );
+    }
+
+    public function destroy()
+    {
+        $this->validate_session($this->validation->destroy);
+
+        $data = $this->BrandCategoryModel->destroy($this->request->getPost("key"));
+        
+        $code = $data==false ? "00007" : "00000";
+
+        return $this->respond( tempResponse($code, $data) );
     }
  
 }

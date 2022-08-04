@@ -79,7 +79,11 @@ $routes->group("Brand", function($routes){
 //Brand Category
 $routes->group("Brand_Category", function($routes){
     $routes->get("/datatable", "App\Brand_Category::datatable");
+    $routes->get("/data", "App\Brand_Category::data");
     $routes->get("/dropdown", "App\Brand_Category::dropdown");
+    $routes->post("/store", "App\Brand_Category::store");
+    $routes->post("/amend", "App\Brand_Category::amend");
+    $routes->post("/destroy", "App\Brand_Category::destroy");
 });
 
 //Brand Category
