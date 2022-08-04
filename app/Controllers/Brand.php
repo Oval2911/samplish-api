@@ -39,10 +39,7 @@ class Brand extends ResourceController
 
     public function datatable()
     {
-        // if(!isExist("get","u")) return $this->respond( tempResponse("00104") );
-        // if(!isExist("get","limit")) return $this->respond( tempResponse("00104") );
-        // if(!isExist("get","token")) return $this->respond( tempResponse("00104") );
-        if (! $this->validate($this->validation->datatable)) return $this->respond( tempResponse("00104",$this->validator->getErrors(),$this->validator->getErrors()) );
+        if (!$this->validate($this->validation->datatable)) return $this->respond( tempResponse("00104",NULL,$this->validator->getErrors()) );
 
         $user = $this->User_model->get_user(array('iduser'), array("filter" => array('related_id' => $this->request->getGet("u"))));
         if ($user==null) return $this->respond( tempResponse("00102") );
