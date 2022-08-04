@@ -107,4 +107,26 @@ class ResourceController extends BaseResource
             $this->format = $format;
         }
     }
+
+    /**
+     * Set/change the expected response representation for returned objects
+     */
+    public function validate_session($rules)
+    {
+        helper(['rsCode', 'form']);
+
+        $request = \Config\Services::request();
+        $user_model = new \App\Models\User_model();
+
+        if (!$this->validate($rules)) exit( $this->respond( tempResponse("00104") ) );
+
+        $user = $user_model->get_user(['iduser'], ["filter" => ['related_id' => $request->getGet("u")]]);
+        if ($user==null) exit( $this->respond( tempResponse("00102") ) );
+        $user = $user[0];
+
+        $access = $user_model->update_user_access_login_session($request->getGet("u"), $request->getGet("token"));
+        if ($access == 0) exit( $this->respond( tempResponse("00102") ) );
+
+        return $user;
+    }
 }
