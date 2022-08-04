@@ -143,6 +143,7 @@ class Brand extends ResourceController
 
         $data = $this->BrandModel->store([
             "idcategorybrand" => $this->request->getPost("category"),
+            "idtonemanner" => $this->request->getPost("tonemanner"),
             "iduser" => $user["iduser"],
             "name" => $this->request->getPost("name"),
             "variant" => $this->request->getPost("variant"),
@@ -178,27 +179,18 @@ class Brand extends ResourceController
             $img = $store;
         }
 
-        $amend = [];
-        if(array_key_exists("idcategorybrand",$_POST)) $amend["idcategorybrand"] = $this->request->getPost("category");
-        if(array_key_exists("name",$_POST)) $amend["name"] = $this->request->getPost("name");
-        if(array_key_exists("variant",$_POST)) $amend["variant"] = $this->request->getPost("variant");
-        if(array_key_exists("mission",$_POST)) $amend["mission"] = $this->request->getPost("mission");
-        if(array_key_exists("targetmarket",$_POST)) $amend["targetmarket"] = $this->request->getPost("targetmarket");
-        if(array_key_exists("desc",$_POST)) $amend["desc"] = $this->request->getPost("desc");
+        $amend = [
+            "idcategorybrand" => $this->request->getPost("category"),
+            "idtonemanner" => $this->request->getPost("tonemanner"),
+            "name" => $this->request->getPost("name"),
+            "variant" => $this->request->getPost("variant"),
+            "mission" => $this->request->getPost("mission"),
+            "targetmarket" => $this->request->getPost("targetmarket"),
+            "desc" => $this->request->getPost("desc"),
+        ];
         if($img!=null) $amend["image"] = $img;
 
-        $data = $this->BrandModel->amend(
-            $this->request->getPost("key"),
-            [
-                "idcategorybrand" => $this->request->getPost("category"),
-                "name" => $this->request->getPost("name"),
-                "variant" => $this->request->getPost("variant"),
-                "mission" => $this->request->getPost("mission"),
-                "targetmarket" => $this->request->getPost("targetmarket"),
-                "desc" => $this->request->getPost("desc"),
-                "image" => $img,
-            ]
-        );
+        $data = $this->BrandModel->amend($this->request->getPost("key"), [$amend]);
         
         $code = $data==false ? "00003" : "00000";
 

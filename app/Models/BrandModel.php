@@ -105,7 +105,8 @@ class BrandModel extends Model
     public function amend($id, $data)
     {
         $builder = $this->dbCanvazer->table('brand');
-        $builder->update();
+        $builder->where("idbrand",$id);
+        $builder->update($data);
         return $this->dbCanvazer->affectedRows() ? $id : false;
     }
 }
