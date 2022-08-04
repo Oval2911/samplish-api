@@ -105,7 +105,7 @@ class Brand extends ResourceController
         $img = $this->request->getFile('image');
         if($img && !$img->hasMoved()) {
             $store = $img->store();
-            $file = new File(WRITEPATH .'uploads/brand/'. $store);
+            $file = new File(WRITEPATH .'uploads/'. $store);
             $img = $store;
         }
 
