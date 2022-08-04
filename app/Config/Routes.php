@@ -61,6 +61,11 @@ $routes->group("User", function($routes){
   
 });
 
+// resource
+$routes->group("Resource", function($routes){
+    $routes->get("/", "App\Brand::resource");
+});
+
 //Brand 
 $routes->group("Brand", function($routes){
     $routes->get("/datatable", "App\Brand::datatable");
