@@ -46,7 +46,7 @@ $routes->group("Auth", function($routes){
     // $routes->match(["get", "post", ], "test", "Auth::test");
 });
 
-$routes->get("/upload/(:any)/(:any)", "App\Upload::index");
+$routes->get("/Upload/(:any)/(:any)", "App\Upload::upload");
 
 $routes->group("Samplers", function($routes){
 

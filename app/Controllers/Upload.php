@@ -2,7 +2,7 @@
  
 use CodeIgniter\RESTful\ResourceController;
  
-class Brand extends ResourceController
+class Upload extends ResourceController
 {
 
     public function upload($folder,$file)
