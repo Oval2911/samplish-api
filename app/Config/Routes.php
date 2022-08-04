@@ -78,6 +78,7 @@ $routes->group("Brand", function($routes){
 
 //Brand Category
 $routes->group("Brand_Category", function($routes){
+    $routes->get("/datatable", "App\Brand_Category::datatable");
     $routes->get("/dropdown", "App\Brand_Category::dropdown");
 });
 

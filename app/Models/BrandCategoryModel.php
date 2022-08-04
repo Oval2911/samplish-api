@@ -52,4 +52,41 @@ class BrandCategoryModel extends Model
 
         return null;
     }
+
+    public function datatable($columns = ['*'], $filters = [])
+    {
+        $data = $this->dbCanvazer->table('brand_category')
+            ->select($columns);
+
+        $total = $this->dbCanvazer->table('brand_category')
+            ->select("COUNT(idcategorybrand) as amount");
+
+        if ($filters['search']!=null) {
+            foreach($filters["searchable"] as $k => $v){
+                if($k==0){
+                    $data->like($v,$filters['search']);
+                    $total->like($v,$filters['search']);
+                }else{
+                    $data->orLike($v,$filters['search']);
+                    $total->orLike($v,$filters['search']);
+                }
+            }
+        }
+
+        $data->limit($filters['limit']['n_item'], $filters['limit']['page'] * $filters['limit']['n_item']);
+
+        if (
+            is_array($filters['order'])
+            && array_key_exists("column",$filters['order'])
+            && array_key_exists("direction",$filters['order'])
+        ) $data->orderBy($filters['order']['column'], $filters['order']['direction']);
+
+        $total = $total->get()->getResultArray()[0]['amount'];
+
+        return (object)[
+            "data" => $data->get()->getResultArray(),
+            "total" => $total,
+            "total_pages" => round($total / $filters['limit']['n_item']),
+        ];
+    }
 }

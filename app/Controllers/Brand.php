@@ -148,7 +148,10 @@ class Brand extends ResourceController
         $filters = $owner==null ? [] : [ "filter" => ["iduser" => $owner] ];
         $data = $this->BrandModel->get_brand($fields,$filters);
 
-        return $this->respond( tempResponse('00000',$data) );
+        $code = $data!=null && count($data)==1 ? '00000' : "00104";
+        $data = $data!=null && count($data)==1 ? $data : false;
+
+        return $this->respond( tempResponse($code,$data) );
     }
 
     public function store()
