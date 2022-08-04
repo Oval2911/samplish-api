@@ -4,10 +4,12 @@ use CodeIgniter\RESTful\ResourceController;
 use App\Models\BrandModel;
 use App\Models\User_model;
 use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\Files\File;
  
 class Brand extends ResourceController
 {
     private $_exec_time_start;
+    private $validation;
 
     public function __construct()
     {
@@ -16,18 +18,31 @@ class Brand extends ResourceController
         $this->BrandModel  = new BrandModel();
         $this->User_model  = new User_model();
 
-        helper(['custom', 'rsCode']);
+        helper(['custom', 'rsCode', 'form']);
         
         $this->_exec_time_start = microtime(true);
         setlocale(LC_MONETARY, 'en_GB');
         date_default_timezone_set('Asia/Jakarta');
+
+        $this->validation = (object)[
+            'images' => [
+                'label' => 'Image File',
+                'rules' => 'uploaded[images]',
+            ],
+            "datatable" => [
+                'u' => ["label"=>"Unknown 1", "rules"=>"required",],
+                'token' => ["label"=>"Unknown 2", "rules"=>"required",],
+                'limit' => ["label"=>"Unknown 3", "rules"=>"required",],
+            ],
+        ];
     }
 
     public function datatable()
     {
-        if(!isExist("get","u")) return $this->respond( tempResponse("00104") );
-        if(!isExist("get","limit")) return $this->respond( tempResponse("00104") );
-        if(!isExist("get","token")) return $this->respond( tempResponse("00104") );
+        // if(!isExist("get","u")) return $this->respond( tempResponse("00104") );
+        // if(!isExist("get","limit")) return $this->respond( tempResponse("00104") );
+        // if(!isExist("get","token")) return $this->respond( tempResponse("00104") );
+        if (! $this->validate($this->validation->datatable)) return $this->respond( tempResponse("00104",NULL,$this->validator->getErrors()) );
 
         $user = $this->User_model->get_user(array('iduser'), array("filter" => array('related_id' => $this->request->getGet("u"))));
         if ($user==null) return $this->respond( tempResponse("00102") );

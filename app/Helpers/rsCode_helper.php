@@ -1,7 +1,7 @@
 <?php
 
 
-function tempResponse($errorcode, $data = null)
+function tempResponse($errorcode, $data = null, $errormsg="")
 {
     
  $error_messages = [
@@ -20,7 +20,7 @@ function tempResponse($errorcode, $data = null)
 
     $resp = [
         'errorcode' => $errorcode,
-        'errormsg' => $error_messages[$errorcode],
+        'errormsg' => $errormsg=="" ? $errormsg : $error_messages[$errorcode],
         'data' => $data,
     ];
     return $resp;
