@@ -66,7 +66,10 @@ class Brand extends ResourceController
 
         $data = $this->BrandModel->get_brand(["*"],["filter" => ["idbrand" => $this->request->getGet("key")]]);
 
-        return $this->respond( tempResponse('00000',$data) );
+        $data = count($data)==1 ? $data[0] : false;
+        $code = count($data)==1 ? '00000' : "00104";
+
+        return $this->respond( tempResponse($code,$data) );
     }
 
     public function datatable()
