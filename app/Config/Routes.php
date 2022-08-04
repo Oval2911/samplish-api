@@ -63,7 +63,7 @@ $routes->group("User", function($routes){
 
 // resource
 $routes->group("Resource", function($routes){
-    $routes->get("/", "App\Resource::index");
+    $routes->get("/", "Resource::index");
 });
 
 //Brand 
