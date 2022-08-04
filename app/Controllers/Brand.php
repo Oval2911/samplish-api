@@ -135,8 +135,9 @@ class Brand extends ResourceController
         );
         if ($access == 0) return $this->respond( tempResponse("00102") );
 
+        $owner = $this->request->getGet("owner");
         $fields = ["idbrand as value","name as label"];
-        $filters = [ "filter" => ["iduser" => $this->request->getGet("owner")] ];
+        $filters = $owner==null ? [] : [ "filter" => ["iduser" => $owner] ];
         $data = $this->BrandModel->get_brand($fields,$filters);
 
         return $this->respond( tempResponse('00000',$data) );
