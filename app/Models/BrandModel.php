@@ -31,9 +31,14 @@ class BrandModel extends Model
             ->where("brand.iduser",$filters["user"]);
 
         if ($filters['search']!=null) {
-            foreach($filters["searchable"] as $v){
-                $data->orLike($v,$filters['search']);
-                $total->orLike($v,$filters['search']);
+            foreach($filters["searchable"] as $k => $v){
+                if($k==0){
+                    $data->like($v,$filters['search']);
+                    $total->like($v,$filters['search']);
+                }else{
+                    $data->orLike($v,$filters['search']);
+                    $total->orLike($v,$filters['search']);
+                }
             }
         }
 
