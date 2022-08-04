@@ -18,7 +18,42 @@ class BrandModel extends Model
 
     }
 
-    public function datatable($columns = array('*'), $filters = array())
+    public function get_brand($columns = array('*'), $filter = array())
+    {
+
+        $builder = $this->dbCanvazer->table('brand');
+        $builder->select($columns);
+
+        if (isset($filter['filter'])) {
+            $builder->where($filter['filter']);
+        }
+        if (isset($filter['filternot'])) {
+            $builder->where($filter['filternot']);
+        }
+        if (isset($filter['filterLike'])) {
+            $builder->like($filter['filterLike']);
+        }
+
+        if (isset($filter['limit'])) {
+            $builder->limit($filter['limit']['n_item'], $filter['limit']['page'] * $filter['limit']['n_item']);
+        }
+
+        if (isset($filter['sort'])) {
+            foreach ($filter['sort'] as $key => $value) {
+                $builder->orderBy($key, $value);
+            }
+        }
+
+        $query = $builder->get();
+        $result = $query->getResultArray();
+        if ($result) {
+            return $result;
+        }
+
+        return null;
+    }
+
+    public function datatable($columns = ['*'], $filters = [])
     {
         $data = $this->dbCanvazer->table('brand')
             ->select($columns)
@@ -63,27 +98,14 @@ class BrandModel extends Model
     {
         $id = uniqid();
         $builder = $this->dbCanvazer->table('brand');
-        $builder->set('idbrand', $id);
-        $builder->set('idcategorybrand', $data["idcategorybrand"]);
-        $builder->set('iduser', $data["iduser"]);
-        $builder->set('name', $data["name"]);
-        $builder->set('variant', $data["variant"]);
-        $builder->set('mission', $data["mission"]);
-        $builder->set('targetmarket', $data["targetmarket"]);
-        $builder->set('desc', $data["desc"]);
         $builder->insert($data);
         return $this->dbCanvazer->affectedRows() ? $id : false;
     }
 
-    public function update_user($data, $filter)
+    public function amend($id, $data)
     {
-        $builder = $this->dbCanvazer->table('user');
-        $builder->set($data);
-        $builder->where($filter);
+        $builder = $this->dbCanvazer->table('brand');
         $builder->update();
-        // echo $builder->last_query();
-
-        $n_affected_rows = $this->dbCanvazer->affectedRows();
-        return $n_affected_rows;
+        return $this->dbCanvazer->affectedRows() ? $id : false;
     }
 }
