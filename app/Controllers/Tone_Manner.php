@@ -16,31 +16,68 @@ class Tone_Manner extends ResourceController
         $this->ToneMannerModel  = new ToneMannerModel();
         $this->User_model  = new User_model();
 
-        helper(['custom', 'rsCode']);
+        helper(['rsCode']);
         
         $this->_exec_time_start = microtime(true);
         setlocale(LC_MONETARY, 'en_GB');
         date_default_timezone_set('Asia/Jakarta');
+
+        $this->validation = (object)[
+            "datatable" => [
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+                'limit' => ["label"=>"Pagination", "rules"=>"required",],
+            ],
+            "data" => [
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+                'key' => ["label"=>"Key", "rules"=>"required",],
+            ],
+            "dropdown" => [
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+            ],
+            "store" => [
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+                'category' => ["label"=>"Brand Category", "rules"=>"required",],
+                'name' => ["label"=>"Brand Name", "rules"=>"required",],
+                'image' => ['label'=>'Image', 'rules'=>'uploaded[image]|is_image[image]',],
+            ],
+            "amend" => [
+                'key' => ["label"=>"Key", "rules"=>"required",],
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+            ],
+            "destroy" => [
+                'key' => ["label"=>"Key", "rules"=>"required",],
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+            ],
+        ];
     }
 
     public function dropdown()
     {
-        if(!isExist("get","u")) return $this->respond( tempResponse("00104") );
-        if(!isExist("get","token")) return $this->respond( tempResponse("00104") );
+        $user = $this->validate_session($this->validation->dropdown);
 
-        $user = $this->User_model->get_user(array('iduser'), array("filter" => array('related_id' => $this->request->getGet("u"))));
-        if ($user==null) return $this->respond( tempResponse("00102") );
-        $user = $user[0];
+        $owner = $this->request->getGet("owner");
+        if($owner=="true"){
+            $owner = $user["iduser"];
+        }else if($owner!=null){
+            $owner = $this->User_model->get_user(['iduser'], ["filter" => ['related_id' => $owner]]);
+            if ($owner!=null && count($owner)==1) $owner = $owner[0];
+            else $owner = null;
+        }
 
-        $access = $this->User_model->update_user_access_login_session(
-            $this->request->getGet("u"),
-            $this->request->getGet("token")
-        );
-        if ($access == 0) return $this->respond( tempResponse("00102") );
+        $fields = ["idtonemanner as value","name as label"];
+        $filters = $owner==null ? [] : [ "filter" => ["iduser" => $owner] ];
+        $data = $this->ToneMannerModel->get_tone_manner($fields,$filters);
 
-        $data = $this->ToneMannerModel->get_tone_manner(array("idtonemanner as value","name as label"));
+        $code = $data!=null && count($data)==1 ? '00000' : "00104";
+        $data = $data!=null && count($data)==1 ? $data : false;
 
-        return $this->respond( tempResponse('00000',$data) );
+        return $this->respond( tempResponse($code,$data) );
     }
  
 }
