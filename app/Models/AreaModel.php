@@ -105,7 +105,7 @@ class AreaModel extends Model
     
     public function destroy($id)
     {
-        $this->dbCanvazer->table('area')->delete(["idarea",$id]);
+        $this->dbCanvazer->table('area')->where("idarea",$id)->delete();
         return $this->dbCanvazer->affectedRows() ? true : false;
     }
 }

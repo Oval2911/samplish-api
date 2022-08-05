@@ -156,7 +156,7 @@ class Brand_Category extends ResourceController
         $fail = false;
         foreach($keys as $k => $v){
             $brand = $this->BrandModel->get_brand(["idbrand"],[ "filter" => ["idcategorybrand"=>$v] ]);
-            if($brand!=null && count($brand)>=0) $fail=true; continue;
+            if($brand!=null && count($brand)>=0) { $fail=true; continue; }
 
             $destroy = $this->BrandCategoryModel->destroy($v);
             if($destroy==false) $fail = true;

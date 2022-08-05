@@ -85,6 +85,7 @@ $routes->group("Brand_Category", function($routes){
     $routes->post("/store", "App\Brand_Category::store");
     $routes->post("/amend", "App\Brand_Category::amend");
     $routes->post("/destroy", "App\Brand_Category::destroy");
+    $routes->post("/destroys", "App\Brand_Category::destroys");
 });
 
 //Brand Category

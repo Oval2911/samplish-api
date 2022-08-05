@@ -133,5 +133,16 @@ class Area extends ResourceController
 
         return $this->respond( tempResponse($code, $data) );
     }
+
+    public function destroys()
+    {
+        $this->validate_session($this->validation->destroy);
+
+        $data = $this->AreaModel->destroy($this->request->getPost("key"));
+        
+        $code = $data==false ? "00007" : "00000";
+
+        return $this->respond( tempResponse($code, $data) );
+    }
  
 }
