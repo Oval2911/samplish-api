@@ -95,6 +95,7 @@ $routes->group("Area", function($routes){
     $routes->post("/store", "App\Area::store");
     $routes->post("/amend", "App\Area::amend");
     $routes->post("/destroy", "App\Area::destroy");
+    $routes->post("/destroys", "App\Area::destroys");
 });
 
 //Tone & Manner
