@@ -59,20 +59,10 @@ class Tone_Manner extends ResourceController
 
     public function dropdown()
     {
-        $user = $this->validate_session($this->validation->dropdown);
-
-        $owner = $this->request->getGet("owner");
-        if($owner=="true"){
-            $owner = $user["iduser"];
-        }else if($owner!=null){
-            $owner = $this->User_model->get_user(['iduser'], ["filter" => ['related_id' => $owner]]);
-            if ($owner!=null && count($owner)==1) $owner = $owner[0];
-            else $owner = null;
-        }
+        $this->validate_session($this->validation->dropdown);
 
         $fields = ["idtonemanner as value","name as label"];
-        $filters = $owner==null ? [] : [ "filter" => ["iduser" => $owner] ];
-        $data = $this->ToneMannerModel->get_tone_manner($fields,$filters);
+        $data = $this->ToneMannerModel->get_tone_manner($fields);
 
         $code = $data!=null && count($data)==1 ? '00000' : "00104";
         $data = $data!=null && count($data)==1 ? $data : false;
