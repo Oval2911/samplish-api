@@ -46,6 +46,11 @@ class Area extends ResourceController
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
             ],
+            "destroys" => [
+                'keys' => ["label"=>"Key", "rules"=>"required",],
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+            ],
         ];
     }
 
@@ -136,13 +141,16 @@ class Area extends ResourceController
 
     public function destroys()
     {
-        $this->validate_session($this->validation->destroy);
+        $this->validate_session($this->validation->destroys);
 
-        $data = $this->AreaModel->destroy($this->request->getPost("key"));
+        $keys = $this->request->getPost("keys");
+        if(!is_array($keys)) return $this->respond( tempResponse("00104") );
         
-        $code = $data==false ? "00007" : "00000";
+        foreach($keys as $k => $v){
+            $this->AreaModel->destroy($v);
+        }
 
-        return $this->respond( tempResponse($code, $data) );
+        return $this->respond( tempResponse("00000", true) );
     }
  
 }

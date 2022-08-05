@@ -88,7 +88,7 @@ $routes->group("Brand_Category", function($routes){
     $routes->post("/destroys", "App\Brand_Category::destroys");
 });
 
-//Brand Category
+//Area
 $routes->group("Area", function($routes){
     $routes->get("/datatable", "App\Area::datatable");
     $routes->get("/data", "App\Area::data");
