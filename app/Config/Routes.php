@@ -88,6 +88,16 @@ $routes->group("Brand_Category", function($routes){
 });
 
 //Brand Category
+$routes->group("Area", function($routes){
+    $routes->get("/datatable", "App\Area::datatable");
+    $routes->get("/data", "App\Area::data");
+    $routes->get("/dropdown", "App\Area::dropdown");
+    $routes->post("/store", "App\Area::store");
+    $routes->post("/amend", "App\Area::amend");
+    $routes->post("/destroy", "App\Area::destroy");
+});
+
+//Tone & Manner
 $routes->group("Tone_Manner", function($routes){
     $routes->get("/dropdown", "App\Tone_Manner::dropdown");
 });

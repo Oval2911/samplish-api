@@ -172,6 +172,7 @@ class Brand extends ResourceController
             "mission" => $this->request->getPost("mission"),
             "targetmarket" => $this->request->getPost("targetmarket"),
             "desc" => $this->request->getPost("desc"),
+            "updatedat" => date("Y-m-d H:i:s"),
         ];
         if($img!=null) $amend["image"] = $img;
 
