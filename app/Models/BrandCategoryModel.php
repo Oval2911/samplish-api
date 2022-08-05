@@ -105,7 +105,7 @@ class BrandCategoryModel extends Model
     
     public function destroy($id)
     {
-        $this->dbCanvazer->table('brand_category')->delete(["idcategorybrand",$id]);
+        $this->dbCanvazer->table('brand_category')->where("idcategorybrand",$id)->delete();
         return $this->dbCanvazer->affectedRows() ? true : false;
     }
 }
