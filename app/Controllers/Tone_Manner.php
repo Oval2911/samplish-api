@@ -64,10 +64,7 @@ class Tone_Manner extends ResourceController
         $fields = ["idtonemanner as value","name as label"];
         $data = $this->ToneMannerModel->get_tone_manner($fields);
 
-        $code = $data!=null && count($data)==1 ? '00000' : "00104";
-        $data = $data!=null && count($data)==1 ? $data : false;
-
-        return $this->respond( tempResponse($code,$data) );
+        return $this->respond( tempResponse('00000',$data) );
     }
  
 }
