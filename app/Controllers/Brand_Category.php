@@ -82,7 +82,7 @@ class Brand_Category extends ResourceController
 
         $fields = ["idcategorybrand", "name"];
         $filters = [ "filter" => ["idcategorybrand" => $this->request->getGet("key")] ];
-        $data = $this->BrandCategoryModel->get_brand($fields,$filters);
+        $data = $this->BrandCategoryModel->get_category($fields,$filters);
 
         $code = $data!=null && count($data)==1 ? '00000' : "00104";
         $data = $data!=null && count($data)==1 ? $data[0] : false;
