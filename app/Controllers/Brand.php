@@ -52,6 +52,11 @@ class Brand extends ResourceController
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
             ],
+            "destroys" => [
+                'keys' => ["label"=>"Key", "rules"=>"required",],
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+            ],
         ];
     }
 
@@ -186,6 +191,20 @@ class Brand extends ResourceController
         $code = $data==false ? "00007" : "00000";
 
         return $this->respond( tempResponse($code, $data) );
+    }
+
+    public function destroys()
+    {
+        $this->validate_session($this->validation->destroys);
+
+        $keys = $this->request->getPost("keys");
+        if(!is_array($keys)) return $this->respond( tempResponse("00104") );
+        
+        foreach($keys as $k => $v){
+            $this->BrandModel->destroy($v);
+        }
+
+        return $this->respond( tempResponse("00000", true) );
     }
  
 }

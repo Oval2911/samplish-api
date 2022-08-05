@@ -74,6 +74,7 @@ $routes->group("Brand", function($routes){
     $routes->post("/store", "App\Brand::store");
     $routes->post("/amend", "App\Brand::amend");
     $routes->post("/destroy", "App\Brand::destroy");
+    $routes->post("/destroys", "App\Brand::destroys");
 });
 
 //Brand Category
