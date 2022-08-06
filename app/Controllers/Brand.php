@@ -118,7 +118,7 @@ class Brand extends ResourceController
             else $owner = null;
         }
 
-        $fields = ["idbrand as value","name as label"];
+        $fields = ["idbrand as value","name as label","variant"];
         $filters = $owner==null ? [] : [ "filter" => ["iduser" => $owner] ];
         $data = $this->BrandModel->get_brand($fields,$filters);
         
