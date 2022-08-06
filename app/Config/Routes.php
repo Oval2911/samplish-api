@@ -107,6 +107,7 @@ $routes->group("Tone_Manner", function($routes){
 //Area
 $routes->group("Campaign", function($routes){
     $routes->post("/store", "App\Campaign::store");
+    $routes->post("/amend", "App\Campaign::amend");
 });
 
 /*

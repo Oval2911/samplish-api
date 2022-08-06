@@ -45,6 +45,8 @@ class Campaign extends ResourceController
                 'key' => ["label"=>"Key", "rules"=>"required",],
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
+                'status' => ["label"=>"Campaign Status", "rules"=>"required",],
+                'name' => ["label"=>"Campaign Name", "rules"=>"required",],
             ],
             "destroy" => [
                 'key' => ["label"=>"Key", "rules"=>"required",],
@@ -201,32 +203,82 @@ class Campaign extends ResourceController
 
     public function amend()
     {
-        $this->validate_session($this->validation->amend);
+        $user = $this->validate_session($this->validation->amend);
+        $campaign = $this->request->getPost("key");
 
-        $img = $this->request->getFile('image');
-        if($img && !$img->hasMoved()) {
-            $store = $img->store();
-            $file = new File(WRITEPATH .'uploads/'. $store);
-            $img = $store;
+        $this->CampaignModel->amend(
+            $campaign,
+            [
+                "idarea" => $this->request->getPost("area"),
+                "name" => $this->request->getPost("name"),
+                "status" => $this->request->getPost("status"),
+                "iduser" => $user["iduser"],
+                "quantity" => $this->request->getPost("quantity"),
+                "theme" => $this->request->getPost("theme"),
+                "box_type" => $this->request->getPost("box_type"),
+                "start_date" => $this->request->getPost("start_date"),
+                "end_date" => $this->request->getPost("end_date"),
+                "size" => $this->request->getPost("size"),
+                "desc" => $this->request->getPost("desc"),
+                "objective" => $this->request->getPost("objective"),
+                "key_message" => $this->request->getPost("key_message"),
+                "creative_direction" => $this->request->getPost("creative_direction"),
+                "adds_merchandise" => $this->request->getPost("adds_merchandise"),
+                "document_brief" => $this->request->getPost("document_brief"),
+                "logo" => $this->request->getPost("logo"),
+                "custom_box_design" => $this->request->getPost("custom_box_design"),
+                "digital_campaign" => $this->request->getPost("digital_campaign"),
+                "event" => $this->request->getPost("event"),
+                "feedback_due_date" => $this->request->getPost("feedback_due_date"),
+            ]
+        );
+
+        $brands = $this->request->getPost("brands");
+        $length = $this->request->getPost("length");
+        $width = $this->request->getPost("width");
+        $weight = $this->request->getPost("weight");
+        $variant = $this->request->getPost("variant");
+        $this->CampaignModel->destroy_brands($campaign);
+        if(is_array($brands) && is_array($length) && is_array($width) && is_array($weight) && is_array($variant)){
+            foreach($brands as $k => $v){
+                if($v=="") continue;
+                $this->CampaignModel->store_brand([
+                    "idcampaign" => $campaign,
+                    "idbrand" => $v,
+                    "variant" => $variant[$k],
+                    "length" => $length[$k],
+                    "width" => $width[$k],
+                    "weight" => $weight[$k],
+                ]);
+            }
         }
 
-        $amend = [
-            "idcategorybrand" => $this->request->getPost("category"),
-            "idtonemanner" => $this->request->getPost("tonemanner"),
-            "name" => $this->request->getPost("name"),
-            "variant" => $this->request->getPost("variant"),
-            "mission" => $this->request->getPost("mission"),
-            "targetmarket" => $this->request->getPost("targetmarket"),
-            "desc" => $this->request->getPost("desc"),
-            "updatedat" => date("Y-m-d H:i:s"),
-        ];
-        if($img!=null) $amend["image"] = $img;
+        $questions = $this->request->getPost("feedback_question");
+        $this->CampaignModel->destroy_questions($campaign);
+        if(is_array($questions)){
+            foreach($questions as $k => $v){
+                if($v=="") continue;
+                $this->CampaignModel->store_question([
+                    "idcampaign" => $campaign,
+                    "idbrand" => $v,
+                ]);
+            }
+        }
 
-        $data = $this->CampaignModel->amend($this->request->getPost("key"), $amend);
-        
-        $code = $data==false ? "00003" : "00000";
+        $text = $this->request->getPost("merchandise_text");
+        $qty = $this->request->getPost("merchandise_qty");
+        $this->CampaignModel->destroy_merchandises($campaign);
+        if(is_array($text) && is_array($qty)){
+            foreach($text as $k => $v){
+                $this->CampaignModel->store_merchandise([
+                    "idcampaign" => $campaign,
+                    "text" => $v,
+                    "quantity" => $qty[$k],
+                ]);
+            }
+        }
 
-        return $this->respond( tempResponse($code, $data) );
+        return $this->respond( tempResponse("00000", $campaign) );
     }
 
     public function destroy()
