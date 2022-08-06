@@ -88,6 +88,76 @@ class CampaignModel extends Model
         return null;
     }
 
+    public function get_campaign_question($columns = array('*'), $filter = array())
+    {
+
+        $builder = $this->dbCanvazer->table('campaign_feedback_question');
+        $builder->select($columns);
+
+        if (isset($filter['filter'])) {
+            $builder->where($filter['filter']);
+        }
+        if (isset($filter['filternot'])) {
+            $builder->where($filter['filternot']);
+        }
+        if (isset($filter['filterLike'])) {
+            $builder->like($filter['filterLike']);
+        }
+
+        if (isset($filter['limit'])) {
+            $builder->limit($filter['limit']['n_item'], $filter['limit']['page'] * $filter['limit']['n_item']);
+        }
+
+        if (isset($filter['sort'])) {
+            foreach ($filter['sort'] as $key => $value) {
+                $builder->orderBy($key, $value);
+            }
+        }
+
+        $query = $builder->get();
+        $result = $query->getResultArray();
+        if ($result) {
+            return $result;
+        }
+
+        return null;
+    }
+
+    public function get_campaign_merchandise($columns = array('*'), $filter = array())
+    {
+
+        $builder = $this->dbCanvazer->table('campaign_merchandise');
+        $builder->select($columns);
+
+        if (isset($filter['filter'])) {
+            $builder->where($filter['filter']);
+        }
+        if (isset($filter['filternot'])) {
+            $builder->where($filter['filternot']);
+        }
+        if (isset($filter['filterLike'])) {
+            $builder->like($filter['filterLike']);
+        }
+
+        if (isset($filter['limit'])) {
+            $builder->limit($filter['limit']['n_item'], $filter['limit']['page'] * $filter['limit']['n_item']);
+        }
+
+        if (isset($filter['sort'])) {
+            foreach ($filter['sort'] as $key => $value) {
+                $builder->orderBy($key, $value);
+            }
+        }
+
+        $query = $builder->get();
+        $result = $query->getResultArray();
+        if ($result) {
+            return $result;
+        }
+
+        return null;
+    }
+
     public function datatable($columns = ['*'], $filters = [])
     {
         $data = $this->dbCanvazer->table('campaign')

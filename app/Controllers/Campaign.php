@@ -93,14 +93,52 @@ class Campaign extends ResourceController
     {
         $this->validate_session($this->validation->data);
 
-        $fields = ["idbrand", "idcategorybrand", "name", "image", "variant", "mission", "idtonemanner", "targetmarket", "desc"];
-        $filters = [ "filter" => ["idbrand" => $this->request->getGet("key")] ];
-        $data = $this->CampaignModel->get_brand($fields,$filters);
+        $id = $this->request->getGet("key");
+        $fields = [
+            "idcampaign",
+            "idarea",
+            "name",
+            "status",
+            "quantity",
+            "theme",
+            "box_type",
+            "start_date",
+            "end_date",
+            "size",
+            "desc",
+            "objective",
+            "key_message",
+            "creative_direction",
+            "adds_merchandise",
+            "document_brief",
+            "logo",
+            "custom_box_design",
+            "digital_campaign",
+            "event",
+            "feedback_due_date",
+        ];
+        $filters = [ "filter" => ["idcampaign" => $id] ];
+        $campaign = $this->CampaignModel->get_campaign($fields,$filters);
 
-        $code = $data!=null && count($data)==1 ? '00000' : "00104";
-        $data = $data!=null && count($data)==1 ? $data[0] : false;
+        if( !($campaign!=null && count($campaign)==1) ) return $this->respond( tempResponse("00104") );
+        
+        $brands = $this->CampaignModel->get_campaign_brands(["*"],$filters);
 
-        return $this->respond( tempResponse($code,$data) );
+        $questions = $this->CampaignModel->get_campaign_question(["*"],$filters);
+
+        $merchandise = $this->CampaignModel->get_campaign_merchandise(["*"],$filters);
+
+        return $this->respond(
+            tempResponse(
+                "00000",
+                (object)[
+                    "campaign" => $campaign[0],
+                    "brands" => $brands,
+                    "questions" => $questions,
+                    "merchandise" => $merchandise,
+                ],
+            )
+        );
     }
 
     public function dropdown()
