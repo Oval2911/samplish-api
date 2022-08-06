@@ -274,7 +274,7 @@ class Campaign extends ResourceController
                 if($v=="") continue;
                 $this->CampaignModel->store_question([
                     "idcampaign" => $campaign,
-                    "idbrand" => $v,
+                    "text" => $v,
                 ]);
             }
         }
