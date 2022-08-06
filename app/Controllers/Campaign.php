@@ -130,6 +130,20 @@ class Campaign extends ResourceController
     {
         $user = $this->validate_session($this->validation->store);
 
+        $document_brief = $this->request->getFile('document_brief');
+        if($document_brief && !$document_brief->hasMoved()) {
+            $store = $document_brief->store();
+            $file = new File(WRITEPATH .'uploads/'. $store);
+            $document_brief = $store;
+        }
+
+        $logo = $this->request->getFile('logo');
+        if($logo && !$logo->hasMoved()) {
+            $store = $logo->store();
+            $file = new File(WRITEPATH .'uploads/'. $store);
+            $logo = $store;
+        }
+
         $campaign = $this->CampaignModel->store([
             "idarea" => $this->request->getPost("area"),
             "name" => $this->request->getPost("name"),
@@ -146,8 +160,8 @@ class Campaign extends ResourceController
             "key_message" => $this->request->getPost("key_message"),
             "creative_direction" => $this->request->getPost("creative_direction"),
             "adds_merchandise" => $this->request->getPost("adds_merchandise"),
-            "document_brief" => $this->request->getPost("document_brief"),
-            "logo" => $this->request->getPost("logo"),
+            "document_brief" => $document_brief,
+            "logo" => $logo,
             "custom_box_design" => $this->request->getPost("custom_box_design"),
             "digital_campaign" => $this->request->getPost("digital_campaign"),
             "event" => $this->request->getPost("event"),
