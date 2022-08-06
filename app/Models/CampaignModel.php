@@ -55,11 +55,11 @@ class CampaignModel extends Model
 
     public function datatable($columns = ['*'], $filters = [])
     {
-        $data = $this->dbCanvazer->table('brand')
+        $data = $this->dbCanvazer->table('campaign')
             ->select($columns)
             ->where("iduser",$filters["user"]);
 
-        $total = $this->dbCanvazer->table('brand')
+        $total = $this->dbCanvazer->table('campaign')
             ->select("COUNT(idcampaign) as amount")
             ->where("iduser",$filters["user"]);
 
