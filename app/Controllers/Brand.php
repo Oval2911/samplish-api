@@ -3,6 +3,7 @@
 use CodeIgniter\RESTful\ResourceController;
 use App\Models\BrandModel;
 use App\Models\User_model;
+use App\Models\CampaignModel;
 use CodeIgniter\Files\File;
  
 class Brand extends ResourceController
@@ -15,6 +16,7 @@ class Brand extends ResourceController
         
         $this->BrandModel  = new BrandModel();
         $this->User_model  = new User_model();
+        $this->CampaignModel  = new CampaignModel();
 
         helper(['rsCode']);
         
@@ -187,11 +189,15 @@ class Brand extends ResourceController
     {
         $this->validate_session($this->validation->destroy);
 
-        $data = $this->BrandModel->destroy($this->request->getPost("key"));
-        
-        $code = $data==false ? "00007" : "00000";
+        $id = $this->request->getPost("key");
 
-        return $this->respond( tempResponse($code, $data) );
+        $campaign = $this->CampaignModel->get_campaign_brands(["idbrand"],[ "filter" => ["idbrand"=>$id] ]);
+        if($campaign!=null && count($campaign)>=0) return $this->respond( tempResponse("00008") );
+
+        $destroy = $this->BrandModel->destroy($id);
+        $code = $destroy==false ? "00007" : "00000";
+
+        return $this->respond( tempResponse($code, $destroy) );
     }
 
     public function destroys()
@@ -201,11 +207,25 @@ class Brand extends ResourceController
         $keys = $this->request->getPost("keys");
         if(!is_array($keys)) return $this->respond( tempResponse("00104") );
         
+        $success = false;
+        $fail = false;
         foreach($keys as $k => $v){
-            $this->BrandModel->destroy($v);
+            $campaign = $this->CampaignModel->get_campaign_brands(["idbrand"],[ "filter" => ["idbrand"=>$v] ]);
+            if($campaign!=null && count($campaign)>=0) { $fail=true; continue; }
+
+            $destroy = $this->BrandModel->destroy($v);
+            if($destroy==false) $fail = true;
+            else $success = true;
         }
 
-        return $this->respond( tempResponse("00000", true) );
+        $code = $success==true ? "00000" : "00008";
+        $msg = "";
+        if($success==true && $fail==true) $msg = "some data was deleted successfully, but some cannot be deleted. Maybe the data is in use or error occurs";
+        elseif($success==true && $fail==false) $msg = "OK";
+        elseif($success==false && $fail==true) $msg = "Failed to delete data. Maybe the data is in use or error occurs";
+        elseif($success==false && $fail==false) $msg = "Failed to delete data. Maybe the data is in use or error occurs";
+
+        return $this->respond( tempResponse($code, true, $msg) );
     }
  
 }
