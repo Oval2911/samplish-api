@@ -161,6 +161,7 @@ class Campaign extends ResourceController
         $variant = $this->request->getPost("variant");
         if(is_array($brands) && is_array($length) && is_array($width) && is_array($weight) && is_array($variant)){
             foreach($brands as $k => $v){
+                if($v=="") continue;
                 $this->CampaignModel->store_brand([
                     "idcampaign" => $campaign,
                     "idbrand" => $v,
@@ -175,6 +176,7 @@ class Campaign extends ResourceController
         $questions = $this->request->getPost("feedback_question");
         if(is_array($questions)){
             foreach($questions as $k => $v){
+                if($v=="") continue;
                 $this->CampaignModel->store_question([
                     "idcampaign" => $campaign,
                     "idbrand" => $v,
