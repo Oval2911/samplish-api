@@ -1,11 +1,11 @@
 <?php namespace App\Controllers;
  
 use CodeIgniter\RESTful\ResourceController;
-use App\Models\BrandModel;
+use App\Models\CampaignModel;
 use App\Models\User_model;
 use CodeIgniter\Files\File;
  
-class Brand extends ResourceController
+class Campaign extends ResourceController
 {
     private $validation;
 
@@ -13,7 +13,7 @@ class Brand extends ResourceController
     {
         $this->request = \Config\Services::request();
         
-        $this->BrandModel  = new BrandModel();
+        $this->CampaignModel  = new CampaignModel();
         $this->User_model  = new User_model();
 
         helper(['rsCode']);
@@ -38,15 +38,13 @@ class Brand extends ResourceController
             "store" => [
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
-                'category' => ["label"=>"Brand Category", "rules"=>"required",],
-                'name' => ["label"=>"Brand Name", "rules"=>"required",],
-                'image' => ['label'=>'Image', 'rules'=>'uploaded[image]|is_image[image]',],
+                'status' => ["label"=>"Campaign Status", "rules"=>"required",],
+                'name' => ["label"=>"Campaign Name", "rules"=>"required",],
             ],
             "amend" => [
                 'key' => ["label"=>"Key", "rules"=>"required",],
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
-                'name' => ["label"=>"Brand Name", "rules"=>"required",],
             ],
             "destroy" => [
                 'key' => ["label"=>"Key", "rules"=>"required",],
@@ -73,7 +71,7 @@ class Brand extends ResourceController
             "searchable" => [ "brand.name", "brand_category.name", "brand.variant", ],
         ];
         $fields = [ "brand.idbrand", "brand.name", "brand_category.name as category", "brand.variant", ];
-        $data = $this->BrandModel->datatable($fields, $filters);
+        $data = $this->CampaignModel->datatable($fields, $filters);
 
         return $this->respond(
             tempResponse(
@@ -95,7 +93,7 @@ class Brand extends ResourceController
 
         $fields = ["idbrand", "idcategorybrand", "name", "image", "variant", "mission", "idtonemanner", "targetmarket", "desc"];
         $filters = [ "filter" => ["idbrand" => $this->request->getGet("key")] ];
-        $data = $this->BrandModel->get_brand($fields,$filters);
+        $data = $this->CampaignModel->get_brand($fields,$filters);
 
         $code = $data!=null && count($data)==1 ? '00000' : "00104";
         $data = $data!=null && count($data)==1 ? $data[0] : false;
@@ -118,7 +116,7 @@ class Brand extends ResourceController
 
         $fields = ["idbrand as value","name as label"];
         $filters = $owner==null ? [] : [ "filter" => ["iduser" => $owner] ];
-        $data = $this->BrandModel->get_brand($fields,$filters);
+        $data = $this->CampaignModel->get_brand($fields,$filters);
 
         $code = $data!=null && count($data)==1 ? '00000' : "00104";
         $data = $data!=null && count($data)==1 ? $data : false;
@@ -130,28 +128,73 @@ class Brand extends ResourceController
     {
         $user = $this->validate_session($this->validation->store);
 
-        $img = $this->request->getFile('image');
-        if($img && !$img->hasMoved()) {
-            $store = $img->store();
-            $file = new File(WRITEPATH .'uploads/'. $store);
-            $img = $store;
+        $campaign = $this->CampaignModel->store([
+            "idarea" => $this->request->getPost("area"),
+            "name" => $this->request->getPost("name"),
+            "status" => $this->request->getPost("status"),
+            "iduser" => $user["iduser"],
+            "quantity" => $this->request->getPost("quantity"),
+            "theme" => $this->request->getPost("theme"),
+            "box_type" => $this->request->getPost("box_type"),
+            "start_date" => $this->request->getPost("start_date"),
+            "end_date" => $this->request->getPost("end_date"),
+            "size" => $this->request->getPost("size"),
+            "desc" => $this->request->getPost("desc"),
+            "objective" => $this->request->getPost("objective"),
+            "key_message" => $this->request->getPost("key_message"),
+            "creative_direction" => $this->request->getPost("creative_direction"),
+            "adds_merchandise" => $this->request->getPost("adds_merchandise"),
+            "document_brief" => $this->request->getPost("document_brief"),
+            "logo" => $this->request->getPost("logo"),
+            "custom_box_design" => $this->request->getPost("custom_box_design"),
+            "digital_campaign" => $this->request->getPost("digital_campaign"),
+            "event" => $this->request->getPost("event"),
+            "feedback_due_date" => $this->request->getPost("feedback_due_date"),
+        ]);
+
+        if($campaign==false) return $this->respond( tempResponse("00002") );
+
+        $brands = $this->request->getPost("brands");
+        $length = $this->request->getPost("length");
+        $width = $this->request->getPost("width");
+        $weight = $this->request->getPost("weight");
+        $variant = $this->request->getPost("variant");
+        if(is_array($brands) && is_array($length) && is_array($width) && is_array($weight) && is_array($variant)){
+            foreach($brands as $k => $v){
+                $this->CampaignModel->store_brand([
+                    "idcampaign" => $campaign,
+                    "idbrand" => $v,
+                    "variant" => $variant[$k],
+                    "length" => $length[$k],
+                    "width" => $width[$k],
+                    "weight" => $weight[$k],
+                ]);
+            }
         }
 
-        $data = $this->BrandModel->store([
-            "idcategorybrand" => $this->request->getPost("category"),
-            "idtonemanner" => $this->request->getPost("tonemanner"),
-            "iduser" => $user["iduser"],
-            "name" => $this->request->getPost("name"),
-            "variant" => $this->request->getPost("variant"),
-            "mission" => $this->request->getPost("mission"),
-            "targetmarket" => $this->request->getPost("targetmarket"),
-            "desc" => $this->request->getPost("desc"),
-            "image" => $img,
-        ]);
-        
-        $code = $data==false ? "00002" : "00000";
+        $questions = $this->request->getPost("feedback_question");
+        if(is_array($questions)){
+            foreach($questions as $k => $v){
+                $this->CampaignModel->store_question([
+                    "idcampaign" => $campaign,
+                    "idbrand" => $v,
+                ]);
+            }
+        }
 
-        return $this->respond( tempResponse($code, $data) );
+        $text = $this->request->getPost("merchandise_text");
+        $qty = $this->request->getPost("merchandise_qty");
+        if(is_array($text) && is_array($qty)){
+            foreach($text as $k => $v){
+                $this->CampaignModel->store_merchandise([
+                    "idcampaign" => $campaign,
+                    "text" => $v,
+                    "quantity" => $qty[$k],
+                ]);
+            }
+        }
+
+        return $this->respond( tempResponse("00000", $campaign) );
     }
 
     public function amend()
@@ -177,7 +220,7 @@ class Brand extends ResourceController
         ];
         if($img!=null) $amend["image"] = $img;
 
-        $data = $this->BrandModel->amend($this->request->getPost("key"), $amend);
+        $data = $this->CampaignModel->amend($this->request->getPost("key"), $amend);
         
         $code = $data==false ? "00003" : "00000";
 
@@ -188,7 +231,7 @@ class Brand extends ResourceController
     {
         $this->validate_session($this->validation->destroy);
 
-        $data = $this->BrandModel->destroy($this->request->getPost("key"));
+        $data = $this->CampaignModel->destroy($this->request->getPost("key"));
         
         $code = $data==false ? "00007" : "00000";
 
@@ -203,7 +246,7 @@ class Brand extends ResourceController
         if(!is_array($keys)) return $this->respond( tempResponse("00104") );
         
         foreach($keys as $k => $v){
-            $this->BrandModel->destroy($v);
+            $this->CampaignModel->destroy($v);
         }
 
         return $this->respond( tempResponse("00000", true) );

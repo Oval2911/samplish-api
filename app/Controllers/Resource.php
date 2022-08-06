@@ -7,13 +7,9 @@ class Resource extends ResourceController
     public function __construct()
     {
         $this->request = \Config\Services::request();
-
-        helper(['rsCode']);
     }
 
     public function index(){
-        $this->validate_session([ 'f' => ["label"=>"File", "rules"=>"required",], ]);
-
         $file = $this->request->getGet("f");
         $filepath = WRITEPATH . 'uploads/' .$file;
 

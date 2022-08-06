@@ -104,6 +104,11 @@ $routes->group("Tone_Manner", function($routes){
     $routes->get("/dropdown", "App\Tone_Manner::dropdown");
 });
 
+//Area
+$routes->group("Campaign", function($routes){
+    $routes->post("/store", "App\Campaign::store");
+});
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing
