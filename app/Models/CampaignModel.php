@@ -57,13 +57,11 @@ class CampaignModel extends Model
     {
         $data = $this->dbCanvazer->table('brand')
             ->select($columns)
-            ->join("brand_category","brand_category.idcategorybrand = brand.idcategorybrand")
-            ->where("brand.iduser",$filters["user"]);
+            ->where("iduser",$filters["user"]);
 
         $total = $this->dbCanvazer->table('brand')
-            ->select("COUNT(brand.idbrand) as amount")
-            ->join("brand_category","brand_category.idcategorybrand = brand.idcategorybrand")
-            ->where("brand.iduser",$filters["user"]);
+            ->select("COUNT(idcampaign) as amount")
+            ->where("iduser",$filters["user"]);
 
         if ($filters['search']!=null) {
             foreach($filters["searchable"] as $k => $v){

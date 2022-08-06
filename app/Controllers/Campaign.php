@@ -70,9 +70,9 @@ class Campaign extends ResourceController
             "order" => $this->request->getGet("order"),
             "search" => $this->request->getGet("search"),
             "user" => $user["iduser"],
-            "searchable" => [ "brand.name", "brand_category.name", "brand.variant", ],
+            "searchable" => [ "name", "status", "theme", "box_type", "start_date", "end_date", ],
         ];
-        $fields = [ "brand.idbrand", "brand.name", "brand_category.name as category", "brand.variant", ];
+        $fields = [ "idcampaign", "name", "status", "theme", "box_type", "start_date", "end_date", ];
         $data = $this->CampaignModel->datatable($fields, $filters);
 
         return $this->respond(
