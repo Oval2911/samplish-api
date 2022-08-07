@@ -229,7 +229,7 @@ class CampaignModel extends Model
         $this->destroy_brands($id);
         $this->destroy_questions($id);
         $this->destroy_merchandises($id);
-        $this->dbCanvazer->table('campaign')->delete(["idcampaign",$id]);
+        $this->dbCanvazer->table('campaign')->delete(["idcampaign"=>$id]);
         return $this->dbCanvazer->affectedRows() ? true : false;
     }
     
