@@ -224,7 +224,7 @@ class CampaignModel extends Model
 
     public function amend($id, $data)
     {
-        $this->dbCanvazer->table('brand')->where("idcampaign",$id)->update($data);
+        $this->dbCanvazer->table('campaign')->where("idcampaign",$id)->update($data);
         return $this->dbCanvazer->affectedRows() ? $id : false;
     }
     
