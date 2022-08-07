@@ -28,6 +28,41 @@ class CampaignModel extends Model
         return $this->get_data("campaign_brand", $columns, $filter);
     }
 
+    public function get_campaign_brand_details($columns=["*"], $filter=[])
+    {
+        $builder = $this->dbCanvazer->table("campaign_brand")
+            ->select($columns)
+            ->join("brand","brand.idbrand = campaign_brand.idbrand");
+
+        if (isset($filter['filter'])) {
+            $builder->where($filter['filter']);
+        }
+        if (isset($filter['filternot'])) {
+            $builder->where($filter['filternot']);
+        }
+        if (isset($filter['filterLike'])) {
+            $builder->like($filter['filterLike']);
+        }
+
+        if (isset($filter['limit'])) {
+            $builder->limit($filter['limit']['n_item'], $filter['limit']['page'] * $filter['limit']['n_item']);
+        }
+
+        if (isset($filter['sort'])) {
+            foreach ($filter['sort'] as $key => $value) {
+                $builder->orderBy($key, $value);
+            }
+        }
+
+        $query = $builder->get();
+        $result = $query->getResultArray();
+        if ($result) {
+            return $result;
+        }
+
+        return null;
+    }
+
     public function get_campaign_question($columns=["*"], $filter=[])
     {
         return $this->get_data("campaign_feedback_question", $columns, $filter);
