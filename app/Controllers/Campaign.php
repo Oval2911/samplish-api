@@ -73,11 +73,6 @@ class Campaign extends ResourceController
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
             ],
-            "destroys" => [
-                'keys' => ["label"=>"Key", "rules"=>"required",],
-                'u' => ["label"=>"User", "rules"=>"required",],
-                'token' => ["label"=>"Access Token", "rules"=>"required",],
-            ],
         ];
     }
 
@@ -479,26 +474,18 @@ class Campaign extends ResourceController
     public function destroy()
     {
         $this->validate_session($this->validation->destroy);
+        $id = $this->request->getPost("key");
 
-        $data = $this->CampaignModel->destroy($this->request->getPost("key"));
+        $data = $this->_data($id);
+        if($data==null) return $this->respond( tempResponse("00104") );
+
+        if($data->campaign->status!="draft") return $this->respond( tempResponse("00104",false,"Campaign is not allowed to delete") );
+
+        $data = $this->CampaignModel->destroy($id);
         
         $code = $data==false ? "00007" : "00000";
 
         return $this->respond( tempResponse($code, $data) );
-    }
-
-    public function destroys()
-    {
-        $this->validate_session($this->validation->destroys);
-
-        $keys = $this->request->getPost("keys");
-        if(!is_array($keys)) return $this->respond( tempResponse("00104") );
-        
-        foreach($keys as $k => $v){
-            $this->CampaignModel->destroy($v);
-        }
-
-        return $this->respond( tempResponse("00000", true) );
     }
 
     public function payment()
@@ -513,6 +500,7 @@ class Campaign extends ResourceController
         $msg = "Can not proceed to payment.";
         if($data->campaign->name==null) return $this->respond( tempResponse("00104",false,"$msg Campaign Name is required") );
         if( !($data->brands!=null && count($data->brands)>0) ) return $this->respond( tempResponse("00104",false,"$msg Brands is required") );
+        if($data->campaign->status!="draft") return $this->respond( tempResponse("00104") );
         if($data->campaign->quantity==null) return $this->respond( tempResponse("00104",false,"$msg Sampling Quantity is required") );
         if($data->campaign->box_type==null) return $this->respond( tempResponse("00104",false,"$msg Package is required") );
         if($data->campaign->start_date==null) return $this->respond( tempResponse("00104",false,"$msg Distribution Date is required") );
