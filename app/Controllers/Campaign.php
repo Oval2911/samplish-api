@@ -63,6 +63,11 @@ class Campaign extends ResourceController
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
             ],
+            "draft" => [
+                'key' => ["label"=>"Key", "rules"=>"required",],
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+            ],
             "destroy" => [
                 'key' => ["label"=>"Key", "rules"=>"required",],
                 'u' => ["label"=>"User", "rules"=>"required",],
@@ -503,13 +508,28 @@ class Campaign extends ResourceController
         $id = $this->request->getPost("key");
 
         $data = $this->_data($id);
-        if($data==null) $this->respond( tempResponse("00104") );
+        if($data==null) return $this->respond( tempResponse("00104") );
 
-        // if($data->)
+        $msg = "Can not proceed to payment.";
+        if($data->campaign->name==null) return $this->respond( tempResponse("00104",false,"$msg Campaign Name is required") );
+        if( !($data->brands!=null && count($data->brands)>0) ) return $this->respond( tempResponse("00104",false,"$msg Campaign Name is required") );
+        if($data->campaign->quantity==null) return $this->respond( tempResponse("00104",false,"$msg Sampling Quantity is required") );
+        if($data->campaign->box_type==null) return $this->respond( tempResponse("00104",false,"$msg Package is required") );
+        if($data->campaign->start_date==null) return $this->respond( tempResponse("00104",false,"$msg Distribution Date is required") );
+        if($data->campaign->end_date==null) return $this->respond( tempResponse("00104",false,"$msg Distribution Date is required") );
+        if(strtotime($data->campaign->start_date)>strtotime($data->campaign->end_date)) return $this->respond( tempResponse("00104",false,"$msg Invalid Distribution Date") );
+        if($data->campaign->idarea==null) return $this->respond( tempResponse("00104",false,"$msg Area Distribution is required") );
+        if($data->campaign->theme==null) return $this->respond( tempResponse("00104",false,"$msg Theme is required") );
+        if($data->campaign->size==null) return $this->respond( tempResponse("00104",false,"$msg Box Size is required") );
 
+        $now = date("Y-m-d H:i:s");
+        $due = date_create($now);
+        date_add($due,date_interval_create_from_date_string("1 days"));
         $campaign = $this->CampaignModel->amend($id, [
             "status" => "wait_pay",
-            "updatedat" => date("Y-m-d H:i:s"),
+            "payment_status" => "unpaid",
+            "payment_due_date" => date_format($due,"Y-m-d H:i:s"),
+            "updatedat" => $now,
         ]);
 
         if($campaign==false) return $this->respond( tempResponse("00003") );
@@ -519,7 +539,7 @@ class Campaign extends ResourceController
 
     public function draft()
     {
-        $this->validate_session($this->validation->payment);
+        $this->validate_session($this->validation->draft);
 
         $campaign = $this->CampaignModel->amend($this->request->getPost("key"), [
             "status" => "draft",
