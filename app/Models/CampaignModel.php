@@ -274,6 +274,22 @@ class CampaignModel extends Model
         return $this->dbCanvazer->affectedRows() ? true : false;
     }
     
+    public function destroy_brands_user($campaign,$user)
+    {
+        $brands = $this->dbCanvazer
+            ->table('brand')
+            ->select("idbrand")
+            ->where("iduser",$user)
+            ->get()
+            ->getResultArray();
+
+        foreach($brands as $k => $v){
+            $this->dbCanvazer->table('campaign_brand')->delete(["idcampaign"=>$campaign, "idbrand"=>$v["idbrand"]]);
+        }
+
+        return true;
+    }
+    
     public function destroy_questions($id)
     {
         $this->dbCanvazer->table('campaign_feedback_question')->delete(["idcampaign"=>$id]);

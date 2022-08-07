@@ -46,7 +46,7 @@ class Campaign extends ResourceController
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
                 'key' => ["label"=>"Key", "rules"=>"required",],
             ],
-            "dropdown" => [
+            "dropdown_mix" => [
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
             ],
@@ -307,27 +307,17 @@ class Campaign extends ResourceController
         ];
     }
 
-    public function dropdown()
+    public function dropdown_mix()
     {
-        $user = $this->validate_session($this->validation->dropdown);
+        $this->validate_session($this->validation->dropdown_mix);
 
-        $owner = $this->request->getGet("owner");
-        if($owner=="true"){
-            $owner = $user["iduser"];
-        }else if($owner!=null){
-            $owner = $this->User_model->get_user(['iduser'], ["filter" => ['related_id' => $owner]]);
-            if ($owner!=null && count($owner)==1) $owner = $owner[0];
-            else $owner = null;
-        }
-
-        $fields = ["idbrand as value","name as label"];
-        $filters = $owner==null ? [] : [ "filter" => ["iduser" => $owner] ];
+        $fields = ["idcampaign as value","name as label", "theme", "idarea", "start_date", "end_date",];
+        $filters = [ "filter" => ["box_type" => "mix"] ];
         $data = $this->CampaignModel->get_brand($fields,$filters);
+        
+        $data = $data!=null ? $data : [];
 
-        $code = $data!=null && count($data)==1 ? '00000' : "00104";
-        $data = $data!=null && count($data)==1 ? $data : false;
-
-        return $this->respond( tempResponse($code,$data) );
+        return $this->respond( tempResponse("00000",$data) );
     }
 
     public function store()
@@ -551,7 +541,7 @@ class Campaign extends ResourceController
 
     public function amend_brands()
     {
-        $this->validate_session($this->validation->amend_brands);
+        $user = $this->validate_session($this->validation->amend_brands);
         $req = $this->request;
         $campaign = $req->getPost("key");
 
@@ -560,6 +550,7 @@ class Campaign extends ResourceController
         $width = $req->getPost("width");
         $weight = $req->getPost("weight");
         $variant = $req->getPost("variant");
+        $this->CampaignModel->destroy_brands_user($campaign,$user["iduser"]);
         if(is_array($brands) && is_array($length) && is_array($width) && is_array($weight) && is_array($variant)){
             foreach($brands as $k => $v){
                 if($v=="") continue;
