@@ -53,6 +53,11 @@ class Campaign extends ResourceController
                 'status' => ["label"=>"Campaign Status", "rules"=>"required",],
                 'name' => ["label"=>"Campaign Name", "rules"=>"required",],
             ],
+            "amend_payment" => [
+                'key' => ["label"=>"Key", "rules"=>"required",],
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+            ],
             "payment" => [
                 'key' => ["label"=>"Key", "rules"=>"required",],
                 'u' => ["label"=>"User", "rules"=>"required",],
@@ -297,6 +302,20 @@ class Campaign extends ResourceController
         $user = $this->validate_session($this->validation->amend);
         $campaign = $this->request->getPost("key");
 
+        $document_brief = $this->request->getFile('document_brief');
+        if($document_brief && !$document_brief->hasMoved()) {
+            $store = $document_brief->store();
+            $file = new File(WRITEPATH .'uploads/'. $store);
+            $document_brief = $store;
+        }
+
+        $logo = $this->request->getFile('logo');
+        if($logo && !$logo->hasMoved()) {
+            $store = $logo->store();
+            $file = new File(WRITEPATH .'uploads/'. $store);
+            $logo = $store;
+        }
+
         $this->CampaignModel->amend(
             $campaign,
             [
@@ -315,8 +334,8 @@ class Campaign extends ResourceController
                 "key_message" => $this->request->getPost("key_message"),
                 "creative_direction" => $this->request->getPost("creative_direction"),
                 "adds_merchandise" => $this->request->getPost("adds_merchandise"),
-                "document_brief" => $this->request->getPost("document_brief"),
-                "logo" => $this->request->getPost("logo"),
+                "document_brief" => $document_brief,
+                "logo" => $logo,
                 "custom_box_design" => $this->request->getPost("custom_box_design"),
                 "digital_campaign" => $this->request->getPost("digital_campaign"),
                 "event" => $this->request->getPost("event"),
@@ -373,6 +392,34 @@ class Campaign extends ResourceController
         return $this->respond( tempResponse("00000", $campaign) );
     }
 
+    public function amend_payment()
+    {
+        $this->validate_session($this->validation->amend_payment);
+        $campaign = $this->request->getPost("key");
+
+        $receipt_payment = $this->request->getFile('receipt_payment');
+        if($receipt_payment && !$receipt_payment->hasMoved()) {
+            $store = $receipt_payment->store();
+            $file = new File(WRITEPATH .'uploads/'. $store);
+            $receipt_payment = $store;
+        }
+
+        $this->CampaignModel->amend(
+            $campaign,
+            [
+                "service" => $this->request->getPost("service"),
+                "service_address" => $this->request->getPost("service_address"),
+                "service_due_date" => $this->request->getPost("service_due_date"),
+                "contact_name" => $this->request->getPost("contact_name"),
+                "contact_number" => $this->request->getPost("contact_number"),
+                "receipt_payment" => $receipt_payment,
+                "updatedat" => date("Y-m-d H:i:s"),
+            ]
+        );
+
+        return $this->respond( tempResponse("00000", $campaign) );
+    }
+
     public function destroy()
     {
         $this->validate_session($this->validation->destroy);
@@ -404,6 +451,20 @@ class Campaign extends ResourceController
 
         $campaign = $this->CampaignModel->amend($this->request->getPost("key"), [
             "status" => "wait_pay",
+            "updatedat" => date("Y-m-d H:i:s"),
+        ]);
+
+        if($campaign==false) return $this->respond( tempResponse("00003") );
+
+        return $this->respond( tempResponse("00000") );
+    }
+
+    public function draft()
+    {
+        $this->validate_session($this->validation->payment);
+
+        $campaign = $this->CampaignModel->amend($this->request->getPost("key"), [
+            "status" => "draft",
             "updatedat" => date("Y-m-d H:i:s"),
         ]);
 

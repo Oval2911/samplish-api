@@ -18,115 +18,29 @@ class CampaignModel extends Model
 
     }
 
-    public function get_campaign($columns = array('*'), $filter = array())
+    public function get_campaign($columns=["*"], $filter=[])
     {
-
-        $builder = $this->dbCanvazer->table('campaign');
-        $builder->select($columns);
-
-        if (isset($filter['filter'])) {
-            $builder->where($filter['filter']);
-        }
-        if (isset($filter['filternot'])) {
-            $builder->where($filter['filternot']);
-        }
-        if (isset($filter['filterLike'])) {
-            $builder->like($filter['filterLike']);
-        }
-
-        if (isset($filter['limit'])) {
-            $builder->limit($filter['limit']['n_item'], $filter['limit']['page'] * $filter['limit']['n_item']);
-        }
-
-        if (isset($filter['sort'])) {
-            foreach ($filter['sort'] as $key => $value) {
-                $builder->orderBy($key, $value);
-            }
-        }
-
-        $query = $builder->get();
-        $result = $query->getResultArray();
-        if ($result) {
-            return $result;
-        }
-
-        return null;
+        return $this->get_data("campaign", $columns, $filter);
     }
 
-    public function get_campaign_brands($columns = array('*'), $filter = array())
+    public function get_campaign_brands($columns=["*"], $filter=[])
     {
-
-        $builder = $this->dbCanvazer->table('campaign_brand');
-        $builder->select($columns);
-
-        if (isset($filter['filter'])) {
-            $builder->where($filter['filter']);
-        }
-        if (isset($filter['filternot'])) {
-            $builder->where($filter['filternot']);
-        }
-        if (isset($filter['filterLike'])) {
-            $builder->like($filter['filterLike']);
-        }
-
-        if (isset($filter['limit'])) {
-            $builder->limit($filter['limit']['n_item'], $filter['limit']['page'] * $filter['limit']['n_item']);
-        }
-
-        if (isset($filter['sort'])) {
-            foreach ($filter['sort'] as $key => $value) {
-                $builder->orderBy($key, $value);
-            }
-        }
-
-        $query = $builder->get();
-        $result = $query->getResultArray();
-        if ($result) {
-            return $result;
-        }
-
-        return null;
+        return $this->get_data("campaign_brand", $columns, $filter);
     }
 
-    public function get_campaign_question($columns = array('*'), $filter = array())
+    public function get_campaign_question($columns=["*"], $filter=[])
     {
-
-        $builder = $this->dbCanvazer->table('campaign_feedback_question');
-        $builder->select($columns);
-
-        if (isset($filter['filter'])) {
-            $builder->where($filter['filter']);
-        }
-        if (isset($filter['filternot'])) {
-            $builder->where($filter['filternot']);
-        }
-        if (isset($filter['filterLike'])) {
-            $builder->like($filter['filterLike']);
-        }
-
-        if (isset($filter['limit'])) {
-            $builder->limit($filter['limit']['n_item'], $filter['limit']['page'] * $filter['limit']['n_item']);
-        }
-
-        if (isset($filter['sort'])) {
-            foreach ($filter['sort'] as $key => $value) {
-                $builder->orderBy($key, $value);
-            }
-        }
-
-        $query = $builder->get();
-        $result = $query->getResultArray();
-        if ($result) {
-            return $result;
-        }
-
-        return null;
+        return $this->get_data("campaign_feedback_question", $columns, $filter);
     }
 
-    public function get_campaign_merchandise($columns = array('*'), $filter = array())
+    public function get_campaign_merchandise($columns=["*"], $filter=[])
     {
+        return $this->get_data("campaign_merchandise", $columns, $filter);
+    }
 
-        $builder = $this->dbCanvazer->table('campaign_merchandise');
+    private function get_data($table, $columns=["*"], $filter=[])
+    {
+        $builder = $this->dbCanvazer->table($table);
         $builder->select($columns);
 
         if (isset($filter['filter'])) {
@@ -171,9 +85,28 @@ class CampaignModel extends Model
             $total->where("iduser",$filters["user"]);
         }
 
+        if (array_key_exists('status',$filters)) {
+            if(is_array($filters["status"])){
+                foreach($filters["status"] as $k => $v){
+                    $data->where("status",$v);
+                    $total->where("status",$v);
+                }
+            }else{
+                $data->where("status",$filters["status"]);
+                $total->where("status",$filters["status"]);
+            }
+        }
+
         if (array_key_exists('statusNot',$filters)) {
-            $data->where("status !=",$filters["statusNot"]);
-            $total->where("status !=",$filters["statusNot"]);
+            if(is_array($filters["statusNot"])){
+                foreach($filters["statusNot"] as $k => $v){
+                    $data->where("statusNot !=",$v);
+                    $total->where("statusNot !=",$v);
+                }
+            }else{
+                $data->where("statusNot !=",$filters["statusNot"]);
+                $total->where("statusNot !=",$filters["statusNot"]);
+            }
         }
 
         if ($filters['search']!=null) {

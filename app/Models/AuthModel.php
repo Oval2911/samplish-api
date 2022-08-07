@@ -40,6 +40,10 @@ class AuthModel extends Model
                 $user = $this->samplersModel->get_sampler(array('*', 'idusampler as iduser'),array('filter'=>array('idusampler'=>$result[0]['related_id'])));
             }elseif($result[0]['related_key']  == 'company'){
                 $user = $this->brandsModel->get_brand(array('*', 'iducompany as iduser'),array('filter'=>array('iducompany'=>$result[0]['related_id'])));
+            }elseif($result[0]['related_key']  == 'superadmin'){
+                $user = $this->brandsModel->get_brand(array('*', 'iducompany as iduser'),array('filter'=>array('iducompany'=>$result[0]['related_id'])));
+            }elseif($result[0]['related_key']  == 'admin'){
+                $user = $this->brandsModel->get_brand(array('*', 'iducompany as iduser'),array('filter'=>array('iducompany'=>$result[0]['related_id'])));
             }
 
             if ($user) {
@@ -65,6 +69,10 @@ class AuthModel extends Model
         if($role == 'sampler'){
             $user = $this->samplersModel->get_sampler(array('*', 'idusampler as iduser'),array('filter'=>$filter));
         }elseif($role == 'company'){
+            $user = $this->brandsModel->get_brand(array('*', 'iducompany as iduser'),array('filter'=>$filter));
+        }elseif($role == 'superadmin'){
+            $user = $this->brandsModel->get_brand(array('*', 'iducompany as iduser'),array('filter'=>$filter));
+        }elseif($role == 'admin'){
             $user = $this->brandsModel->get_brand(array('*', 'iducompany as iduser'),array('filter'=>$filter));
         }
 
