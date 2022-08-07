@@ -544,6 +544,7 @@ class Campaign extends ResourceController
                 "contact_number" => $this->request->getPost("contact_number"),
                 "receipt_payment" => $receipt_payment,
                 "status" => "process_admin",
+                "payment_status" => "paid",
                 "updatedat" => date("Y-m-d H:i:s"),
             ]
         );
