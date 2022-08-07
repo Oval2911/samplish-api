@@ -126,22 +126,12 @@ class CampaignModel extends Model
             foreach($filters["searchable"] as $k => $col){
                 $v  = $this->dbCanvazer->escape($filters['search']);
                 $where .= $k==0 ? "" : " OR ";
-                $where .= $col ."!={$v}";
+                $where .= $col ." LIKE {$v}";
             }
             $where = ")";
             
             $data->where($where);
             $total->where($where);
-
-            foreach($filters["searchable"] as $k => $v){
-                if($k==0){
-                    $data->like($v,$filters['search']);
-                    $total->like($v,$filters['search']);
-                }else{
-                    $data->orLike($v,$filters['search']);
-                    $total->orLike($v,$filters['search']);
-                }
-            }
         }
 
         $data->limit($filters['limit']['n_item'], $filters['limit']['page'] * $filters['limit']['n_item']);
