@@ -68,6 +68,11 @@ class Campaign extends ResourceController
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
             ],
+            "amend_brands" => [
+                'key' => ["label"=>"Key", "rules"=>"required",],
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+            ],
             "payment" => [
                 'key' => ["label"=>"Key", "rules"=>"required",],
                 'u' => ["label"=>"User", "rules"=>"required",],
@@ -540,6 +545,34 @@ class Campaign extends ResourceController
                 "updatedat" => date("Y-m-d H:i:s"),
             ]
         );
+
+        return $this->respond( tempResponse("00000", $campaign) );
+    }
+
+    public function amend_brands()
+    {
+        $this->validate_session($this->validation->amend_brands);
+        $req = $this->request;
+        $campaign = $req->getPost("key");
+
+        $brands = $req->getPost("brands");
+        $length = $req->getPost("length");
+        $width = $req->getPost("width");
+        $weight = $req->getPost("weight");
+        $variant = $req->getPost("variant");
+        if(is_array($brands) && is_array($length) && is_array($width) && is_array($weight) && is_array($variant)){
+            foreach($brands as $k => $v){
+                if($v=="") continue;
+                $this->CampaignModel->store_brand([
+                    "idcampaign" => $campaign,
+                    "idbrand" => $v,
+                    "variant" => $variant[$k],
+                    "length" => $length[$k],
+                    "width" => $width[$k],
+                    "weight" => $weight[$k],
+                ]);
+            }
+        }
 
         return $this->respond( tempResponse("00000", $campaign) );
     }

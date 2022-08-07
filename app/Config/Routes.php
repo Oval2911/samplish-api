@@ -114,6 +114,7 @@ $routes->group("Campaign", function($routes){
     $routes->post("/store", "App\Campaign::store");
     $routes->post("/amend", "App\Campaign::amend");
     $routes->post("/amend_payment", "App\Campaign::amend_payment");
+    $routes->post("/amend_brands", "App\Campaign::amend_brands");
     $routes->post("/destroy", "App\Campaign::destroy");
 
     $routes->post("/draft", "App\Campaign::draft");
