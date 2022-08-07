@@ -247,18 +247,12 @@ class Campaign extends ResourceController
         
         $brands = $this->CampaignModel->get_campaign_brands(["*"],$filters);
 
-        $questions = $this->CampaignModel->get_campaign_question(["*"],$filters);
-
-        $merchandise = $this->CampaignModel->get_campaign_merchandise(["*"],$filters);
-
         return $this->respond(
             tempResponse(
                 "00000",
                 (object)[
                     "campaign" => $campaign[0],
                     "brands" => $brands,
-                    "questions" => $questions,
-                    "merchandise" => $merchandise,
                 ],
             )
         );
