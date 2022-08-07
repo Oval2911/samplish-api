@@ -67,6 +67,12 @@ class Campaign extends ResourceController
                 'key' => ["label"=>"Key", "rules"=>"required",],
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
+                'service' => ["label"=>"Pick Up Service", "rules"=>"required",],
+                'service_address' => ["label"=>"Address", "rules"=>"required",],
+                'service_due_date' => ["label"=>"Date", "rules"=>"required",],
+                'contact_name' => ["label"=>"Contact Name", "rules"=>"required",],
+                'contact_number' => ["label"=>"Contact Number", "rules"=>"required",],
+                'receipt_payment' => ["label"=>"Proof of Payment", "rules"=>"required",],
             ],
             "amend_brands" => [
                 'key' => ["label"=>"Key", "rules"=>"required",],
@@ -528,7 +534,7 @@ class Campaign extends ResourceController
             $receipt_payment = $store;
         }
 
-        $this->CampaignModel->amend(
+        $data = $this->CampaignModel->amend(
             $campaign,
             [
                 "service" => $this->request->getPost("service"),
@@ -537,10 +543,13 @@ class Campaign extends ResourceController
                 "contact_name" => $this->request->getPost("contact_name"),
                 "contact_number" => $this->request->getPost("contact_number"),
                 "receipt_payment" => $receipt_payment,
+                "status" => "process_admin",
                 "updatedat" => date("Y-m-d H:i:s"),
             ]
         );
 
+        if($data==false) return $this->respond( tempResponse("00104") );
+        
         return $this->respond( tempResponse("00000", $campaign) );
     }
 
