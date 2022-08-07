@@ -110,6 +110,7 @@ $routes->group("Campaign", function($routes){
     $routes->get("/datatable_payment", "App\Campaign::datatable_payment");
     $routes->get("/datatable_all_company", "App\Campaign::datatable_all_company");
     $routes->get("/data", "App\Campaign::data");
+    $routes->get("/data_payment", "App\Campaign::data_payment");
     $routes->post("/store", "App\Campaign::store");
     $routes->post("/amend", "App\Campaign::amend");
     $routes->post("/amend_payment", "App\Campaign::amend_payment");

@@ -41,6 +41,11 @@ class Campaign extends ResourceController
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
                 'key' => ["label"=>"Key", "rules"=>"required",],
             ],
+            "data_payment" => [
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+                'key' => ["label"=>"Key", "rules"=>"required",],
+            ],
             "dropdown" => [
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
@@ -192,6 +197,48 @@ class Campaign extends ResourceController
             "digital_campaign",
             "event",
             "feedback_due_date",
+        ];
+        $filters = [ "filter" => ["idcampaign" => $id] ];
+        $campaign = $this->CampaignModel->get_campaign($fields,$filters);
+
+        if( !($campaign!=null && count($campaign)==1) ) return $this->respond( tempResponse("00104") );
+        
+        $brands = $this->CampaignModel->get_campaign_brands(["*"],$filters);
+
+        $questions = $this->CampaignModel->get_campaign_question(["*"],$filters);
+
+        $merchandise = $this->CampaignModel->get_campaign_merchandise(["*"],$filters);
+
+        return $this->respond(
+            tempResponse(
+                "00000",
+                (object)[
+                    "campaign" => $campaign[0],
+                    "brands" => $brands,
+                    "questions" => $questions,
+                    "merchandise" => $merchandise,
+                ],
+            )
+        );
+    }
+
+    public function data_payment()
+    {
+        $this->validate_session($this->validation->data);
+
+        $id = $this->request->getGet("key");
+        $fields = [
+            "idcampaign",
+            "payment_status",
+            "payment_due_date",
+            "name",
+            "box_type",
+            "service",
+            "service_address",
+            "service_due_date",
+            "contact_name",
+            "contact_number",
+            "receipt_payment",
         ];
         $filters = [ "filter" => ["idcampaign" => $id] ];
         $campaign = $this->CampaignModel->get_campaign($fields,$filters);
