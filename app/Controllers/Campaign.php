@@ -512,7 +512,7 @@ class Campaign extends ResourceController
 
         $msg = "Can not proceed to payment.";
         if($data->campaign->name==null) return $this->respond( tempResponse("00104",false,"$msg Campaign Name is required") );
-        if( !($data->brands!=null && count($data->brands)>0) ) return $this->respond( tempResponse("00104",false,"$msg Campaign Name is required") );
+        if( !($data->brands!=null && count($data->brands)>0) ) return $this->respond( tempResponse("00104",false,"$msg Brands is required") );
         if($data->campaign->quantity==null) return $this->respond( tempResponse("00104",false,"$msg Sampling Quantity is required") );
         if($data->campaign->box_type==null) return $this->respond( tempResponse("00104",false,"$msg Package is required") );
         if($data->campaign->start_date==null) return $this->respond( tempResponse("00104",false,"$msg Distribution Date is required") );
