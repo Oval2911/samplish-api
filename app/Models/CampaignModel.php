@@ -87,10 +87,16 @@ class CampaignModel extends Model
 
         if (array_key_exists('status',$filters)) {
             if(is_array($filters["status"])){
+                $where = "(";
                 foreach($filters["status"] as $k => $v){
-                    $data->where("status",$v);
-                    $total->where("status",$v);
+                    $v  = $this->dbCanvazer->escape($v);
+                    $where .= $k==0 ? "" : " AND ";
+                    $where .= "status={$v}";
                 }
+                $where = ")";
+                
+                $data->where($where);
+                $total->where($where);
             }else{
                 $data->where("status",$filters["status"]);
                 $total->where("status",$filters["status"]);
@@ -99,10 +105,16 @@ class CampaignModel extends Model
 
         if (array_key_exists('statusNot',$filters)) {
             if(is_array($filters["statusNot"])){
+                $where = "(";
                 foreach($filters["statusNot"] as $k => $v){
-                    $data->where("status !=",$v);
-                    $total->where("status !=",$v);
+                    $v  = $this->dbCanvazer->escape($v);
+                    $where .= $k==0 ? "" : " AND ";
+                    $where .= "status!={$v}";
                 }
+                $where = ")";
+                
+                $data->where($where);
+                $total->where($where);
             }else{
                 $data->where("status !=",$filters["statusNot"]);
                 $total->where("status !=",$filters["statusNot"]);
@@ -110,6 +122,17 @@ class CampaignModel extends Model
         }
 
         if ($filters['search']!=null) {
+            $where = "(";
+            foreach($filters["searchable"] as $k => $col){
+                $v  = $this->dbCanvazer->escape($filters['search']);
+                $where .= $k==0 ? "" : " OR ";
+                $where .= $col ."!={$v}";
+            }
+            $where = ")";
+            
+            $data->where($where);
+            $total->where($where);
+
             foreach($filters["searchable"] as $k => $v){
                 if($k==0){
                     $data->like($v,$filters['search']);
