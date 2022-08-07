@@ -124,7 +124,7 @@ class CampaignModel extends Model
         if ($filters['search']!=null) {
             $where = "(";
             foreach($filters["searchable"] as $k => $col){
-                $v  = $this->dbCanvazer->escape($filters['search']);
+                $v  = $this->dbCanvazer->escape("%".$filters['search']."%");
                 $where .= $k==0 ? "" : " OR ";
                 $where .= $col ." LIKE {$v}";
             }
