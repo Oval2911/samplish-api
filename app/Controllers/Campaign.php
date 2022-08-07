@@ -48,6 +48,11 @@ class Campaign extends ResourceController
                 'status' => ["label"=>"Campaign Status", "rules"=>"required",],
                 'name' => ["label"=>"Campaign Name", "rules"=>"required",],
             ],
+            "payment" => [
+                'key' => ["label"=>"Key", "rules"=>"required",],
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+            ],
             "destroy" => [
                 'key' => ["label"=>"Key", "rules"=>"required",],
                 'u' => ["label"=>"User", "rules"=>"required",],
@@ -282,6 +287,7 @@ class Campaign extends ResourceController
                 "digital_campaign" => $this->request->getPost("digital_campaign"),
                 "event" => $this->request->getPost("event"),
                 "feedback_due_date" => $this->request->getPost("feedback_due_date"),
+                "updatedat" => date("Y-m-d H:i:s"),
             ]
         );
 
@@ -356,6 +362,18 @@ class Campaign extends ResourceController
         }
 
         return $this->respond( tempResponse("00000", true) );
+    }
+
+    public function payment()
+    {
+        $this->validate_session($this->validation->payment);
+
+        $this->CampaignModel->amend($this->request->getPost("key"), [
+            "status" => "wait_pay",
+            "updatedat" => date("Y-m-d H:i:s"),
+        ]);
+
+        return $this->respond( tempResponse("00000") );
     }
  
 }
