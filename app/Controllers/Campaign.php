@@ -227,7 +227,7 @@ class Campaign extends ResourceController
         $merchandise = $this->CampaignModel->get_campaign_merchandise(["*"],$filters);
 
         return (object)[
-            "campaign" => $campaign[0],
+            "campaign" => (object)$campaign[0],
             "brands" => $brands,
             "questions" => $questions,
             "merchandise" => $merchandise,
