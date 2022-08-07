@@ -31,6 +31,11 @@ class Campaign extends ResourceController
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
                 'limit' => ["label"=>"Pagination", "rules"=>"required",],
             ],
+            "datatable_all_company" => [
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+                'limit' => ["label"=>"Pagination", "rules"=>"required",],
+            ],
             "data" => [
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
@@ -118,6 +123,33 @@ class Campaign extends ResourceController
         ];
         $fields = [ "idcampaign", "name", "box_type", "service", "quantity", "payment_due_date", "payment_status", ];
         $data = $this->CampaignModel->datatable($fields, $filters);
+
+        return $this->respond(
+            tempResponse(
+                '00000',
+                [
+                    'page' => $filters["limit"]["page"],
+                    'per_page' => $filters["limit"]["n_item"],
+                    'total' => $data->total,
+                    'total_pages' => $data->total_pages,
+                    'records' => $data->data,
+                ]
+            )
+        );
+    }
+
+    public function datatable_all_company()
+    {
+        $this->validate_session($this->validation->datatable);
+
+        $filters = [
+            "limit" => $this->request->getGet("limit"),
+            "order" => $this->request->getGet("order"),
+            "search" => $this->request->getGet("search"),
+            "searchable" => [ "user.fullname", "campaign.name", "campaign.box_type", "campaign.status", "campaign.start_date", "campaign.end_date", "campaign.feedback_due_date", ],
+        ];
+        $fields = [ "campaign.idcampaign", "user.fullname", "campaign.name", "campaign.box_type", "campaign.status", "campaign.start_date", "campaign.end_date", "campaign.feedback_due_date", ];
+        $data = $this->CampaignModel->datatable_all_company($fields, $filters);
 
         return $this->respond(
             tempResponse(

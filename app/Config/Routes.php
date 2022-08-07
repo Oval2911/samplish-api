@@ -108,6 +108,7 @@ $routes->group("Tone_Manner", function($routes){
 $routes->group("Campaign", function($routes){
     $routes->get("/datatable", "App\Campaign::datatable");
     $routes->get("/datatable_payment", "App\Campaign::datatable_payment");
+    $routes->get("/datatable_all_company", "App\Campaign::datatable_all_company");
     $routes->get("/data", "App\Campaign::data");
     $routes->post("/store", "App\Campaign::store");
     $routes->post("/amend", "App\Campaign::amend");

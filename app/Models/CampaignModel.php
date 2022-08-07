@@ -150,6 +150,48 @@ class CampaignModel extends Model
             "total_pages" => round($total / $filters['limit']['n_item']),
         ];
     }
+
+    public function datatable_all_company($columns = ['*'], $filters = [])
+    {
+        $data = $this->dbCanvazer->table('campaign')
+            ->select($columns)
+            ->join("user","user.iduser = campaign.iduser")
+            ->where("campaign.status !=", "draft");
+
+        $total = $this->dbCanvazer->table('campaign')
+            ->select("COUNT(campaign.idcampaign) as amount")
+            ->join("user","user.iduser = campaign.iduser")
+            ->where("campaign.status !=", "draft");
+
+        if ($filters['search']!=null) {
+            $where = "(";
+            foreach($filters["searchable"] as $k => $col){
+                $v  = $this->dbCanvazer->escape("%".$filters['search']."%");
+                $where .= $k==0 ? "" : " OR ";
+                $where .= $col ." LIKE {$v}";
+            }
+            $where .= ")";
+            
+            $data->where($where);
+            $total->where($where);
+        }
+
+        $data->limit($filters['limit']['n_item'], $filters['limit']['page'] * $filters['limit']['n_item']);
+
+        if (
+            is_array($filters['order'])
+            && array_key_exists("column",$filters['order'])
+            && array_key_exists("direction",$filters['order'])
+        ) $data->orderBy($filters['order']['column'], $filters['order']['direction']);
+
+        $total = $total->get()->getResultArray()[0]['amount'];
+
+        return (object)[
+            "data" => $data->get()->getResultArray(),
+            "total" => $total,
+            "total_pages" => round($total / $filters['limit']['n_item']),
+        ];
+    }
     
     public function store($data)
     {
