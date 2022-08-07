@@ -235,19 +235,19 @@ class CampaignModel extends Model
     
     public function destroy_brands($id)
     {
-        $this->dbCanvazer->table('campaign_brand')->delete(["idcampaign",$id]);
+        $this->dbCanvazer->table('campaign_brand')->delete(["idcampaign"=>$id]);
         return $this->dbCanvazer->affectedRows() ? true : false;
     }
     
     public function destroy_questions($id)
     {
-        $this->dbCanvazer->table('campaign_feedback_question')->delete(["idcampaign",$id]);
+        $this->dbCanvazer->table('campaign_feedback_question')->delete(["idcampaign"=>$id]);
         return $this->dbCanvazer->affectedRows() ? true : false;
     }
     
     public function destroy_merchandises($id)
     {
-        $this->dbCanvazer->table('campaign_merchandise')->delete(["idcampaign",$id]);
+        $this->dbCanvazer->table('campaign_merchandise')->delete(["idcampaign"=>$id]);
         return $this->dbCanvazer->affectedRows() ? true : false;
     }
 }
