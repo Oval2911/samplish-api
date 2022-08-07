@@ -111,7 +111,7 @@ class CampaignModel extends Model
                     $where .= $k==0 ? "" : " AND ";
                     $where .= "status!={$v}";
                 }
-                $where = ")";
+                $where .= ")";
                 
                 $data->where($where);
                 $total->where($where);
@@ -128,7 +128,7 @@ class CampaignModel extends Model
                 $where .= $k==0 ? "" : " OR ";
                 $where .= $col ." LIKE {$v}";
             }
-            $where = ")";
+            $where .= ")";
             
             $data->where($where);
             $total->where($where);
