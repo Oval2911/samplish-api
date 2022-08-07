@@ -226,7 +226,7 @@ class CampaignModel extends Model
     
     public function destroy($id)
     {
-        $this->dbCanvazer->table('brand')->delete(["idcampaign",$id]);
+        $this->dbCanvazer->table('campaign')->delete(["idcampaign",$id]);
         return $this->dbCanvazer->affectedRows() ? true : false;
     }
     
