@@ -100,12 +100,12 @@ class CampaignModel extends Model
         if (array_key_exists('statusNot',$filters)) {
             if(is_array($filters["statusNot"])){
                 foreach($filters["statusNot"] as $k => $v){
-                    $data->where("statusNot !=",$v);
-                    $total->where("statusNot !=",$v);
+                    $data->where("status !=",$v);
+                    $total->where("status !=",$v);
                 }
             }else{
-                $data->where("statusNot !=",$filters["statusNot"]);
-                $total->where("statusNot !=",$filters["statusNot"]);
+                $data->where("status !=",$filters["statusNot"]);
+                $total->where("status !=",$filters["statusNot"]);
             }
         }
 
