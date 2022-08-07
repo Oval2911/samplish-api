@@ -26,6 +26,11 @@ class Campaign extends ResourceController
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
                 'limit' => ["label"=>"Pagination", "rules"=>"required",],
             ],
+            "datatable_payment" => [
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+                'limit' => ["label"=>"Pagination", "rules"=>"required",],
+            ],
             "data" => [
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
@@ -78,6 +83,34 @@ class Campaign extends ResourceController
             "searchable" => [ "name", "status", "theme", "box_type", "start_date", "end_date", ],
         ];
         $fields = [ "idcampaign", "name", "status", "theme", "box_type", "start_date", "end_date", ];
+        $data = $this->CampaignModel->datatable($fields, $filters);
+
+        return $this->respond(
+            tempResponse(
+                '00000',
+                [
+                    'page' => $filters["limit"]["page"],
+                    'per_page' => $filters["limit"]["n_item"],
+                    'total' => $data->total,
+                    'total_pages' => $data->total_pages,
+                    'records' => $data->data,
+                ]
+            )
+        );
+    }
+
+    public function datatable_payment()
+    {
+        $user = $this->validate_session($this->validation->datatable_payment);
+
+        $filters = [
+            "limit" => $this->request->getGet("limit"),
+            "order" => $this->request->getGet("order"),
+            "search" => $this->request->getGet("search"),
+            "user" => $user["iduser"],
+            "searchable" => [ "name", "box_type", "service", ],
+        ];
+        $fields = [ "idcampaign", "name", "box_type", "service", ];
         $data = $this->CampaignModel->datatable($fields, $filters);
 
         return $this->respond(
