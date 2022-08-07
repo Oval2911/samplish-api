@@ -313,7 +313,7 @@ class Campaign extends ResourceController
 
         $fields = ["idcampaign as value","name as label", "theme", "idarea", "start_date", "end_date",];
         $filters = [ "filter" => ["box_type" => "mix"] ];
-        $data = $this->CampaignModel->get_brand($fields,$filters);
+        $data = $this->CampaignModel->get_campaign($fields,$filters);
         
         $data = $data!=null ? $data : [];
 
