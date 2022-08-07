@@ -108,6 +108,7 @@ class Campaign extends ResourceController
             "order" => $this->request->getGet("order"),
             "search" => $this->request->getGet("search"),
             "user" => $user["iduser"],
+            "statusNot" => "draft",
             "searchable" => [ "name", "box_type", "service", ],
         ];
         $fields = [ "idcampaign", "name", "box_type", "service", ];
