@@ -109,7 +109,7 @@ class BrandModel extends Model
     
     public function destroy($id)
     {
-        $this->dbCanvazer->table('brand')->delete(["idbrand",$id]);
+        $this->dbCanvazer->table('brand')->delete(["idbrand"=>$id]);
         return $this->dbCanvazer->affectedRows() ? true : false;
     }
 }
