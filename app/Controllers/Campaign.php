@@ -114,9 +114,9 @@ class Campaign extends ResourceController
             "search" => $this->request->getGet("search"),
             "user" => $user["iduser"],
             "statusNot" => "draft",
-            "searchable" => [ "name", "box_type", "service", ],
+            "searchable" => [ "name", "box_type", "service", "quantity", "payment_due_date", "payment_status", ],
         ];
-        $fields = [ "idcampaign", "name", "box_type", "service", ];
+        $fields = [ "idcampaign", "name", "box_type", "service", "quantity", "payment_due_date", "payment_status", ];
         $data = $this->CampaignModel->datatable($fields, $filters);
 
         return $this->respond(
@@ -185,6 +185,50 @@ class Campaign extends ResourceController
         );
     }
 
+    private function _data($id)
+    {
+        $fields = [
+            "idcampaign",
+            "idarea",
+            "name",
+            "status",
+            "quantity",
+            "theme",
+            "box_type",
+            "start_date",
+            "end_date",
+            "size",
+            "desc",
+            "objective",
+            "key_message",
+            "creative_direction",
+            "adds_merchandise",
+            "document_brief",
+            "logo",
+            "custom_box_design",
+            "digital_campaign",
+            "event",
+            "feedback_due_date",
+        ];
+        $filters = [ "filter" => ["idcampaign" => $id] ];
+        $campaign = $this->CampaignModel->get_campaign($fields,$filters);
+
+        if( !($campaign!=null && count($campaign)==1) ) return false;
+        
+        $brands = $this->CampaignModel->get_campaign_brands(["*"],$filters);
+
+        $questions = $this->CampaignModel->get_campaign_question(["*"],$filters);
+
+        $merchandise = $this->CampaignModel->get_campaign_merchandise(["*"],$filters);
+
+        return (object)[
+            "campaign" => $campaign[0],
+            "brands" => $brands,
+            "questions" => $questions,
+            "merchandise" => $merchandise,
+        ];
+    }
+
     public function dropdown()
     {
         $user = $this->validate_session($this->validation->dropdown);
@@ -211,52 +255,57 @@ class Campaign extends ResourceController
     public function store()
     {
         $user = $this->validate_session($this->validation->store);
+        $req = $this->request;
 
-        $document_brief = $this->request->getFile('document_brief');
+        $document_brief = $req->getFile('document_brief');
         if($document_brief && !$document_brief->hasMoved()) {
             $store = $document_brief->store();
             $file = new File(WRITEPATH .'uploads/'. $store);
             $document_brief = $store;
         }
 
-        $logo = $this->request->getFile('logo');
+        $logo = $req->getFile('logo');
         if($logo && !$logo->hasMoved()) {
             $store = $logo->store();
             $file = new File(WRITEPATH .'uploads/'. $store);
             $logo = $store;
         }
 
-        $campaign = $this->CampaignModel->store([
-            "idarea" => $this->request->getPost("area"),
-            "name" => $this->request->getPost("name"),
-            "status" => $this->request->getPost("status"),
+        $campaignData = [
             "iduser" => $user["iduser"],
-            "quantity" => $this->request->getPost("quantity"),
-            "theme" => $this->request->getPost("theme"),
-            "box_type" => $this->request->getPost("box_type"),
-            "start_date" => $this->request->getPost("start_date"),
-            "end_date" => $this->request->getPost("end_date"),
-            "size" => $this->request->getPost("size"),
-            "desc" => $this->request->getPost("desc"),
-            "objective" => $this->request->getPost("objective"),
-            "key_message" => $this->request->getPost("key_message"),
-            "creative_direction" => $this->request->getPost("creative_direction"),
-            "adds_merchandise" => $this->request->getPost("adds_merchandise"),
-            "document_brief" => $document_brief,
-            "logo" => $logo,
-            "custom_box_design" => $this->request->getPost("custom_box_design"),
-            "digital_campaign" => $this->request->getPost("digital_campaign"),
-            "event" => $this->request->getPost("event"),
-            "feedback_due_date" => $this->request->getPost("feedback_due_date"),
-        ]);
+        ];
+        if($req->getPost("area")==null) $campaign["idarea"] = $req->getPost("area");
+        if($req->getPost("name")==null) $campaign["name"] = $req->getPost("name");
+        if($req->getPost("status")==null) $campaign["status"] = $req->getPost("status");
+        if($req->getPost("quantity")==null) $campaign["quantity"] = $req->getPost("quantity");
+        if($req->getPost("theme")==null) $campaign["theme"] = $req->getPost("theme");
+        if($req->getPost("box_type")==null) $campaign["box_type"] = $req->getPost("box_type");
+        if($req->getPost("start_date")==null) $campaign["start_date"] = $req->getPost("start_date");
+        if($req->getPost("end_date")==null) $campaign["end_date"] = $req->getPost("end_date");
+        if($req->getPost("size")==null) $campaign["size"] = $req->getPost("size");
+        if($req->getPost("desc")==null) $campaign["desc"] = $req->getPost("desc");
+        if($req->getPost("objective")==null) $campaign["objective"] = $req->getPost("objective");
+        if($req->getPost("key_message")==null) $campaign["key_message"] = $req->getPost("key_message");
+        if($req->getPost("creative_direction")==null) $campaign["creative_direction"] = $req->getPost("creative_direction");
+        if($req->getPost("adds_merchandise")==null) $campaign["adds_merchandise"] = $req->getPost("adds_merchandise");
+        if($req->getPost("custom_box_design")==null) $campaign["custom_box_design"] = $req->getPost("custom_box_design");
+        if($req->getPost("digital_campaign")==null) $campaign["digital_campaign"] = $req->getPost("digital_campaign");
+        if($req->getPost("event")==null) $campaign["event"] = $req->getPost("event");
+        if($req->getPost("feedback_due_date")==null) $campaign["feedback_due_date"] = $req->getPost("feedback_due_date");
+        if($req->getPost("target_market")==null) $campaign["target_market"] = $req->getPost("target_market");
+
+        if($document_brief!=null) $campaign["document_brief"] = $document_brief;
+        if($logo!=null) $campaign["logo"] = $logo;
+            
+        $campaign = $this->CampaignModel->store($campaignData);
 
         if($campaign==false) return $this->respond( tempResponse("00002") );
 
-        $brands = $this->request->getPost("brands");
-        $length = $this->request->getPost("length");
-        $width = $this->request->getPost("width");
-        $weight = $this->request->getPost("weight");
-        $variant = $this->request->getPost("variant");
+        $brands = $req->getPost("brands");
+        $length = $req->getPost("length");
+        $width = $req->getPost("width");
+        $weight = $req->getPost("weight");
+        $variant = $req->getPost("variant");
         if(is_array($brands) && is_array($length) && is_array($width) && is_array($weight) && is_array($variant)){
             foreach($brands as $k => $v){
                 if($v=="") continue;
@@ -271,7 +320,7 @@ class Campaign extends ResourceController
             }
         }
 
-        $questions = $this->request->getPost("feedback_question");
+        $questions = $req->getPost("feedback_question");
         if(is_array($questions)){
             foreach($questions as $k => $v){
                 if($v=="") continue;
@@ -282,8 +331,8 @@ class Campaign extends ResourceController
             }
         }
 
-        $text = $this->request->getPost("merchandise_text");
-        $qty = $this->request->getPost("merchandise_qty");
+        $text = $req->getPost("merchandise_text");
+        $qty = $req->getPost("merchandise_qty");
         if(is_array($text) && is_array($qty)){
             foreach($text as $k => $v){
                 $this->CampaignModel->store_merchandise([
@@ -300,55 +349,57 @@ class Campaign extends ResourceController
     public function amend()
     {
         $user = $this->validate_session($this->validation->amend);
-        $campaign = $this->request->getPost("key");
+        $req = $this->request;
+        $campaign = $req->getPost("key");
 
-        $document_brief = $this->request->getFile('document_brief');
+        $document_brief = $req->getFile('document_brief');
         if($document_brief && !$document_brief->hasMoved()) {
             $store = $document_brief->store();
             $file = new File(WRITEPATH .'uploads/'. $store);
             $document_brief = $store;
         }
 
-        $logo = $this->request->getFile('logo');
+        $logo = $req->getFile('logo');
         if($logo && !$logo->hasMoved()) {
             $store = $logo->store();
             $file = new File(WRITEPATH .'uploads/'. $store);
             $logo = $store;
         }
 
-        $this->CampaignModel->amend(
-            $campaign,
-            [
-                "idarea" => $this->request->getPost("area"),
-                "name" => $this->request->getPost("name"),
-                "status" => $this->request->getPost("status"),
-                "iduser" => $user["iduser"],
-                "quantity" => $this->request->getPost("quantity"),
-                "theme" => $this->request->getPost("theme"),
-                "box_type" => $this->request->getPost("box_type"),
-                "start_date" => $this->request->getPost("start_date"),
-                "end_date" => $this->request->getPost("end_date"),
-                "size" => $this->request->getPost("size"),
-                "desc" => $this->request->getPost("desc"),
-                "objective" => $this->request->getPost("objective"),
-                "key_message" => $this->request->getPost("key_message"),
-                "creative_direction" => $this->request->getPost("creative_direction"),
-                "adds_merchandise" => $this->request->getPost("adds_merchandise"),
-                "document_brief" => $document_brief,
-                "logo" => $logo,
-                "custom_box_design" => $this->request->getPost("custom_box_design"),
-                "digital_campaign" => $this->request->getPost("digital_campaign"),
-                "event" => $this->request->getPost("event"),
-                "feedback_due_date" => $this->request->getPost("feedback_due_date"),
-                "updatedat" => date("Y-m-d H:i:s"),
-            ]
-        );
+        $campaignData = [
+            "iduser" => $user["iduser"],
+            "updatedat" => date("Y-m-d H:i:s"),
+        ];
+        if($req->getPost("area")==null) $campaign["idarea"] = $req->getPost("area");
+        if($req->getPost("name")==null) $campaign["name"] = $req->getPost("name");
+        if($req->getPost("status")==null) $campaign["status"] = $req->getPost("status");
+        if($req->getPost("quantity")==null) $campaign["quantity"] = $req->getPost("quantity");
+        if($req->getPost("theme")==null) $campaign["theme"] = $req->getPost("theme");
+        if($req->getPost("box_type")==null) $campaign["box_type"] = $req->getPost("box_type");
+        if($req->getPost("start_date")==null) $campaign["start_date"] = $req->getPost("start_date");
+        if($req->getPost("end_date")==null) $campaign["end_date"] = $req->getPost("end_date");
+        if($req->getPost("size")==null) $campaign["size"] = $req->getPost("size");
+        if($req->getPost("desc")==null) $campaign["desc"] = $req->getPost("desc");
+        if($req->getPost("objective")==null) $campaign["objective"] = $req->getPost("objective");
+        if($req->getPost("key_message")==null) $campaign["key_message"] = $req->getPost("key_message");
+        if($req->getPost("creative_direction")==null) $campaign["creative_direction"] = $req->getPost("creative_direction");
+        if($req->getPost("adds_merchandise")==null) $campaign["adds_merchandise"] = $req->getPost("adds_merchandise");
+        if($req->getPost("custom_box_design")==null) $campaign["custom_box_design"] = $req->getPost("custom_box_design");
+        if($req->getPost("digital_campaign")==null) $campaign["digital_campaign"] = $req->getPost("digital_campaign");
+        if($req->getPost("event")==null) $campaign["event"] = $req->getPost("event");
+        if($req->getPost("feedback_due_date")==null) $campaign["feedback_due_date"] = $req->getPost("feedback_due_date");
+        if($req->getPost("target_market")==null) $campaign["target_market"] = $req->getPost("target_market");
 
-        $brands = $this->request->getPost("brands");
-        $length = $this->request->getPost("length");
-        $width = $this->request->getPost("width");
-        $weight = $this->request->getPost("weight");
-        $variant = $this->request->getPost("variant");
+        if($document_brief!=null) $campaign["document_brief"] = $document_brief;
+        if($logo!=null) $campaign["logo"] = $logo;
+
+        $this->CampaignModel->amend($campaign, $campaignData);
+
+        $brands = $req->getPost("brands");
+        $length = $req->getPost("length");
+        $width = $req->getPost("width");
+        $weight = $req->getPost("weight");
+        $variant = $req->getPost("variant");
         $this->CampaignModel->destroy_brands($campaign);
         if(is_array($brands) && is_array($length) && is_array($width) && is_array($weight) && is_array($variant)){
             foreach($brands as $k => $v){
@@ -364,7 +415,7 @@ class Campaign extends ResourceController
             }
         }
 
-        $questions = $this->request->getPost("feedback_question");
+        $questions = $req->getPost("feedback_question");
         $this->CampaignModel->destroy_questions($campaign);
         if(is_array($questions)){
             foreach($questions as $k => $v){
@@ -376,8 +427,8 @@ class Campaign extends ResourceController
             }
         }
 
-        $text = $this->request->getPost("merchandise_text");
-        $qty = $this->request->getPost("merchandise_qty");
+        $text = $req->getPost("merchandise_text");
+        $qty = $req->getPost("merchandise_qty");
         $this->CampaignModel->destroy_merchandises($campaign);
         if(is_array($text) && is_array($qty)){
             foreach($text as $k => $v){
@@ -449,7 +500,14 @@ class Campaign extends ResourceController
     {
         $this->validate_session($this->validation->payment);
 
-        $campaign = $this->CampaignModel->amend($this->request->getPost("key"), [
+        $id = $this->request->getPost("key");
+
+        $data = $this->_data($id);
+        if($data==null) $this->respond( tempResponse("00104") );
+
+        // if($data->)
+
+        $campaign = $this->CampaignModel->amend($id, [
             "status" => "wait_pay",
             "updatedat" => date("Y-m-d H:i:s"),
         ]);
