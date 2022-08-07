@@ -237,6 +237,8 @@ class Campaign extends ResourceController
             "payment_status",
             "payment_due_date",
             "name",
+            "size",
+            "quantity",
             "box_type",
             "service",
             "service_address",
