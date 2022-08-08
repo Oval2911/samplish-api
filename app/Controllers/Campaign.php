@@ -278,6 +278,7 @@ class Campaign extends ResourceController
             "payment_due_date",
             "name",
             "size",
+            "status",
             "custom_box_design",
             "digital_campaign",
             "event",
