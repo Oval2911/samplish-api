@@ -685,13 +685,27 @@ class Campaign extends ResourceController
         return $this->respond( tempResponse("00000") );
     }
 
-    public function wait_payment()
+    public function reject()
     {
         $this->validate_session($this->validation->draft);
 
         $campaign = $this->CampaignModel->amend($this->request->getPost("key"), [
             "status" => "wait_pay",
             "payment_status" => "unpaid",
+            "updatedat" => date("Y-m-d H:i:s"),
+        ]);
+
+        if($campaign==false) return $this->respond( tempResponse("00003") );
+
+        return $this->respond( tempResponse("00000") );
+    }
+
+    public function confirm()
+    {
+        $this->validate_session($this->validation->draft);
+
+        $campaign = $this->CampaignModel->amend($this->request->getPost("key"), [
+            "status" => "on_going",
             "updatedat" => date("Y-m-d H:i:s"),
         ]);
 
