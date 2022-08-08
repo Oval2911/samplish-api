@@ -226,7 +226,6 @@ class CampaignModel extends Model
             ->get()
             ->getResultArray();
         $total = $total
-            ->groupBy("campaign.idcampaign")
             ->get()
             ->getResultArray()[0]['amount'];
 
