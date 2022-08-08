@@ -128,7 +128,7 @@ class CampaignModel extends Model
                     $where .= $k==0 ? "" : " AND ";
                     $where .= "status={$v}";
                 }
-                $where = ")";
+                $where .= ")";
                 
                 $data->where($where);
                 $total->where($where);
@@ -206,7 +206,7 @@ class CampaignModel extends Model
                     $where .= $k==0 ? "" : " AND ";
                     $where .= "campaign.status={$v}";
                 }
-                $where = ")";
+                $where .= ")";
                 
                 $data->where($where);
                 $total->where($where);
@@ -224,7 +224,7 @@ class CampaignModel extends Model
                     $where .= $k==0 ? "" : " AND ";
                     $where .= "campaign.payment_status={$v}";
                 }
-                $where = ")";
+                $where .= ")";
                 
                 $data->where($where);
                 $total->where($where);
