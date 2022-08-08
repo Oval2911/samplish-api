@@ -191,11 +191,13 @@ class CampaignModel extends Model
         $data = $this->dbCanvazer->table('campaign')
             ->select($columns)
             ->join("user","user.iduser = campaign.iduser")
+            ->where("user.related_key", "company")
             ->where("campaign.status !=", "draft");
 
         $total = $this->dbCanvazer->table('campaign')
             ->select("COUNT(campaign.idcampaign) as amount")
             ->join("user","user.iduser = campaign.iduser")
+            ->where("user.related_key", "company")
             ->where("campaign.status !=", "draft");
 
         if ($filters['search']!=null) {

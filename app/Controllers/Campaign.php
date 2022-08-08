@@ -158,13 +158,15 @@ class Campaign extends ResourceController
     {
         $this->validate_session($this->validation->datatable);
 
+        $fields = [ "user.fullname", "campaign.name", "campaign.box_type", "campaign.status", "campaign.start_date", "campaign.end_date", "campaign.feedback_due_date", "campaign.payment_status", "campaign.payment_due_date", ];
         $filters = [
             "limit" => $this->request->getGet("limit"),
             "order" => $this->request->getGet("order"),
             "search" => $this->request->getGet("search"),
-            "searchable" => [ "user.fullname", "campaign.name", "campaign.box_type", "campaign.status", "campaign.start_date", "campaign.end_date", "campaign.feedback_due_date", ],
+            "searchable" => $fields,
         ];
-        $fields = [ "campaign.idcampaign", "user.fullname", "campaign.name", "campaign.box_type", "campaign.status", "campaign.start_date", "campaign.end_date", "campaign.feedback_due_date", ];
+
+        $fields[] = "campaign.idcampaign";
         $data = $this->CampaignModel->datatable_all_company($fields, $filters);
 
         return $this->respond(
