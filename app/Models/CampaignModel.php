@@ -221,10 +221,17 @@ class CampaignModel extends Model
             && array_key_exists("direction",$filters['order'])
         ) $data->orderBy($filters['order']['column'], $filters['order']['direction']);
 
-        $total = $total->get()->getResultArray()[0]['amount'];
+        $data = $data
+            ->groupBy("campaign.idcampaign")
+            ->get()
+            ->getResultArray();
+        $total = $total
+            ->groupBy("campaign.idcampaign")
+            ->get()
+            ->getResultArray()[0]['amount'];
 
         return (object)[
-            "data" => $data->get()->getResultArray(),
+            "data" => $data,
             "total" => $total,
             "total_pages" => round($total / $filters['limit']['n_item']),
         ];
