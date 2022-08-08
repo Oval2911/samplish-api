@@ -200,6 +200,42 @@ class CampaignModel extends Model
             ->where("user.related_key", "company")
             ->where("campaign.status !=", "draft");
 
+        if (array_key_exists('status',$filters)) {
+            if(is_array($filters["status"])){
+                $where = "(";
+                foreach($filters["status"] as $k => $v){
+                    $v  = $this->dbCanvazer->escape($v);
+                    $where .= $k==0 ? "" : " AND ";
+                    $where .= "campaign.status={$v}";
+                }
+                $where = ")";
+                
+                $data->where($where);
+                $total->where($where);
+            }else{
+                $data->where("campaign.status",$filters["status"]);
+                $total->where("campaign.status",$filters["status"]);
+            }
+        }
+
+        if (array_key_exists('payment_status',$filters)) {
+            if(is_array($filters["payment_status"])){
+                $where = "(";
+                foreach($filters["payment_status"] as $k => $v){
+                    $v  = $this->dbCanvazer->escape($v);
+                    $where .= $k==0 ? "" : " AND ";
+                    $where .= "campaign.payment_status={$v}";
+                }
+                $where = ")";
+                
+                $data->where($where);
+                $total->where($where);
+            }else{
+                $data->where("campaign.payment_status",$filters["payment_status"]);
+                $total->where("campaign.payment_status",$filters["payment_status"]);
+            }
+        }
+
         if ($filters['search']!=null) {
             $where = "(";
             foreach($filters["searchable"] as $k => $col){

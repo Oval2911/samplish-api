@@ -109,6 +109,7 @@ $routes->group("Campaign", function($routes){
     $routes->get("/datatable", "App\Campaign::datatable");
     $routes->get("/datatable_payment", "App\Campaign::datatable_payment");
     $routes->get("/datatable_all_company", "App\Campaign::datatable_all_company");
+    $routes->get("/datatable_admin_payment_company", "App\Campaign::datatable_admin_payment_company");
     $routes->get("/data", "App\Campaign::data");
     $routes->get("/data_payment", "App\Campaign::data_payment");
     $routes->get("/dropdown_mix", "App\Campaign::dropdown_mix");
@@ -120,6 +121,7 @@ $routes->group("Campaign", function($routes){
 
     $routes->post("/draft", "App\Campaign::draft");
     $routes->post("/payment", "App\Campaign::payment");
+    $routes->post("/wait_payment", "App\Campaign::wait_payment");
 });
 
 /*

@@ -183,6 +183,37 @@ class Campaign extends ResourceController
         );
     }
 
+    public function datatable_admin_payment_company()
+    {
+        $this->validate_session($this->validation->datatable);
+
+        $fields = [ "user.fullname", "campaign.name", "campaign.box_type", "campaign.status", "campaign.start_date", "campaign.end_date", "campaign.feedback_due_date", "campaign.payment_status", "campaign.payment_due_date", ];
+        $filters = [
+            "limit" => $this->request->getGet("limit"),
+            "order" => $this->request->getGet("order"),
+            "search" => $this->request->getGet("search"),
+            "searchable" => $fields,
+            "status" => "process_admin",
+            "payment_status" => "paid",
+        ];
+
+        $fields[] = "campaign.idcampaign";
+        $data = $this->CampaignModel->datatable_all_company($fields, $filters);
+
+        return $this->respond(
+            tempResponse(
+                '00000',
+                [
+                    'page' => $filters["limit"]["page"],
+                    'per_page' => $filters["limit"]["n_item"],
+                    'total' => $data->total,
+                    'total_pages' => $data->total_pages,
+                    'records' => $data->data,
+                ]
+            )
+        );
+    }
+
     public function data()
     {
         $this->validate_session($this->validation->data);
@@ -645,6 +676,20 @@ class Campaign extends ResourceController
 
         $campaign = $this->CampaignModel->amend($this->request->getPost("key"), [
             "status" => "draft",
+            "updatedat" => date("Y-m-d H:i:s"),
+        ]);
+
+        if($campaign==false) return $this->respond( tempResponse("00003") );
+
+        return $this->respond( tempResponse("00000") );
+    }
+
+    public function wait_payment()
+    {
+        $this->validate_session($this->validation->draft);
+
+        $campaign = $this->CampaignModel->amend($this->request->getPost("key"), [
+            "status" => "wait_pay",
             "updatedat" => date("Y-m-d H:i:s"),
         ]);
 
