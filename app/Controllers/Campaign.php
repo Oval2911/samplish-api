@@ -135,9 +135,9 @@ class Campaign extends ResourceController
             "search" => $this->request->getGet("search"),
             "user" => $user["iduser"],
             "statusNot" => "draft",
-            "searchable" => [ "name", "box_type", "service", "quantity", "payment_due_date", "payment_status", ],
+            "searchable" => [ "name", "box_type", "service", "quantity", "payment_due_date", "payment_status", "status", ],
         ];
-        $fields = [ "idcampaign", "name", "box_type", "service", "quantity", "payment_due_date", "payment_status", ];
+        $fields = [ "idcampaign", "name", "box_type", "service", "quantity", "payment_due_date", "payment_status", "status", ];
         $data = $this->CampaignModel->datatable($fields, $filters);
 
         return $this->respond(
@@ -243,7 +243,6 @@ class Campaign extends ResourceController
             "payment_status",
             "payment_due_date",
             "name",
-            "status",
             "size",
             "custom_box_design",
             "digital_campaign",
