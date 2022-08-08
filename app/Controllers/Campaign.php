@@ -691,6 +691,7 @@ class Campaign extends ResourceController
 
         $campaign = $this->CampaignModel->amend($this->request->getPost("key"), [
             "status" => "wait_pay",
+            "payment_status" => "unpaid",
             "updatedat" => date("Y-m-d H:i:s"),
         ]);
 
