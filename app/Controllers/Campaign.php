@@ -163,6 +163,7 @@ class Campaign extends ResourceController
             "limit" => $this->request->getGet("limit"),
             "order" => $this->request->getGet("order"),
             "search" => $this->request->getGet("search"),
+            "status" => "draft",
             "searchable" => $fields,
         ];
 
