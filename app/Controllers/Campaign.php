@@ -193,7 +193,7 @@ class Campaign extends ResourceController
             "order" => $this->request->getGet("order"),
             "search" => $this->request->getGet("search"),
             "searchable" => $fields,
-            "status" => "process_admin",
+            "status" => ['process_admin','on_going','done'],
             "payment_status" => "paid",
         ];
 
