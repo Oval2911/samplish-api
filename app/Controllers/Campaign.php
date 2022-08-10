@@ -237,7 +237,9 @@ class Campaign extends ResourceController
             "user" => $user["iduser"],
             "searchable" => $fields,
             "join" => [ "area" => "area.idarea = campaign.idarea", ],
+            "status" => ['on_going',],
         ];
+
         $fields[] = "campaign.idcampaign";
         $data = $this->CampaignModel->datatable($fields, $filters);
 
