@@ -94,6 +94,16 @@ class Campaign extends ResourceController
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
             ],
+            "join" => [
+                'key' => ["label"=>"Key", "rules"=>"required",],
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+                'brands' => ["label"=>"Brands", "rules"=>"required",],
+                'length' => ["label"=>"Brands Length", "rules"=>"required",],
+                'width' => ["label"=>"Brands Width", "rules"=>"required",],
+                'weight' => ["label"=>"Brands Weight", "rules"=>"required",],
+                'variant' => ["label"=>"Brands Variant", "rules"=>"required",],
+            ],
         ];
     }
 
@@ -200,6 +210,36 @@ class Campaign extends ResourceController
 
         $fields[] = "campaign.idcampaign";
         $data = $this->CampaignModel->datatable_all_company($fields, $filters);
+
+        return $this->respond(
+            tempResponse(
+                '00000',
+                [
+                    'page' => $filters["limit"]["page"],
+                    'per_page' => $filters["limit"]["n_item"],
+                    'total' => $data->total,
+                    'total_pages' => $data->total_pages,
+                    'records' => $data->data,
+                ]
+            )
+        );
+    }
+
+    public function datatable_overview()
+    {
+        $user = $this->validate_session($this->validation->datatable);
+
+        $fields = [ "campaign.name", "campaign.desc", "area.name as area", "campaign.box_type", "campaign.start_date", "campaign.end_date", ];
+        $filters = [
+            "limit" => $this->request->getGet("limit"),
+            "order" => $this->request->getGet("order"),
+            "search" => $this->request->getGet("search"),
+            "user" => $user["iduser"],
+            "searchable" => $fields,
+            "join" => [ "area" => "area.idarea = campaign.idarea", ],
+        ];
+        $fields[] = "campaign.idcampaign";
+        $data = $this->CampaignModel->datatable($fields, $filters);
 
         return $this->respond(
             tempResponse(
@@ -713,6 +753,38 @@ class Campaign extends ResourceController
         if($campaign==false) return $this->respond( tempResponse("00003") );
 
         return $this->respond( tempResponse("00000") );
+    }
+
+    public function join()
+    {
+        $this->validate_session($this->validation->join);
+        
+        $req = $this->request;
+        $campaign = $req->getPost("key");
+
+        $brands = $req->getPost("brands");
+        $length = $req->getPost("length");
+        $width = $req->getPost("width");
+        $weight = $req->getPost("weight");
+        $variant = $req->getPost("variant");
+        
+        if(is_array($brands) && is_array($length) && is_array($width) && is_array($weight) && is_array($variant)){
+            foreach($brands as $k => $v){
+                if($v=="") continue;
+                $this->CampaignModel->store_brand([
+                    "idcampaign" => $campaign,
+                    "idbrand" => $v,
+                    "variant" => $variant[$k],
+                    "length" => $length[$k],
+                    "width" => $width[$k],
+                    "weight" => $weight[$k],
+                ]);
+            }
+
+            return $this->respond( tempResponse("00000", $campaign) );
+        }
+
+        return $this->respond( tempResponse("00104", false, "Invalid data") );
     }
  
 }

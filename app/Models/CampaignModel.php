@@ -113,11 +113,17 @@ class CampaignModel extends Model
             ->select($columns);
 
         $total = $this->dbCanvazer->table('campaign')
-            ->select("COUNT(idcampaign) as amount");
+            ->select("COUNT(campaign.idcampaign) as amount");
+
+        if (array_key_exists('join',$filters)) {
+            foreach($filters["join"] as $k => $v){
+                $data->join($k,$v);
+            }
+        }
 
         if (array_key_exists('user',$filters)) {
-            $data->where("iduser",$filters["user"]);
-            $total->where("iduser",$filters["user"]);
+            $data->where("campaign.iduser",$filters["user"]);
+            $total->where("campaign.iduser",$filters["user"]);
         }
 
         if (array_key_exists('status',$filters)) {
@@ -126,15 +132,15 @@ class CampaignModel extends Model
                 foreach($filters["status"] as $k => $v){
                     $v  = $this->dbCanvazer->escape($v);
                     $where .= $k==0 ? "" : " OR ";
-                    $where .= "status={$v}";
+                    $where .= "campaign.status={$v}";
                 }
                 $where .= ")";
                 
                 $data->where($where);
                 $total->where($where);
             }else{
-                $data->where("status",$filters["status"]);
-                $total->where("status",$filters["status"]);
+                $data->where("campaign.status",$filters["status"]);
+                $total->where("campaign.status",$filters["status"]);
             }
         }
 
@@ -144,15 +150,15 @@ class CampaignModel extends Model
                 foreach($filters["statusNot"] as $k => $v){
                     $v  = $this->dbCanvazer->escape($v);
                     $where .= $k==0 ? "" : " OR ";
-                    $where .= "status!={$v}";
+                    $where .= "campaign.status!={$v}";
                 }
                 $where .= ")";
                 
                 $data->where($where);
                 $total->where($where);
             }else{
-                $data->where("status !=",$filters["statusNot"]);
-                $total->where("status !=",$filters["statusNot"]);
+                $data->where("campaign.status !=",$filters["statusNot"]);
+                $total->where("campaign.status !=",$filters["statusNot"]);
             }
         }
 

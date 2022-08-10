@@ -110,6 +110,7 @@ $routes->group("Campaign", function($routes){
     $routes->get("/datatable_payment", "App\Campaign::datatable_payment");
     $routes->get("/datatable_all_company", "App\Campaign::datatable_all_company");
     $routes->get("/datatable_admin_payment_company", "App\Campaign::datatable_admin_payment_company");
+    $routes->get("/datatable_overview", "App\Campaign::datatable_overview");
     $routes->get("/data", "App\Campaign::data");
     $routes->get("/data_payment", "App\Campaign::data_payment");
     $routes->get("/dropdown_mix", "App\Campaign::dropdown_mix");
@@ -118,7 +119,7 @@ $routes->group("Campaign", function($routes){
     $routes->post("/amend_payment", "App\Campaign::amend_payment");
     $routes->post("/amend_brands", "App\Campaign::amend_brands");
     $routes->post("/destroy", "App\Campaign::destroy");
-
+    $routes->post("/join", "App\Campaign::join");
     $routes->post("/draft", "App\Campaign::draft");
     $routes->post("/payment", "App\Campaign::payment");
     $routes->post("/reject", "App\Campaign::reject");
