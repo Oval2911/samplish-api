@@ -145,9 +145,9 @@ class Campaign extends ResourceController
             "search" => $this->request->getGet("search"),
             "user" => $user["iduser"],
             "statusNot" => "draft",
-            "searchable" => [ "name", "box_type", "service", "quantity", "payment_due_date", "payment_status", "status", ],
+            "searchable" => [ "name", "box_type", "service", "payment_due_date", "payment_status", "status", ],
         ];
-        $fields = [ "idcampaign", "name", "box_type", "service", "quantity", "payment_due_date", "payment_status", "status", ];
+        $fields = [ "idcampaign", "name", "box_type", "service", "payment_due_date", "payment_status", "status", ];
         $data = $this->CampaignModel->datatable($fields, $filters);
 
         return $this->respond(
@@ -267,7 +267,6 @@ class Campaign extends ResourceController
             "idarea",
             "name",
             "status",
-            "quantity",
             "theme",
             "box_type",
             "start_date",
@@ -324,7 +323,6 @@ class Campaign extends ResourceController
             "custom_box_design",
             "digital_campaign",
             "event",
-            "quantity",
             "box_type",
             "service",
             "service_address",
@@ -358,7 +356,6 @@ class Campaign extends ResourceController
             "idarea",
             "name",
             "status",
-            "quantity",
             "theme",
             "box_type",
             "start_date",
@@ -433,7 +430,6 @@ class Campaign extends ResourceController
         if($req->getPost("area")!=null) $campaignData["idarea"] = $req->getPost("area");
         if($req->getPost("name")!=null) $campaignData["name"] = $req->getPost("name");
         if($req->getPost("status")!=null) $campaignData["status"] = $req->getPost("status");
-        if($req->getPost("quantity")!=null) $campaignData["quantity"] = $req->getPost("quantity");
         if($req->getPost("theme")!=null) $campaignData["theme"] = $req->getPost("theme");
         if($req->getPost("box_type")!=null) $campaignData["box_type"] = $req->getPost("box_type");
         if($req->getPost("start_date")!=null) $campaignData["start_date"] = $req->getPost("start_date");
@@ -462,7 +458,8 @@ class Campaign extends ResourceController
         $width = $req->getPost("width");
         $weight = $req->getPost("weight");
         $variant = $req->getPost("variant");
-        if(is_array($brands) && is_array($length) && is_array($width) && is_array($weight) && is_array($variant)){
+        $quantity = $req->getPost("quantity");
+        if(is_array($brands) && is_array($length) && is_array($width) && is_array($weight) && is_array($variant) && is_array($quantity)){
             foreach($brands as $k => $v){
                 if($v=="") continue;
                 $this->CampaignModel->store_brand([
@@ -472,6 +469,7 @@ class Campaign extends ResourceController
                     "length" => $length[$k],
                     "width" => $width[$k],
                     "weight" => $weight[$k],
+                    "quantity" => $quantity[$k],
                 ]);
             }
         }
@@ -529,7 +527,6 @@ class Campaign extends ResourceController
         if($req->getPost("area")!=null) $campaignData["idarea"] = $req->getPost("area");
         if($req->getPost("name")!=null) $campaignData["name"] = $req->getPost("name");
         if($req->getPost("status")!=null) $campaignData["status"] = $req->getPost("status");
-        if($req->getPost("quantity")!=null) $campaignData["quantity"] = $req->getPost("quantity");
         if($req->getPost("theme")!=null) $campaignData["theme"] = $req->getPost("theme");
         if($req->getPost("box_type")!=null) $campaignData["box_type"] = $req->getPost("box_type");
         if($req->getPost("start_date")!=null) $campaignData["start_date"] = $req->getPost("start_date");
@@ -556,8 +553,9 @@ class Campaign extends ResourceController
         $width = $req->getPost("width");
         $weight = $req->getPost("weight");
         $variant = $req->getPost("variant");
+        $quantity = $req->getPost("quantity");
         $this->CampaignModel->destroy_brands($campaign);
-        if(is_array($brands) && is_array($length) && is_array($width) && is_array($weight) && is_array($variant)){
+        if(is_array($brands) && is_array($length) && is_array($width) && is_array($weight) && is_array($variant) && is_array($quantity)){
             foreach($brands as $k => $v){
                 if($v=="") continue;
                 $this->CampaignModel->store_brand([
@@ -567,6 +565,7 @@ class Campaign extends ResourceController
                     "length" => $length[$k],
                     "width" => $width[$k],
                     "weight" => $weight[$k],
+                    "quantity" => $quantity[$k],
                 ]);
             }
         }
@@ -642,8 +641,9 @@ class Campaign extends ResourceController
         $width = $req->getPost("width");
         $weight = $req->getPost("weight");
         $variant = $req->getPost("variant");
+        $quantity = $req->getPost("quantity");
         $this->CampaignModel->destroy_brands_user($campaign,$user["iduser"]);
-        if(is_array($brands) && is_array($length) && is_array($width) && is_array($weight) && is_array($variant)){
+        if(is_array($brands) && is_array($length) && is_array($width) && is_array($weight) && is_array($variant) && is_array($quantity)){
             foreach($brands as $k => $v){
                 if($v=="") continue;
                 $this->CampaignModel->store_brand([
@@ -653,6 +653,7 @@ class Campaign extends ResourceController
                     "length" => $length[$k],
                     "width" => $width[$k],
                     "weight" => $weight[$k],
+                    "quantity" => $quantity[$k],
                 ]);
             }
         }
@@ -690,7 +691,6 @@ class Campaign extends ResourceController
         if($data->campaign->name==null) return $this->respond( tempResponse("00104",false,"$msg Campaign Name is required") );
         if( !($data->brands!=null && count($data->brands)>0) ) return $this->respond( tempResponse("00104",false,"$msg Brands is required") );
         if($data->campaign->status!="draft") return $this->respond( tempResponse("00104") );
-        if($data->campaign->quantity==null) return $this->respond( tempResponse("00104",false,"$msg Sampling Quantity is required") );
         if($data->campaign->box_type==null) return $this->respond( tempResponse("00104",false,"$msg Package is required") );
         if($data->campaign->start_date==null) return $this->respond( tempResponse("00104",false,"$msg Distribution Date is required") );
         if($data->campaign->end_date==null) return $this->respond( tempResponse("00104",false,"$msg Distribution Date is required") );
@@ -769,8 +769,9 @@ class Campaign extends ResourceController
         $width = $req->getPost("width");
         $weight = $req->getPost("weight");
         $variant = $req->getPost("variant");
+        $quantity = $req->getPost("quantity");
         
-        if(is_array($brands) && is_array($length) && is_array($width) && is_array($weight) && is_array($variant)){
+        if(is_array($brands) && is_array($length) && is_array($width) && is_array($weight) && is_array($variant) && is_array($quantity)){
             foreach($brands as $k => $v){
                 if($v=="") continue;
                 $this->CampaignModel->store_brand([
@@ -780,6 +781,7 @@ class Campaign extends ResourceController
                     "length" => $length[$k],
                     "width" => $width[$k],
                     "weight" => $weight[$k],
+                    "quantity" => $quantity[$k],
                 ]);
             }
 
