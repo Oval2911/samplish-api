@@ -601,29 +601,29 @@ class Campaign extends ResourceController
     public function amend_payment()
     {
         $this->validate_session($this->validation->amend_payment);
-        $campaign = $this->request->getPost("key");
+        $req = $this->request;
+        $campaign = $req->getPost("key");
 
-        $receipt_payment = $this->request->getFile('receipt_payment');
+        $receipt_payment = $req->getFile('receipt_payment');
         if($receipt_payment && !$receipt_payment->hasMoved()) {
             $store = $receipt_payment->store();
             $file = new File(WRITEPATH .'uploads/'. $store);
             $receipt_payment = $store;
         }
 
-        $data = $this->CampaignModel->amend(
-            $campaign,
-            [
-                "service" => $this->request->getPost("service"),
-                "service_address" => $this->request->getPost("service_address"),
-                "service_due_date" => $this->request->getPost("service_due_date"),
-                "contact_name" => $this->request->getPost("contact_name"),
-                "contact_number" => $this->request->getPost("contact_number"),
-                "receipt_payment" => $receipt_payment,
-                "status" => "process_admin",
-                "payment_status" => "paid",
-                "updatedat" => date("Y-m-d H:i:s"),
-            ]
-        );
+        $campaignData = [
+            "updatedat" => date("Y-m-d H:i:s"),
+        ];
+        if($req->getPost("service")!=null) $campaignData["service"] = $req->getPost("service");
+        if($req->getPost("service_address")!=null) $campaignData["service_address"] = $req->getPost("service_address");
+        if($req->getPost("service_due_date")!=null) $campaignData["service_due_date"] = $req->getPost("service_due_date");
+        if($req->getPost("contact_name")!=null) $campaignData["contact_name"] = $req->getPost("contact_name");
+        if($req->getPost("contact_number")!=null) $campaignData["contact_number"] = $req->getPost("contact_number");
+        if($receipt_payment!=null) $campaignData["receipt_payment"] = $receipt_payment;
+        if($req->getPost("process_admin")!=null) $campaignData["status"] = "process_admin";
+        if($req->getPost("paid")!=null) $campaignData["payment_status"] = "paid";
+
+        $data = $this->CampaignModel->amend($campaignData);
 
         if($data==false) return $this->respond( tempResponse("00104") );
         
