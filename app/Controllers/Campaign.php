@@ -336,7 +336,7 @@ class Campaign extends ResourceController
 
         if( !($campaign!=null && count($campaign)==1) ) return $this->respond( tempResponse("00104") );
         
-        $brands = $this->CampaignModel->get_campaign_brand_details(["brand.name","brand.variant","brand.quantity"],$filters);
+        $brands = $this->CampaignModel->get_campaign_brand_details(["brand.name","campaign_brand.variant","campaign_brand.quantity"],$filters);
 
         return $this->respond(
             tempResponse(
