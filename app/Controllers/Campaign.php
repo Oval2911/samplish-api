@@ -67,12 +67,6 @@ class Campaign extends ResourceController
                 'key' => ["label"=>"Key", "rules"=>"required",],
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
-                'service' => ["label"=>"Pick Up Service", "rules"=>"required",],
-                'service_address' => ["label"=>"Address", "rules"=>"required",],
-                'service_due_date' => ["label"=>"Date", "rules"=>"required",],
-                'contact_name' => ["label"=>"Contact Name", "rules"=>"required",],
-                'contact_number' => ["label"=>"Contact Number", "rules"=>"required",],
-                'receipt_payment' => ["label"=>"Proof of Payment", "rules"=>"uploaded[receipt_payment]",],
             ],
             "amend_brands" => [
                 'key' => ["label"=>"Key", "rules"=>"required",],
