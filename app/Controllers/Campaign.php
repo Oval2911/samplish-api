@@ -623,7 +623,7 @@ class Campaign extends ResourceController
         if($req->getPost("process_admin")!=null) $campaignData["status"] = "process_admin";
         if($req->getPost("paid")!=null) $campaignData["payment_status"] = "paid";
 
-        $data = $this->CampaignModel->amend($campaignData);
+        $data = $this->CampaignModel->amend($campaign,$campaignData);
 
         if($data==false) return $this->respond( tempResponse("00104") );
         
