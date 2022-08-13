@@ -239,6 +239,24 @@ class CampaignModel extends Model
                 $total->where("campaign.payment_status",$filters["payment_status"]);
             }
         }
+        
+        if (array_key_exists('statusNot',$filters)) {
+            if(is_array($filters["statusNot"])){
+                $where = "(";
+                foreach($filters["statusNot"] as $k => $v){
+                    $v  = $this->dbCanvazer->escape($v);
+                    $where .= $k==0 ? "" : " OR ";
+                    $where .= "campaign.status!={$v}";
+                }
+                $where .= ")";
+                
+                $data->where($where);
+                $total->where($where);
+            }else{
+                $data->where("campaign.status !=",$filters["statusNot"]);
+                $total->where("campaign.status !=",$filters["statusNot"]);
+            }
+        }
 
         if ($filters['search']!=null) {
             $where = "(";
