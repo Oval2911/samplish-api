@@ -199,7 +199,6 @@ class Campaign extends ResourceController
             "search" => $this->request->getGet("search"),
             "searchable" => $fields,
             "statusNot" => [ 'draft', 'wait_confirm', ],
-            "payment_status" => "paid",
         ];
 
         $fields[] = "campaign.idcampaign";
