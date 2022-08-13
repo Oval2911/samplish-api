@@ -678,7 +678,7 @@ class Campaign extends ResourceController
         return $this->respond( tempResponse($code, $data) );
     }
 
-    public function payment()
+    public function wait_confirm()
     {
         $this->validate_session($this->validation->payment);
 
@@ -699,14 +699,10 @@ class Campaign extends ResourceController
         if($data->campaign->theme==null) return $this->respond( tempResponse("00104",false,"$msg Theme is required") );
         if($data->campaign->size==null) return $this->respond( tempResponse("00104",false,"$msg Box Size is required") );
 
-        $now = date("Y-m-d H:i:s");
-        $due = date_create($now);
-        date_add($due,date_interval_create_from_date_string("1 days"));
         $campaign = $this->CampaignModel->amend($id, [
-            "status" => "wait_pay",
+            "status" => "wait_confirm",
             "payment_status" => "unpaid",
-            "payment_due_date" => date_format($due,"Y-m-d H:i:s"),
-            "updatedat" => $now,
+            "updatedat" => date("Y-m-d H:i:s"),
         ]);
 
         if($campaign==false) return $this->respond( tempResponse("00003") );

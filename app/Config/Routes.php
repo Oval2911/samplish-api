@@ -121,7 +121,7 @@ $routes->group("Campaign", function($routes){
     $routes->post("/destroy", "App\Campaign::destroy");
     $routes->post("/join", "App\Campaign::join");
     $routes->post("/draft", "App\Campaign::draft");
-    $routes->post("/payment", "App\Campaign::payment");
+    $routes->post("/wait_confirm", "App\Campaign::wait_confirm");
     $routes->post("/reject", "App\Campaign::reject");
     $routes->post("/confirm", "App\Campaign::confirm");
 });
