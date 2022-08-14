@@ -250,6 +250,39 @@ class Campaign extends ResourceController
         );
     }
 
+    public function datatable_mix()
+    {
+        $this->validate_session($this->validation->datatable);
+
+        $fields = [ "campaign.name", "campaign.desc", "area.name as area", "campaign.box_type", "campaign.start_date", "campaign.end_date", ];
+        $filters = [
+            "limit" => $this->request->getGet("limit"),
+            "order" => $this->request->getGet("order"),
+            "search" => $this->request->getGet("search"),
+            "searchable" => $fields,
+            "join" => [ "area" => "area.idarea = campaign.idarea", ],
+            "status" => ['on_going',],
+            "box" => "mix",
+            "inRange" => date("Y-m-d"),
+        ];
+
+        $fields[] = "campaign.idcampaign";
+        $data = $this->CampaignModel->datatable($fields, $filters);
+
+        return $this->respond(
+            tempResponse(
+                '00000',
+                [
+                    'page' => $filters["limit"]["page"],
+                    'per_page' => $filters["limit"]["n_item"],
+                    'total' => $data->total,
+                    'total_pages' => $data->total_pages,
+                    'records' => $data->data,
+                ]
+            )
+        );
+    }
+
     public function data()
     {
         $this->validate_session($this->validation->data);
