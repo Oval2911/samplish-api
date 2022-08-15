@@ -772,8 +772,7 @@ class Campaign extends ResourceController
         $this->validate_session($this->validation->draft);
 
         $campaign = $this->CampaignModel->amend($this->request->getPost("key"), [
-            "status" => "wait_pay",
-            "payment_status" => "unpaid",
+            "status" => "reject",
             "updatedat" => date("Y-m-d H:i:s"),
         ]);
 
