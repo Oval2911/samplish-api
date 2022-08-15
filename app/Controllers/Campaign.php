@@ -260,7 +260,7 @@ class Campaign extends ResourceController
         );
     }
 
-    public function datatable_mix()
+    public function datatable_on_going()
     {
         $this->validate_session($this->validation->datatable);
 
@@ -274,6 +274,39 @@ class Campaign extends ResourceController
             "status" => ['on_going',],
             "box" => "mix",
             "inRange" => date("Y-m-d"),
+        ];
+
+        $fields[] = "campaign.idcampaign";
+        $data = $this->CampaignModel->datatable($fields, $filters);
+
+        return $this->respond(
+            tempResponse(
+                '00000',
+                [
+                    'page' => $filters["limit"]["page"],
+                    'per_page' => $filters["limit"]["n_item"],
+                    'total' => $data->total,
+                    'total_pages' => $data->total_pages,
+                    'records' => $data->data,
+                ]
+            )
+        );
+    }
+
+    public function datatable_upcoming()
+    {
+        $this->validate_session($this->validation->datatable);
+
+        $fields = [ "campaign.name", "campaign.desc", "area.name as area", "campaign.box_type", "campaign.start_date", "campaign.end_date", ];
+        $filters = [
+            "limit" => $this->request->getGet("limit"),
+            "order" => $this->request->getGet("order"),
+            "search" => $this->request->getGet("search"),
+            "searchable" => $fields,
+            "join" => [ "area" => "area.idarea = campaign.idarea", ],
+            "status" => ['on_going',],
+            "box" => "mix",
+            "notInRange" => date("Y-m-d"),
         ];
 
         $fields[] = "campaign.idcampaign";
@@ -773,6 +806,7 @@ class Campaign extends ResourceController
 
         $campaign = $this->CampaignModel->amend($this->request->getPost("key"), [
             "status" => "reject",
+            "payment_status" => "unpaid",
             "updatedat" => date("Y-m-d H:i:s"),
         ]);
 

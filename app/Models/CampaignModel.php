@@ -169,7 +169,13 @@ class CampaignModel extends Model
 
         if (array_key_exists('inRange',$filters)) {
             $data->where("campaign.start_date >=",$filters["inRange"]);
-            $total->where("campaign.box_type <=",$filters["inRange"]);
+            $data->where("campaign.end_date <=",$filters["inRange"]);
+            $total->where("campaign.start_date >=",$filters["inRange"]);
+            $total->where("campaign.end_date <=",$filters["inRange"]);
+        }else if (array_key_exists('notInRange',$filters)) {
+            $v  = $this->dbCanvazer->escape($filters["notInRange"]);
+            $data->where(" !(campaign.start_date >= {$v} AND campaign.end_date <= {$v}) ");
+            $total->where(" !(campaign.start_date >= {$v} AND campaign.end_date <= {$v}) ");
         }
 
         if ($filters['search']!=null) {
