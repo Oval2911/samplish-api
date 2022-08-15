@@ -779,6 +779,24 @@ class Campaign extends ResourceController
         return $this->respond( tempResponse("00000") );
     }
 
+    public function nego()
+    {
+        $this->validate_session($this->validation->draft);
+        
+        $date = date_create(date("Y-m-d H:i:s"));
+        date_add($date,date_interval_create_from_date_string("1 days"));
+
+        $campaign = $this->CampaignModel->amend($this->request->getPost("key"), [
+            "status" => "on_nego",
+            "payment_due_date" => date_format($date,"Y-m-d H:i:s"),
+            "updatedat" => date("Y-m-d H:i:s"),
+        ]);
+
+        if($campaign==false) return $this->respond( tempResponse("00003") );
+
+        return $this->respond( tempResponse("00000") );
+    }
+
     public function join()
     {
         $this->validate_session($this->validation->join);

@@ -125,6 +125,7 @@ $routes->group("Campaign", function($routes){
     $routes->post("/wait_confirm", "App\Campaign::wait_confirm");
     $routes->post("/reject", "App\Campaign::reject");
     $routes->post("/confirm", "App\Campaign::confirm");
+    $routes->post("/nego", "App\Campaign::nego");
 });
 
 /*
