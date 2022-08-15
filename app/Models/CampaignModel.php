@@ -283,11 +283,9 @@ class CampaignModel extends Model
 
         $data->limit($filters['limit']['n_item'], $filters['limit']['page'] * $filters['limit']['n_item']);
 
-        if (
-            is_array($filters['order'])
-            && array_key_exists("column",$filters['order'])
-            && array_key_exists("direction",$filters['order'])
-        ) $data->orderBy($filters['order']['column'], $filters['order']['direction']);
+        $isOrder = is_array($filters['order']) && array_key_exists("column",$filters['order']) && array_key_exists("direction",$filters['order']);
+        if ($isOrder) $data->orderBy($filters['order']['column'], $filters['order']['direction']);
+        else $data->orderBy("updatedat", "desc");
 
         $data = $data
             ->groupBy("campaign.idcampaign")
