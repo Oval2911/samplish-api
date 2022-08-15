@@ -467,6 +467,8 @@ class Campaign extends ResourceController
 
         $campaignData = [
             "iduser" => $user["iduser"],
+            "createdat" => date("Y-m-d H:i:s"),
+            "updatedat" => date("Y-m-d H:i:s"),
         ];
         if($req->getPost("area")!=null) $campaignData["idarea"] = $req->getPost("area");
         if($req->getPost("name")!=null) $campaignData["name"] = $req->getPost("name");
