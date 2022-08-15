@@ -83,6 +83,16 @@ class Campaign extends ResourceController
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
             ],
+            "wait_pay" => [
+                'key' => ["label"=>"Key", "rules"=>"required",],
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+                'price_service' => ["label"=>"Price Service", "rules"=>"required",],
+                'price_box_design' => ["label"=>"Price Box Design", "rules"=>"required",],
+                'payment_price_event' => ["label"=>"Price Event", "rules"=>"required",],
+                'payment_price_digital_marketing' => ["Price Digital Marketing"=>"Key", "rules"=>"required",],
+                'payment_price_merchandise' => ["label"=>"Price Merchandise", "rules"=>"required",],
+            ],
             "destroy" => [
                 'key' => ["label"=>"Key", "rules"=>"required",],
                 'u' => ["label"=>"User", "rules"=>"required",],
@@ -802,23 +812,52 @@ class Campaign extends ResourceController
     {
         $this->validate_session($this->validation->draft);
         
+        $price = (object)[
+            "mix" => 4500,
+            "brand" => (object)[
+                "small" => 21500,
+                "medium" => 23500,
+                "large" => 25500,
+            ],
+        ];
+
+        $key = $this->request->getPost("key");
+        $price_service = $this->request->getPost("price_service");
+        $price_box_design = $this->request->getPost("price_box_design");
+        $price_event = $this->request->getPost("price_event");
+        $price_digital_marketing = $this->request->getPost("price_digital_marketing");
+        $price_merchandise = $this->request->getPost("price_merchandise");
         $date = date_create(date("Y-m-d H:i:s"));
         date_add($date,date_interval_create_from_date_string("1 days"));
 
-        $campaign = $this->CampaignModel->amend($this->request->getPost("key"), [
+        $data = $this->_data($key);
+        $price_brands = 0;
+        foreach($data->brands as $k => $v){
+            $qty = $v->quantity;
+            $box = $data->campaign->box_type;
+            $size = $data->campaign->size;
+            $price_brands += $box=="mix"
+                ? $qty / 10 * $price->mix
+                : $qty / 10 * $price->brand->{$size};
+        }
+
+        $total = $price_service + $price_box_design + $price_event + $price_digital_marketing + $price_merchandise;
+
+        $campaign = $this->CampaignModel->amend($key, [
             "status" => "wait_pay",
             "payment_due_date" => date_format($date,"Y-m-d H:i:s"),
-            "payment_price_service" => $this->request->getPost("price_service"),
-            "payment_price_box_design" => $this->request->getPost("price_box_design"),
-            "payment_price_event" => $this->request->getPost("price_event"),
-            "payment_price_digital_marketing" => $this->request->getPost("price_digital_marketing"),
-            "payment_price_merchandise" => $this->request->getPost("price_merchandise"),
+            "payment_price_service" => $price_service,
+            "payment_price_box_design" => $price_box_design,
+            "payment_price_event" => $price_event,
+            "payment_price_digital_marketing" => $price_digital_marketing,
+            "payment_price_merchandise" => $price_merchandise,
+            "payment_total" => $total,
             "updatedat" => date("Y-m-d H:i:s"),
         ]);
 
         if($campaign==false) return $this->respond( tempResponse("00003") );
 
-        return $this->respond( tempResponse("00000") );
+        return $this->respond( tempResponse("00000",$key) );
     }
 
     public function join()
