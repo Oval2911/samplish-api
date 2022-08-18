@@ -46,23 +46,24 @@ class Profile extends ResourceController
     }
 
     private function _profile($user,$profile){
-        $data_profile = (object)[
+        if($profile!=null && count($profile)==1){
+            $profile = (object)$profile;
+            return (object)[
+                "name" => $user->fulllname,
+                "nomor" => $profile->nomor,
+                "ktp" => $profile->ktp,
+                "selfie_ktp" => $profile->selfie_ktp,
+                "gender" => $profile->gender,
+            ];
+        }
+        
+        return (object)[
             "name" => $user->fulllname,
             "nomor" => null,
             "ktp" => null,
             "selfie_ktp" => null,
             "gender" => null,
         ];
-
-        return $profile!=null && count($profile)==1
-            ? (object)[
-                    "name" => $user->fulllname,
-                    "nomor" => $profile->nomor,
-                    "ktp" => $profile->ktp,
-                    "selfie_ktp" => $profile->selfie_ktp,
-                    "gender" => $profile->gender,
-                ]
-            : $data_profile;
     }
 
     public function data()
@@ -76,7 +77,7 @@ class Profile extends ResourceController
         $user = $this->Profile->get_user($fields,$filters);
 
         if( !($user!=null && count($user)==1) ) $this->respond( tempResponse("00104") );
-        $user = $user[0];
+        $user = (object)$user[0];
         
         $fields = [ "nomor", "ktp", "selfie_ktp", "gender", ];
         $profile = $this->Profile->get_profile($fields,$filters);
