@@ -698,6 +698,7 @@ class Campaign extends ResourceController
         if($req->getPost("contact_number")!=null) $campaignData["contact_number"] = $req->getPost("contact_number");
         if($receipt_payment!=null) $campaignData["receipt_payment"] = $receipt_payment;
         if($req->getPost("process_admin")!=null) $campaignData["status"] = "process_admin";
+        if($req->getPost("process_admin_pay")!=null) $campaignData["status"] = "process_admin_pay";
         if($req->getPost("paid")!=null) $campaignData["payment_status"] = "paid";
 
         $data = $this->CampaignModel->amend($campaign,$campaignData);
