@@ -130,6 +130,12 @@ $routes->group("Campaign", function($routes){
     $routes->post("/wait_pay", "App\Campaign::wait_pay");
 });
 
+//Profile
+$routes->group("Profile", function($routes){
+    $routes->get("/data", "App\Profile::data");
+    $routes->post("/amend_profile", "App\Profile::amend_profile");
+});
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing
