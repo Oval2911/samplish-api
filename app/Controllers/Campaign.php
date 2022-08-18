@@ -89,9 +89,9 @@ class Campaign extends ResourceController
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
                 'price_service' => ["label"=>"Price Service", "rules"=>"required",],
                 'price_box_design' => ["label"=>"Price Box Design", "rules"=>"required",],
-                'payment_price_event' => ["label"=>"Price Event", "rules"=>"required",],
-                'payment_price_digital_marketing' => ["Price Digital Marketing"=>"Key", "rules"=>"required",],
-                'payment_price_merchandise' => ["label"=>"Price Merchandise", "rules"=>"required",],
+                'price_event' => ["label"=>"Price Event", "rules"=>"required",],
+                'price_digital_marketing' => ["Price Digital Marketing"=>"Key", "rules"=>"required",],
+                'price_merchandise' => ["label"=>"Price Merchandise", "rules"=>"required",],
             ],
             "destroy" => [
                 'key' => ["label"=>"Key", "rules"=>"required",],
@@ -845,7 +845,7 @@ class Campaign extends ResourceController
 
     public function wait_pay()
     {
-        $this->validate_session($this->validation->draft);
+        $this->validate_session($this->validation->wait_pay);
         
         $price = (object)[
             "mix" => 4500,
@@ -876,7 +876,7 @@ class Campaign extends ResourceController
                 : $qty / 10 * $price->brand->{$size};
         }
 
-        $total = $price_service + $price_box_design + $price_event + $price_digital_marketing + $price_merchandise;
+        $total = $price_service + $price_box_design + $price_event + $price_digital_marketing + $price_merchandise + $price_brands;
 
         $campaign = $this->CampaignModel->amend($key, [
             "status" => "wait_pay",
