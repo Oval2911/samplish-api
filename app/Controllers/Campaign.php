@@ -868,7 +868,7 @@ class Campaign extends ResourceController
         $data = $this->_data($key);
         $price_brands = 0;
         foreach($data->brands as $k => $v){
-            $qty = $v->quantity;
+            $qty = $v["quantity"];
             $box = $data->campaign->box_type;
             $size = $data->campaign->size;
             $price_brands += $box=="mix"
