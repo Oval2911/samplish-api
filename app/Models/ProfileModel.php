@@ -48,6 +48,17 @@ class ProfileModel extends Model
         return null;
     }
 
+    public function store_profile($id, $user, $user_profile)
+    {
+        $this->dbCanvazer->table('user')->where("iduser",$id)->update($user);
+        $user = $this->dbCanvazer->affectedRows();
+
+        $this->dbCanvazer->table('user_profile')->insert($user_profile);
+        $user_profile = $this->dbCanvazer->affectedRows();
+
+        return $user || $user_profile ? $id : false;
+    }
+
     public function amend_profile($id, $user, $user_profile)
     {
         $this->dbCanvazer->table('user')->where("iduser",$id)->update($user);

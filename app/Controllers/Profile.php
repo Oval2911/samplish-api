@@ -45,6 +45,26 @@ class Profile extends ResourceController
         return $key;
     }
 
+    private function _profile($user,$profile){
+        $data_profile = (object)[
+            "name" => $user->fulllname,
+            "nomor" => null,
+            "ktp" => null,
+            "selfie_ktp" => null,
+            "gender" => null,
+        ];
+
+        return $profile!=null && count($profile)==1
+            ? (object)[
+                    "name" => $user->fulllname,
+                    "nomor" => $profile->nomor,
+                    "ktp" => $profile->ktp,
+                    "selfie_ktp" => $profile->selfie_ktp,
+                    "gender" => $profile->gender,
+                ]
+            : $data_profile;
+    }
+
     public function data()
     {
         $user = $this->validate_session($this->validation->data);
@@ -56,19 +76,14 @@ class Profile extends ResourceController
         $user = $this->Profile->get_user($fields,$filters);
 
         if( !($user!=null && count($user)==1) ) $this->respond( tempResponse("00104") );
+        $user = $user[0];
         
         $fields = [ "nomor", "ktp", "selfie_ktp", "gender", ];
         $profile = $this->Profile->get_profile($fields,$filters);
 
         return $this->respond(
             tempResponse("00000",(object)[
-                "profile" => (object)[
-                    "name" => $user->fulllname,
-                    "nomor" => $profile->nomor,
-                    "ktp" => $profile->ktp,
-                    "selfie_ktp" => $profile->selfie_ktp,
-                    "gender" => $profile->gender,
-                ],
+                "profile" => $this->_profile($user,$profile),
             ])
         );
     }
@@ -79,15 +94,21 @@ class Profile extends ResourceController
 
         $key = $this->_data( $this->request->getPost("key"), $user );
 
-        $data = $this->Profile->amend_profile($key,
-            [ "fullname" => $this->request->getPost("name"), ],
-            [
-                "nomor" => $this->request->getPost("nomor"),
-                "ktp" => $this->request->getPost("ktp"),
-                "selfie_ktp" => $this->request->getPost("selfie_ktp"),
-                "gender" => $this->request->getPost("gender"),
-            ]
-        );
+        $user = [ "fullname" => $this->request->getPost("name"), ];
+        $profile = [
+            "iduser" => $key,
+            "nomor" => $this->request->getPost("nomor"),
+            "ktp" => $this->request->getPost("ktp"),
+            "selfie_ktp" => $this->request->getPost("selfie_ktp"),
+            "gender" => $this->request->getPost("gender"),
+        ];
+
+        $_profile = $this->Profile->get_profile([ "iduser", ], [ "filter" => ["iduser" => $key] ]);
+        if( !($_profile!=null && count($_profile)==1) ){
+            $data = $this->Profile->store_profile($key,$user,$profile);
+        }else{
+            $data = $this->Profile->amend_profile($key,$user,$profile);
+        }
         
         $code = $data==false ? "00003" : "00000";
 
