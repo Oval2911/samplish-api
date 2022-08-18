@@ -404,6 +404,7 @@ class Campaign extends ResourceController
             "payment_price_event",
             "payment_price_digital_marketing",
             "payment_price_merchandise",
+            "payment_total",
         ];
         $filters = [ "filter" => ["idcampaign" => $id] ];
         $campaign = $this->CampaignModel->get_campaign($fields,$filters);
