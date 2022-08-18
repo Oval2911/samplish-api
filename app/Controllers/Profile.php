@@ -49,7 +49,7 @@ class Profile extends ResourceController
         if($profile!=null && count($profile)==1){
             $profile = (object)$profile;
             return (object)[
-                "name" => $user->fulllname,
+                "name" => $user->fullname,
                 "nomor" => $profile->nomor,
                 "ktp" => $profile->ktp,
                 "selfie_ktp" => $profile->selfie_ktp,
@@ -58,7 +58,7 @@ class Profile extends ResourceController
         }
         
         return (object)[
-            "name" => $user->fulllname,
+            "name" => $user->fullname,
             "nomor" => null,
             "ktp" => null,
             "selfie_ktp" => null,
