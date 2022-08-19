@@ -3,6 +3,7 @@
 use CodeIgniter\RESTful\ResourceController;
 use App\Models\ProfileModel;
 use App\Models\User_model;
+use CodeIgniter\Files\File;
  
 class Profile extends ResourceController
 {
@@ -26,10 +27,6 @@ class Profile extends ResourceController
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
                 'name' => ["label"=>"Full Name", "rules"=>"required",],
-                'nomor' => ["label"=>"Nomor KTP/SIM", "rules"=>"required",],
-                'ktp' => ["label"=>"ID Image", "rules"=>"required",],
-                'selfie_ktp' => ["label"=>"ID Selfie Image", "rules"=>"required",],
-                'gender' => ["label"=>"Gender", "rules"=>"required",],
             ],
         ];
     }
@@ -95,14 +92,27 @@ class Profile extends ResourceController
 
         $key = $this->_data( $this->request->getPost("key"), $user );
 
+        $ktp = $this->request->getFile('ktp');
+        if($ktp && !$ktp->hasMoved()) {
+            $store = $ktp->store();
+            $file = new File(WRITEPATH .'uploads/'. $store);
+            $ktp = $store;
+        }
+        $selfie_ktp = $this->request->getFile('selfie_ktp');
+        if($selfie_ktp && !$selfie_ktp->hasMoved()) {
+            $store = $selfie_ktp->store();
+            $file = new File(WRITEPATH .'uploads/'. $store);
+            $selfie_ktp = $store;
+        }
+
         $user = [ "fullname" => $this->request->getPost("name"), ];
         $profile = [
             "iduser" => $key,
             "nomor" => $this->request->getPost("nomor"),
-            "ktp" => $this->request->getPost("ktp"),
-            "selfie_ktp" => $this->request->getPost("selfie_ktp"),
             "gender" => $this->request->getPost("gender"),
         ];
+        if($ktp!=null) $profile["ktp"] = $ktp;
+        if($selfie_ktp!=null) $profile["selfie_ktp"] = $selfie_ktp;
 
         $_profile = $this->Profile->get_profile([ "iduser", ], [ "filter" => ["iduser" => $key] ]);
         if( !($_profile!=null && count($_profile)==1) ){
