@@ -44,7 +44,7 @@ class Profile extends ResourceController
 
     private function _profile($user,$profile){
         if($profile!=null && count($profile)==1){
-            $profile = (object)$profile;
+            $profile = (object)$profile[0];
             return (object)[
                 "name" => $user->fullname,
                 "nomor" => $profile->nomor,
