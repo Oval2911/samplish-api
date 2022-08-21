@@ -153,6 +153,7 @@ class Campaign extends ResourceController
             "order" => $this->request->getGet("order"),
             "search" => $this->request->getGet("search"),
             "join" => [ "campaign_sampler" => "campaign_sampler.idcampaign = campaign.idcampaign", ],
+            "join_total" => [ "campaign_sampler" => true, ],
             "searchable" => [ "campaign.name", "campaign.desc", "campaign.box_type", ],
             "user_sampler" => $user["iduser"],
         ];

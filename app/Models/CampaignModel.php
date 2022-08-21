@@ -118,6 +118,9 @@ class CampaignModel extends Model
         if (array_key_exists('join',$filters)) {
             foreach($filters["join"] as $k => $v){
                 $data->join($k,$v);
+                if (array_key_exists('join_total',$filters) && array_key_exists($k,$filters["join_total"])) {
+                    $total->join($k,$v);
+                }
             }
         }
 
