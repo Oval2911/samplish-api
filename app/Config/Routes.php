@@ -110,6 +110,17 @@ $routes->group("Community", function($routes){
     $routes->post("/destroys", "App\Community::destroys");
 });
 
+//Interest
+$routes->group("Interest", function($routes){
+    $routes->get("/datatable", "App\Interest::datatable");
+    $routes->get("/data", "App\Interest::data");
+    $routes->get("/dropdown", "App\Interest::dropdown");
+    $routes->post("/store", "App\Interest::store");
+    $routes->post("/amend", "App\Interest::amend");
+    $routes->post("/destroy", "App\Interest::destroy");
+    $routes->post("/destroys", "App\Interest::destroys");
+});
+
 //Tone & Manner
 $routes->group("Tone_Manner", function($routes){
     $routes->get("/dropdown", "App\Tone_Manner::dropdown");
