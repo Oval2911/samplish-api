@@ -101,7 +101,7 @@ class Profile extends ResourceController
                     "in" => $profile ? $profile->in : null,
                     "tk" => $profile ? $profile->tk : null,
                 ],
-                "social" => (object)[
+                "family" => (object)[
                     "status" => $profile ? $profile->status : null,
                     "child" => $profile ? $profile->child : null,
                     "is60th" => $profile ? $profile->is60th : null,
