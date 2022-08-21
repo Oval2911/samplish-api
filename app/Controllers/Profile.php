@@ -33,6 +33,10 @@ class Profile extends ResourceController
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
                 'address' => ["label"=>"Address", "rules"=>"required",],
             ],
+            "amend_social" => [
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+            ],
         ];
     }
 
@@ -60,7 +64,7 @@ class Profile extends ResourceController
         if( !($user!=null && count($user)==1) ) $this->respond( tempResponse("00104") );
         $user = (object)$user[0];
         
-        $fields = [ "nomor", "ktp", "selfie_ktp", "gender", ];
+        $fields = [ "*", ];
         $profile = $this->Profile->get_profile($fields,$filters);
         $profile = $profile!=null && count($profile)==1 ? (object)$profile[0] : false;
         
@@ -85,6 +89,13 @@ class Profile extends ResourceController
                     "kec" => $address ? $address->kec : null,
                     "kel" => $address ? $address->kel : null,
                     "pos" => $address ? $address->pos : null,
+                ],
+                "social" => (object)[
+                    "ig" => $profile ? $profile->ig : null,
+                    "fb" => $profile ? $profile->fb : null,
+                    "tw" => $profile ? $profile->tw : null,
+                    "in" => $profile ? $profile->in : null,
+                    "tk" => $profile ? $profile->tk : null,
                 ],
             ])
         );
@@ -150,7 +161,26 @@ class Profile extends ResourceController
         
         $code = $data==false ? "00002" : "00000";
 
-        return $this->respond( tempResponse($code, $data) );
+        return $this->respond( tempResponse($code, true) );
+    }
+    
+    public function amend_social()
+    {
+        $user = $this->validate_session($this->validation->amend_social);
+
+        $key = $this->_data( $this->request->getPost("key"), $user );
+
+        $data = $this->Profile->amend($key, [
+            "ig" => $this->request->getPost("ig"),
+            "tw" => $this->request->getPost("tw"),
+            "fb" => $this->request->getPost("fb"),
+            "in" => $this->request->getPost("in"),
+            "tk" => $this->request->getPost("tk"),
+        ]);
+        
+        $code = $data==false ? "00003" : "00000";
+
+        return $this->respond( tempResponse($code, true) );
     }
  
 }

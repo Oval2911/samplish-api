@@ -74,6 +74,20 @@ class ProfileModel extends Model
         return $user || $user_profile ? $id : false;
     }
 
+    public function store_address($data)
+    {
+        $data["id"] = uniqid();
+        $this->dbCanvazer->table('user_address')->insert($data);
+
+        return $this->dbCanvazer->affectedRows() ? $data["id"] : false;
+    }
+
+    public function amend($id, $data)
+    {
+        $this->dbCanvazer->table('user_profile')->where("iduser",$id)->update($data);
+        return $this->dbCanvazer->affectedRows() ? $id : false;
+    }
+
     public function amend_profile($id, $user, $user_profile)
     {
         $this->dbCanvazer->table('user')->where("iduser",$id)->update($user);
@@ -83,14 +97,6 @@ class ProfileModel extends Model
         $user_profile = $this->dbCanvazer->affectedRows();
 
         return $user || $user_profile ? $id : false;
-    }
-
-    public function store_address($data)
-    {
-        $data["id"] = uniqid();
-        $this->dbCanvazer->table('user_address')->insert($data);
-
-        return $this->dbCanvazer->affectedRows() ? $data["id"] : false;
     }
     
     public function destroys_address($id)
