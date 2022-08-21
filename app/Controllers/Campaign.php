@@ -154,7 +154,7 @@ class Campaign extends ResourceController
             "search" => $this->request->getGet("search"),
             "join" => [ "campaign_sampler" => "campaign_sampler.idcampaign = campaign.idcampaign", ],
             "join_total" => [ "campaign_sampler" => true, ],
-            "searchable" => [ "campaign.name", "campaign.desc", "campaign.box_type", ],
+            "searchable" => [ "campaign.name", "campaign.desc", "campaign.box_type", "campaign_sampler.status_campaign", "campaign_sampler.status_box", ],
             "user_sampler" => $user["iduser"],
         ];
         $fields = [
@@ -164,6 +164,8 @@ class Campaign extends ResourceController
             "campaign.logo",
             "campaign.box_type",
             "(SELECT COUNT(idbrand) FROM campaign_brand WHERE campaign_brand.idcampaign = campaign.idcampaign) AS item",
+            "campaign_sampler.status_campaign",
+            "campaign_sampler.status_box",
         ];
         $data = $this->CampaignModel->datatable($fields, $filters);
 
