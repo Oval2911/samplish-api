@@ -126,6 +126,11 @@ class CampaignModel extends Model
             $total->where("campaign.iduser",$filters["user"]);
         }
 
+        if (array_key_exists('user_sampler',$filters)) {
+            $data->where("campaign_sampler.iduser",$filters["user_sampler"]);
+            $total->where("campaign_sampler.iduser",$filters["user_sampler"]);
+        }
+
         if (array_key_exists('status',$filters)) {
             if(is_array($filters["status"])){
                 $where = "(";
@@ -328,6 +333,12 @@ class CampaignModel extends Model
     public function store_merchandise($data)
     {
         $this->dbCanvazer->table('campaign_merchandise')->insert($data);
+        return $this->dbCanvazer->affectedRows() ? true : false;
+    }
+    
+    public function store_sampler($data)
+    {
+        $this->dbCanvazer->table('campaign_sampler')->insert($data);
         return $this->dbCanvazer->affectedRows() ? true : false;
     }
 

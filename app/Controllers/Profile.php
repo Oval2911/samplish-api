@@ -41,6 +41,10 @@ class Profile extends ResourceController
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
             ],
+            "amend_interest_community" => [
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+            ],
         ];
     }
 
@@ -84,6 +88,7 @@ class Profile extends ResourceController
                     "ktp" => $profile ? $profile->ktp : null,
                     "selfie_ktp" => $profile ? $profile->selfie_ktp : null,
                     "gender" => $profile ? $profile->gender : null,
+                    "birthdate" => $profile ? $profile->birthdate : null,
                 ],
                 "address" => (object)[
                     "address" => $address ? $address->address : null,
@@ -139,6 +144,7 @@ class Profile extends ResourceController
             "iduser" => $key,
             "nomor" => $this->request->getPost("nomor"),
             "gender" => $this->request->getPost("gender"),
+            "birthdate" => $this->request->getPost("birthdate"),
         ];
         if($ktp!=null) $profile["ktp"] = $ktp;
         if($selfie_ktp!=null) $profile["selfie_ktp"] = $selfie_ktp;
@@ -217,6 +223,38 @@ class Profile extends ResourceController
         $code = $data==false ? "00003" : "00000";
 
         return $this->respond( tempResponse($code, true) );
+    }
+
+    public function amend_interest_community()
+    {
+        $user = $this->validate_session($this->validation->amend_interest_community);
+        $key = $this->_data( $this->request->getPost("key"), $user );
+        
+        $this->Profile->destroys_community($key);
+        $communities = $this->request->getPost("community");
+        if(is_array($communities)){
+            foreach($communities as $k => $v){
+                if($v=="") continue;
+                $this->Profile->store_community([
+                    "iduser" => $key,
+                    "idcommunity" => $v,
+                ]);
+            }
+        }
+        
+        $this->Profile->destroys_interest($key);
+        $interest = $this->request->getPost("interest");
+        if(is_array($interest)){
+            foreach($interest as $k => $v){
+                if($v=="") continue;
+                $this->Profile->store_interest([
+                    "iduser" => $key,
+                    "idinterest" => $v,
+                ]);
+            }
+        }
+
+        return $this->respond( tempResponse("00000", true) );
     }
  
 }

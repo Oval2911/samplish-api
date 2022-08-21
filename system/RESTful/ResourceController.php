@@ -120,7 +120,7 @@ class ResourceController extends BaseResource
 
         if (!$this->validate($rules)) die(json_encode(tempResponse("00104")));
 
-        $user = $user_model->get_user(['iduser'], ["filter" => ['related_id' => $request->getPostGet("u")]]);
+        $user = $user_model->get_user(['iduser','related_key'], ["filter" => ['related_id' => $request->getPostGet("u")]]);
         if ($user==null) die(json_encode(tempResponse("00102")));
         $user = $user[0];
 

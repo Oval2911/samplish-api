@@ -82,6 +82,22 @@ class ProfileModel extends Model
         return $this->dbCanvazer->affectedRows() ? $data["id"] : false;
     }
 
+    public function store_community($data)
+    {
+        $data["id"] = uniqid();
+        $this->dbCanvazer->table('user_community')->insert($data);
+
+        return $this->dbCanvazer->affectedRows() ? $data["id"] : false;
+    }
+
+    public function store_interest($data)
+    {
+        $data["id"] = uniqid();
+        $this->dbCanvazer->table('user_interests')->insert($data);
+
+        return $this->dbCanvazer->affectedRows() ? $data["id"] : false;
+    }
+
     public function amend($id, $data)
     {
         $this->dbCanvazer->table('user_profile')->where("iduser",$id)->update($data);
@@ -102,6 +118,18 @@ class ProfileModel extends Model
     public function destroys_address($id)
     {
         $this->dbCanvazer->table('user_address')->delete(["iduser"=>$id]);
+        return $this->dbCanvazer->affectedRows() ? true : false;
+    }
+    
+    public function destroys_community($id)
+    {
+        $this->dbCanvazer->table('user_community')->delete(["iduser"=>$id]);
+        return $this->dbCanvazer->affectedRows() ? true : false;
+    }
+    
+    public function destroys_interest($id)
+    {
+        $this->dbCanvazer->table('user_interests')->delete(["iduser"=>$id]);
         return $this->dbCanvazer->affectedRows() ? true : false;
     }
 }

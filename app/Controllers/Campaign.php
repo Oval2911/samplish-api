@@ -108,6 +108,11 @@ class Campaign extends ResourceController
                 'weight' => ["label"=>"Brands Weight", "rules"=>"required",],
                 'variant' => ["label"=>"Brands Variant", "rules"=>"required",],
             ],
+            "join_sampler" => [
+                'key' => ["label"=>"Key", "rules"=>"required",],
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+            ],
         ];
     }
 
@@ -123,6 +128,42 @@ class Campaign extends ResourceController
             "searchable" => [ "name", "status", "theme", "box_type", "start_date", "end_date", ],
         ];
         $fields = [ "idcampaign", "name", "status", "theme", "box_type", "start_date", "end_date", ];
+        $data = $this->CampaignModel->datatable($fields, $filters);
+
+        return $this->respond(
+            tempResponse(
+                '00000',
+                [
+                    'page' => $filters["limit"]["page"],
+                    'per_page' => $filters["limit"]["n_item"],
+                    'total' => $data->total,
+                    'total_pages' => $data->total_pages,
+                    'records' => $data->data,
+                ]
+            )
+        );
+    }
+
+    public function datatable_overview_sampler()
+    {
+        $user = $this->validate_session($this->validation->datatable);
+
+        $filters = [
+            "limit" => $this->request->getGet("limit"),
+            "order" => $this->request->getGet("order"),
+            "search" => $this->request->getGet("search"),
+            "join" => [ "campaign_sampler" => "campaign_sampler.idcampaign = campaign.idcampaign", ],
+            "searchable" => [ "campaign.name", "campaign.desc", "campaign.box_type", ],
+            "user_sampler" => $user["iduser"],
+        ];
+        $fields = [
+            "campaign.idcampaign",
+            "campaign.name",
+            "campaign.desc",
+            "campaign.logo",
+            "campaign.box_type",
+            "(SELECT COUNT(idbrand) FROM campaign_brand WHERE campaign_brand.idcampaign = campaign.idcampaign) AS item",
+        ];
         $data = $this->CampaignModel->datatable($fields, $filters);
 
         return $this->respond(
@@ -262,7 +303,13 @@ class Campaign extends ResourceController
 
     public function datatable_on_going()
     {
-        $this->validate_session($this->validation->datatable);
+        $user = $this->validate_session($this->validation->datatable);
+        $key = $user["related_key"];
+        $box = false;
+
+        if($key=="company") $box = "mix";
+        elseif($key=="sampler") $box = "brand";
+        else return $this->respond( tempResponse('00104') );
 
         $fields = [ "campaign.name", "campaign.desc", "area.name as area", "campaign.box_type", "campaign.start_date", "campaign.end_date", ];
         $filters = [
@@ -272,7 +319,7 @@ class Campaign extends ResourceController
             "searchable" => $fields,
             "join" => [ "area" => "area.idarea = campaign.idarea", ],
             "status" => ['on_going',],
-            "box" => "mix",
+            "box" => $box,
             "inRange" => date("Y-m-d"),
         ];
 
@@ -295,8 +342,14 @@ class Campaign extends ResourceController
 
     public function datatable_upcoming()
     {
-        $this->validate_session($this->validation->datatable);
+        $user = $this->validate_session($this->validation->datatable);
+        $key = $user["related_key"];
+        $box = false;
 
+        if($key=="company") $box = "mix";
+        elseif($key=="sampler") $box = "brand";
+        else return $this->respond( tempResponse('00104') );
+        
         $fields = [ "campaign.name", "campaign.desc", "area.name as area", "campaign.box_type", "campaign.start_date", "campaign.end_date", ];
         $filters = [
             "limit" => $this->request->getGet("limit"),
@@ -305,7 +358,7 @@ class Campaign extends ResourceController
             "searchable" => $fields,
             "join" => [ "area" => "area.idarea = campaign.idarea", ],
             "status" => ['on_going',],
-            "box" => "mix",
+            "box" => $box,
             "notInRange" => date("Y-m-d"),
         ];
 
@@ -375,6 +428,27 @@ class Campaign extends ResourceController
                 ],
             )
         );
+    }
+
+    public function data_sampler()
+    {
+        $this->validate_session($this->validation->data);
+
+        $id = $this->request->getGet("key");
+        $fields = [
+            "logo",
+            "name",
+            "theme",
+            "box_type",
+            "desc",
+            "feedback_due_date",
+        ];
+        $filters = [ "filter" => ["idcampaign" => $id] ];
+        $campaign = $this->CampaignModel->get_campaign($fields,$filters);
+
+        if( !($campaign!=null && count($campaign)==1) ) return $this->respond( tempResponse("00104") );
+
+        return $this->respond( tempResponse("00000", (object)$campaign[0]) );
     }
 
     public function data_payment()
@@ -927,6 +1001,21 @@ class Campaign extends ResourceController
 
             return $this->respond( tempResponse("00000", $campaign) );
         }
+
+        return $this->respond( tempResponse("00104", false, "Invalid data") );
+    }
+
+    public function join_sampler()
+    {
+        $user = $this->validate_session($this->validation->join_sampler);
+        
+        $req = $this->request;
+
+        $this->CampaignModel->store_sampler([
+            "idcampaign" => $req->getPost("key"),
+            "iduser" => $user["iduser"],
+            "status_campaign" => "check",
+        ]);
 
         return $this->respond( tempResponse("00104", false, "Invalid data") );
     }

@@ -135,7 +135,9 @@ $routes->group("Campaign", function($routes){
     $routes->get("/datatable_overview", "App\Campaign::datatable_overview");
     $routes->get("/datatable_on_going", "App\Campaign::datatable_on_going");
     $routes->get("/datatable_upcoming", "App\Campaign::datatable_upcoming");
+    $routes->get("/datatable_overview_sampler", "App\Campaign::datatable_overview_sampler");
     $routes->get("/data", "App\Campaign::data");
+    $routes->get("/data_sampler", "App\Campaign::data_sampler");
     $routes->get("/data_payment", "App\Campaign::data_payment");
     $routes->get("/dropdown_mix", "App\Campaign::dropdown_mix");
     $routes->post("/store", "App\Campaign::store");
@@ -144,6 +146,7 @@ $routes->group("Campaign", function($routes){
     $routes->post("/amend_brands", "App\Campaign::amend_brands");
     $routes->post("/destroy", "App\Campaign::destroy");
     $routes->post("/join", "App\Campaign::join");
+    $routes->post("/join_sampler", "App\Campaign::join_sampler");
     $routes->post("/draft", "App\Campaign::draft");
     $routes->post("/wait_confirm", "App\Campaign::wait_confirm");
     $routes->post("/reject", "App\Campaign::reject");
@@ -159,6 +162,7 @@ $routes->group("Profile", function($routes){
     $routes->post("/amend_address", "App\Profile::amend_address");
     $routes->post("/amend_social", "App\Profile::amend_social");
     $routes->post("/amend_family", "App\Profile::amend_family");
+    $routes->post("/amend_interest_community", "App\Profile::amend_interest_community");
 });
 
 /*
