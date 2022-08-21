@@ -48,6 +48,21 @@ class ProfileModel extends Model
         return null;
     }
 
+    public function get_address($columns = array('*'), $filter = array())
+    {
+
+        $builder = $this->dbCanvazer->table('user_address');
+        $builder->select($columns);
+
+        if (isset($filter['filter'])) $builder->where($filter['filter']);
+
+        $query = $builder->get();
+        $result = $query->getResultArray();
+
+        if ($result) return $result;
+        return null;
+    }
+
     public function store_profile($id, $user, $user_profile)
     {
         $this->dbCanvazer->table('user')->where("iduser",$id)->update($user);
@@ -68,5 +83,19 @@ class ProfileModel extends Model
         $user_profile = $this->dbCanvazer->affectedRows();
 
         return $user || $user_profile ? $id : false;
+    }
+
+    public function store_address($data)
+    {
+        $data["id"] = uniqid();
+        $this->dbCanvazer->table('user_address')->insert($data);
+
+        return $this->dbCanvazer->affectedRows() ? $data["id"] : false;
+    }
+    
+    public function destroys_address($id)
+    {
+        $this->dbCanvazer->table('user_address')->delete(["iduser"=>$id]);
+        return $this->dbCanvazer->affectedRows() ? true : false;
     }
 }

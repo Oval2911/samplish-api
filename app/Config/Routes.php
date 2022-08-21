@@ -134,6 +134,7 @@ $routes->group("Campaign", function($routes){
 $routes->group("Profile", function($routes){
     $routes->get("/data", "App\Profile::data");
     $routes->post("/amend_profile", "App\Profile::amend_profile");
+    $routes->post("/store_address", "App\Profile::store_address");
 });
 
 /*

@@ -28,6 +28,11 @@ class Profile extends ResourceController
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
                 'name' => ["label"=>"Full Name", "rules"=>"required",],
             ],
+            "store_address" => [
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+                'address' => ["label"=>"Address", "rules"=>"required",],
+            ],
         ];
     }
 
@@ -40,27 +45,6 @@ class Profile extends ResourceController
             $key = $user["iduser"];
         }
         return $key;
-    }
-
-    private function _profile($user,$profile){
-        if($profile!=null && count($profile)==1){
-            $profile = (object)$profile[0];
-            return (object)[
-                "name" => $user->fullname,
-                "nomor" => $profile->nomor,
-                "ktp" => $profile->ktp,
-                "selfie_ktp" => $profile->selfie_ktp,
-                "gender" => $profile->gender,
-            ];
-        }
-        
-        return (object)[
-            "name" => $user->fullname,
-            "nomor" => null,
-            "ktp" => null,
-            "selfie_ktp" => null,
-            "gender" => null,
-        ];
     }
 
     public function data()
@@ -78,10 +62,30 @@ class Profile extends ResourceController
         
         $fields = [ "nomor", "ktp", "selfie_ktp", "gender", ];
         $profile = $this->Profile->get_profile($fields,$filters);
+        $profile = $profile!=null && count($profile)==1 ? (object)$profile[0] : false;
+        
+        $fields = [ "address", "rt", "rw", "city", "kec", "kel", "pos", ];
+        $address = $this->Profile->get_address($fields,$filters);
+        $address = $address!=null && count($address)==1 ? (object)$address[0] : false;
 
         return $this->respond(
             tempResponse("00000",(object)[
-                "profile" => $this->_profile($user,$profile),
+                "profile" => (object)[
+                    "name" => $user->fullname,
+                    "nomor" => $profile ? $profile->nomor : null,
+                    "ktp" => $profile ? $profile->ktp : null,
+                    "selfie_ktp" => $profile ? $profile->selfie_ktp : null,
+                    "gender" => $profile ? $profile->gender : null,
+                ],
+                "address" => (object)[
+                    "address" => $address ? $address->address : null,
+                    "rt" => $address ? $address->rt : null,
+                    "rw" => $address ? $address->rw : null,
+                    "city" => $address ? $address->city : null,
+                    "kec" => $address ? $address->kec : null,
+                    "kel" => $address ? $address->kel : null,
+                    "pos" => $address ? $address->pos : null,
+                ],
             ])
         );
     }
@@ -122,6 +126,29 @@ class Profile extends ResourceController
         }
         
         $code = $data==false ? "00003" : "00000";
+
+        return $this->respond( tempResponse($code, true) );
+    }
+    
+    public function store_address()
+    {
+        $user = $this->validate_session($this->validation->store_address);
+
+        $key = $this->_data( $this->request->getPost("key"), $user );
+
+        $this->Profile->destroys_address($key);
+        $data = $this->Profile->store_address([
+            "iduser" => $key,
+            "address" => $this->request->getPost("address"),
+            "city" => $this->request->getPost("city"),
+            "rt" => $this->request->getPost("rt"),
+            "rw" => $this->request->getPost("rw"),
+            "kec" => $this->request->getPost("kec"),
+            "kel" => $this->request->getPost("kel"),
+            "pos" => $this->request->getPost("pos"),
+        ]);
+        
+        $code = $data==false ? "00002" : "00000";
 
         return $this->respond( tempResponse($code, $data) );
     }
