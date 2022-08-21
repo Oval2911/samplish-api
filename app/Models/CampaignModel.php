@@ -73,6 +73,11 @@ class CampaignModel extends Model
         return $this->get_data("campaign_merchandise", $columns, $filter);
     }
 
+    public function get_campaign_sampler($columns=["*"], $filter=[])
+    {
+        return $this->get_data("campaign_sampler", $columns, $filter);
+    }
+
     private function get_data($table, $columns=["*"], $filter=[])
     {
         $builder = $this->dbCanvazer->table($table);

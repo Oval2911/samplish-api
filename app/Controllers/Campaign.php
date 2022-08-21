@@ -438,20 +438,18 @@ class Campaign extends ResourceController
         $this->validate_session($this->validation->data);
 
         $id = $this->request->getGet("key");
-        $fields = [
-            "logo",
-            "name",
-            "theme",
-            "box_type",
-            "desc",
-            "feedback_due_date",
-        ];
+        $fields = [ "logo", "name", "theme", "box_type", "desc", "feedback_due_date", ];
         $filters = [ "filter" => ["idcampaign" => $id] ];
         $campaign = $this->CampaignModel->get_campaign($fields,$filters);
 
         if( !($campaign!=null && count($campaign)==1) ) return $this->respond( tempResponse("00104") );
+        $campaign = $campaign[0];
 
-        return $this->respond( tempResponse("00000", (object)$campaign[0]) );
+        $fields = [ "status_campaign", "status_box", ];
+        $sampler = $this->CampaignModel->get_campaign_sampler($fields,$filters);
+        $sampler = !($sampler!=null && count($sampler)==1) ? [] : $sampler[0];
+
+        return $this->respond( tempResponse("00000", (object)array_merge($campaign,$sampler)) );
     }
 
     public function data_payment()
