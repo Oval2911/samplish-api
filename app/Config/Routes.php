@@ -99,6 +99,17 @@ $routes->group("Area", function($routes){
     $routes->post("/destroys", "App\Area::destroys");
 });
 
+//Community
+$routes->group("Community", function($routes){
+    $routes->get("/datatable", "App\Community::datatable");
+    $routes->get("/data", "App\Community::data");
+    $routes->get("/dropdown", "App\Community::dropdown");
+    $routes->post("/store", "App\Community::store");
+    $routes->post("/amend", "App\Community::amend");
+    $routes->post("/destroy", "App\Community::destroy");
+    $routes->post("/destroys", "App\Community::destroys");
+});
+
 //Tone & Manner
 $routes->group("Tone_Manner", function($routes){
     $routes->get("/dropdown", "App\Tone_Manner::dropdown");
