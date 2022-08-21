@@ -136,6 +136,7 @@ $routes->group("Profile", function($routes){
     $routes->post("/amend_profile", "App\Profile::amend_profile");
     $routes->post("/amend_address", "App\Profile::amend_address");
     $routes->post("/amend_social", "App\Profile::amend_social");
+    $routes->post("/amend_family", "App\Profile::amend_family");
 });
 
 /*

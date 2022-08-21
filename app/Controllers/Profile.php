@@ -37,6 +37,10 @@ class Profile extends ResourceController
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
             ],
+            "amend_family" => [
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",],
+            ],
         ];
     }
 
@@ -96,6 +100,16 @@ class Profile extends ResourceController
                     "tw" => $profile ? $profile->tw : null,
                     "in" => $profile ? $profile->in : null,
                     "tk" => $profile ? $profile->tk : null,
+                ],
+                "social" => (object)[
+                    "status" => $profile ? $profile->status : null,
+                    "child" => $profile ? $profile->child : null,
+                    "is60th" => $profile ? $profile->is60th : null,
+                    "amount60th" => $profile ? $profile->amount60th : null,
+                    "age60th" => $profile ? $profile->age60th : null,
+                    "isAnimal" => $profile ? $profile->isAnimal : null,
+                    "animalType" => $profile ? $profile->animalType : null,
+                    "income" => $profile ? $profile->income : null,
                 ],
             ])
         );
@@ -176,6 +190,28 @@ class Profile extends ResourceController
             "fb" => $this->request->getPost("fb"),
             "in" => $this->request->getPost("in"),
             "tk" => $this->request->getPost("tk"),
+        ]);
+        
+        $code = $data==false ? "00003" : "00000";
+
+        return $this->respond( tempResponse($code, true) );
+    }
+    
+    public function amend_family()
+    {
+        $user = $this->validate_session($this->validation->amend_family);
+
+        $key = $this->_data( $this->request->getPost("key"), $user );
+
+        $data = $this->Profile->amend($key, [
+            "status" => $this->request->getPost("status"),
+            "child" => $this->request->getPost("child"),
+            "is60th" => $this->request->getPost("is60th"),
+            "amount60th" => $this->request->getPost("amount60th"),
+            "age60th" => $this->request->getPost("age60th"),
+            "isAnimal" => $this->request->getPost("isAnimal"),
+            "animalType" => $this->request->getPost("animalType"),
+            "income" => $this->request->getPost("income"),
         ]);
         
         $code = $data==false ? "00003" : "00000";
