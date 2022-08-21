@@ -28,7 +28,7 @@ class Profile extends ResourceController
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
                 'name' => ["label"=>"Full Name", "rules"=>"required",],
             ],
-            "store_address" => [
+            "amend_address" => [
                 'u' => ["label"=>"User", "rules"=>"required",],
                 'token' => ["label"=>"Access Token", "rules"=>"required",],
                 'address' => ["label"=>"Address", "rules"=>"required",],
@@ -130,9 +130,9 @@ class Profile extends ResourceController
         return $this->respond( tempResponse($code, true) );
     }
     
-    public function store_address()
+    public function amend_address()
     {
-        $user = $this->validate_session($this->validation->store_address);
+        $user = $this->validate_session($this->validation->amend_address);
 
         $key = $this->_data( $this->request->getPost("key"), $user );
 
