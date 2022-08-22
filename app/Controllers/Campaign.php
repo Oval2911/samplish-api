@@ -167,7 +167,7 @@ class Campaign extends ResourceController
             "campaign_sampler.status_campaign",
             "campaign_sampler.status_box",
             "CASE
-                WHEN !(campaign.feedback_due_date IS NOT NULL AND campaign.feedback_due_date <= CURDATE() THEN true
+                WHEN !(campaign.feedback_due_date IS NOT NULL AND campaign.feedback_due_date <= CURDATE()) THEN true
                 ELSE false
             END AS is_late",
         ];
