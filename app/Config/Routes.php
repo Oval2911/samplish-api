@@ -153,6 +153,8 @@ $routes->group("Campaign", function($routes){
     $routes->post("/confirm", "App\Campaign::confirm");
     $routes->post("/nego", "App\Campaign::nego");
     $routes->post("/wait_pay", "App\Campaign::wait_pay");
+    $routes->post("/joined", "App\Campaign::joined");
+    $routes->post("/not_received", "App\Campaign::not_received");
 });
 
 //Profile

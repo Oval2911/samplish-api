@@ -355,6 +355,12 @@ class CampaignModel extends Model
         $this->dbCanvazer->table('campaign')->where("idcampaign",$id)->update($data);
         return $this->dbCanvazer->affectedRows() ? $id : false;
     }
+
+    public function amend_sampler($id, $user, $data)
+    {
+        $this->dbCanvazer->table('campaign_sampler')->where("idcampaign",$id)->where("iduser",$user)->update($data);
+        return $this->dbCanvazer->affectedRows() ? $id : false;
+    }
     
     public function destroy($id)
     {

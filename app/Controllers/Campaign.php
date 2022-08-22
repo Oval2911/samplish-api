@@ -166,6 +166,10 @@ class Campaign extends ResourceController
             "(SELECT COUNT(idbrand) FROM campaign_brand WHERE campaign_brand.idcampaign = campaign.idcampaign) AS item",
             "campaign_sampler.status_campaign",
             "campaign_sampler.status_box",
+            "CASE
+                WHEN !(campaign.feedback_due_date IS NOT NULL AND campaign.feedback_due_date <= CURDATE() THEN true
+                ELSE false
+            END AS is_late",
         ];
         $data = $this->CampaignModel->datatable($fields, $filters);
 
@@ -447,7 +451,9 @@ class Campaign extends ResourceController
 
         $fields = [ "status_campaign", "status_box", ];
         $sampler = $this->CampaignModel->get_campaign_sampler($fields,$filters);
-        $sampler = !($sampler!=null && count($sampler)==1) ? [] : $sampler[0];
+
+        if( !($sampler!=null && count($sampler)==1) ) return $this->respond( tempResponse("00104") );
+        $sampler = $sampler[0];
 
         return $this->respond( tempResponse("00000", (object)array_merge($campaign,$sampler)) );
     }
@@ -1019,6 +1025,36 @@ class Campaign extends ResourceController
         ]);
 
         return $this->respond( tempResponse("00104", false, "Invalid data") );
+    }
+
+    public function joined()
+    {
+        $user = $this->validate_session($this->validation->draft);
+
+        $campaign = $this->CampaignModel->amend_sampler(
+            $this->request->getPost("key"),
+            $user["iduser"],
+            [ "status_campaign" => "joined", "status_box" => "prepare", ]
+        );
+
+        if($campaign==false) return $this->respond( tempResponse("00003") );
+
+        return $this->respond( tempResponse("00000") );
+    }
+
+    public function not_received()
+    {
+        $user = $this->validate_session($this->validation->draft);
+
+        $campaign = $this->CampaignModel->amend_sampler(
+            $this->request->getPost("key"),
+            $user["iduser"],
+            [ "status_box" => "not_received", ]
+        );
+
+        if($campaign==false) return $this->respond( tempResponse("00003") );
+
+        return $this->respond( tempResponse("00000") );
     }
  
 }
