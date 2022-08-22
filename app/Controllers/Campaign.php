@@ -1018,13 +1018,15 @@ class Campaign extends ResourceController
         
         $req = $this->request;
 
-        $this->CampaignModel->store_sampler([
+        $data = $this->CampaignModel->store_sampler([
             "idcampaign" => $req->getPost("key"),
             "iduser" => $user["iduser"],
             "status_campaign" => "check",
         ]);
 
-        return $this->respond( tempResponse("00104", false, "Invalid data") );
+        if($data==false) return $this->respond( tempResponse("00104", false, "Invalid data") );
+        
+        return $this->respond( tempResponse("00000", true) );
     }
 
     public function joined()
