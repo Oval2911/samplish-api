@@ -57,13 +57,16 @@ class BrandModel extends Model
     {
         $data = $this->dbCanvazer->table('brand')
             ->select($columns)
-            ->join("brand_category","brand_category.idcategorybrand = brand.idcategorybrand")
-            ->where("brand.iduser",$filters["user"]);
+            ->join("brand_category","brand_category.idcategorybrand = brand.idcategorybrand");
 
         $total = $this->dbCanvazer->table('brand')
             ->select("COUNT(brand.idbrand) as amount")
-            ->join("brand_category","brand_category.idcategorybrand = brand.idcategorybrand")
-            ->where("brand.iduser",$filters["user"]);
+            ->join("brand_category","brand_category.idcategorybrand = brand.idcategorybrand");
+            
+        if (array_key_exists('user',$filters)) {
+            $data->where("brand.iduser",$filters["user"]);
+            $total->where("brand.iduser",$filters["user"]);
+        }
 
         if ($filters['search']!=null) {
             foreach($filters["searchable"] as $k => $v){
