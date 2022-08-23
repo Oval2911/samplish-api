@@ -33,7 +33,7 @@ class CampaignModel extends Model
             FROM campaign AS c
             JOIN area AS a ON a.idarea = c.idarea
             JOIN campaign_brand AS cb ON cb.idcampaign = c.idcampaign
-            JOIN brand AS b ON b.idbrand = c.idbrand
+            JOIN brand AS b ON b.idbrand = cb.idbrand
             WHERE
                 b.iduser = {$user}
                 AND c.status = {$status}
