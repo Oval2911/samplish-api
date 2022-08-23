@@ -555,13 +555,13 @@ class User_model extends Model
 
     public function data($columns = ['*'], $filters = [])
     {
-        $data = $this->dbCanvazer
+        $data = $this->dbcanvazer
             ->table("user AS u")
             ->join("user_profile AS p","p.iduser = u.iduser","left")
             ->where("u.related_key",$filters["role"])
             ->select($columns);
 
-        $total = $this->dbCanvazer
+        $total = $this->dbcanvazer
             ->table("user AS u")
             ->where("u.related_key",$filters["role"])
             ->select("COUNT(u.iduser) as amount");
@@ -569,7 +569,7 @@ class User_model extends Model
         if ($filters['search']!=null) {
             $where = "(";
             foreach($filters["searchable"] as $k => $col){
-                $v  = $this->dbCanvazer->escape("%".$filters['search']."%");
+                $v  = $this->dbcanvazer->escape("%".$filters['search']."%");
                 $where .= $k==0 ? "" : " OR ";
                 $where .= $col ." LIKE {$v}";
             }
