@@ -4944,4 +4944,12 @@ class User extends ResourceController
         }
         return $string;
     }
+
+    public function sampler(){
+        return $this->respond( tempResponse('00000', $this->User_model->data("sampler")) );
+    }
+
+    public function company(){
+        return $this->respond( tempResponse('00000', $this->User_model->data("company")) );
+    }
 }

@@ -41,6 +41,11 @@ $routes->group("Auth", function($routes){
     $routes->post("register", "User::register");
 });
 
+$routes->group("User", function($routes){
+    $routes->post("sampler", "User::sampler");
+    $routes->post("company", "User::company");
+});
+
 // resource
 $routes->group("Resource", function($routes){
     $routes->get("", "Resource::index");

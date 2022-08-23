@@ -552,5 +552,16 @@ class User_model extends Model
 
         return $random_number;
     }
+    
+    public function data($role)
+    {        
+        return $this->dbcanvazer
+            ->table("user AS u")
+            ->join("user_profile AS p","p.iduser = u.iduser")
+            ->where("u.related_key",$role)
+            ->select(["u.name", "p.company", "p.birthdate", "p.gender", "p.phone",])
+            ->get()
+            ->getResultArray();
+    }
 
 }
