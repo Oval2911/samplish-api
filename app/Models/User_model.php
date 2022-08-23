@@ -583,7 +583,7 @@ class User_model extends Model
 
         $isOrder = is_array($filters['order']) && array_key_exists("column",$filters['order']) && array_key_exists("direction",$filters['order']);
         if ($isOrder) $data->orderBy($filters['order']['column'], $filters['order']['direction']);
-        else $data->orderBy("campaign.updatedat", "desc");
+        else $data->orderBy("u.iduser", "desc");
 
         $total = $total->get()->getResultArray()[0]['amount'];
 
