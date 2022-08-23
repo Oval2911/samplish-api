@@ -21,7 +21,7 @@ $routes->setDefaultController('Home');
 $routes->setDefaultMethod('index');
 $routes->setTranslateURIDashes(false);
 $routes->set404Override();
-$routes->setAutoRoute(true);
+$routes->setAutoRoute(false);
 
 /*
  * --------------------------------------------------------------------
@@ -35,28 +35,15 @@ $routes->setAutoRoute(true);
 
 /*Auth group*/
 
-// $routes->post('auth/login', "App\Auth::login");
-
 $routes->group("Auth", function($routes){
-
-    // URL - /login orlogout
     $routes->post("/login", "App\Auth::login");
-    $routes->post("/logout", "App\Auth::logout");
-  
-    // $routes->match(["get", "post", ], "test", "Auth::test");
+    // $routes->post("/logout", "App\Auth::logout");
+    $routes->post("/register", "App\User::register");
 });
 
 $routes->group("Samplers", function($routes){
 
     $routes->get("/", "App\Samplers::index");
-    // $routes->post("/logout", "App\Auth::logout");
-  
-});
-
-//User 
-$routes->group("User", function($routes){
-
-    $routes->post("/", "App\User::register");
     // $routes->post("/logout", "App\Auth::logout");
   
 });
