@@ -120,14 +120,26 @@ class Campaign extends ResourceController
     {
         $user = $this->validate_session($this->validation->datatable);
 
-        $filters = [
-            "limit" => $this->request->getGet("limit"),
-            "order" => $this->request->getGet("order"),
-            "search" => $this->request->getGet("search"),
-            "user" => $user["iduser"],
-        ];
-        $data = $this->CampaignModel->datatable_company_union($filters);
-
+        if($user["related_key"]=="admin"){
+            $filters = [
+                "limit" => $this->request->getGet("limit"),
+                "order" => $this->request->getGet("order"),
+                "search" => $this->request->getGet("search"),
+                "user" => $user["iduser"],
+                "searchable" => [ "name", "status", "theme", "box_type", "start_date", "end_date", ],
+            ];
+            $fields = [ "idcampaign", "name", "status", "theme", "box_type", "start_date", "end_date", ];
+            $data = $this->CampaignModel->datatable($fields, $filters);
+        }else{
+            $filters = [
+                "limit" => $this->request->getGet("limit"),
+                "order" => $this->request->getGet("order"),
+                "search" => $this->request->getGet("search"),
+                "user" => $user["iduser"],
+            ];
+            $data = $this->CampaignModel->datatable_company_union($filters);
+        }
+        
         return $this->respond(
             tempResponse(
                 '00000',
