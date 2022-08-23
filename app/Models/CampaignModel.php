@@ -24,9 +24,7 @@ class CampaignModel extends Model
             WHERE
                 c.iduser = {$user}
                 AND c.status = {$status}
-                AND c.box_type = {$type}
-                AND c.start_date >= {$inRange}
-                AND c.end_date <= {$inRange}";
+                AND c.box_type = {$type}";
     }
     private function query_mix($columns, $user, $status, $type, $inRange){
         return "SELECT $columns
@@ -38,8 +36,6 @@ class CampaignModel extends Model
                 b.iduser = {$user}
                 AND c.status = {$status}
                 AND c.box_type = {$type}
-                AND c.start_date >= {$inRange}
-                AND c.end_date <= {$inRange}
             GROUP BY c.idcampaign";
     }
     private function query_union($un1, $un2){
@@ -288,8 +284,8 @@ class CampaignModel extends Model
 
         $data .= " LIMIT $limit OFFSET $offset ";
 
-        $data = $this->dbCanvazer->query($data);
-        $total = $this->dbCanvazer->query($total)[0]['amount'];
+        $data = $this->dbCanvazer->query($data)->getResultArray();
+        $total = $this->dbCanvazer->query($total)->getResultArray()[0]['amount'];
 
         return (object)[
             "data" => $data,
