@@ -84,7 +84,7 @@ class Profile extends ResourceController
             tempResponse("00000",(object)[
                 "profile" => (object)[
                     "company" => $user->fullname,
-                    "name" => $profile->name,
+                    "name" => $profile ? $profile->name : null,
                     "phone" => $profile ? $profile->phone : null,
                     "nomor" => $profile ? $profile->nomor : null,
                     "photo" => $profile ? $profile->photo : null,
