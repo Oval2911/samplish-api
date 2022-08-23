@@ -91,6 +91,33 @@ class Brand extends ResourceController
         );
     }
 
+    public function datatable_all()
+    {
+        $this->validate_session($this->validation->datatable);
+
+        $filters = [
+            "limit" => $this->request->getGet("limit"),
+            "order" => $this->request->getGet("order"),
+            "search" => $this->request->getGet("search"),
+            "searchable" => [ "brand.name", "brand_category.name", "brand.variant", ],
+        ];
+        $fields = [ "brand.idbrand", "brand.name", "brand_category.name as category", "brand.variant", ];
+        $data = $this->BrandModel->datatable($fields, $filters);
+
+        return $this->respond(
+            tempResponse(
+                '00000',
+                [
+                    'page' => $filters["limit"]["page"],
+                    'per_page' => $filters["limit"]["n_item"],
+                    'total' => $data->total,
+                    'total_pages' => $data->total_pages,
+                    'records' => $data->data,
+                ]
+            )
+        );
+    }
+
     public function data()
     {
         $this->validate_session($this->validation->data);
