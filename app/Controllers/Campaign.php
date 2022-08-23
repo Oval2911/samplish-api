@@ -323,7 +323,7 @@ class Campaign extends ResourceController
             "search" => $this->request->getGet("search"),
             "searchable" => $fields,
             "join" => [ "area" => "area.idarea = campaign.idarea", ],
-            "left_join" => [ "campaign_sampler" => "campaign_sampler.idcampaign = campaign.idcampaign AND campaign_sampelr.iduser = {$id}", ],
+            "left_join" => [ "campaign_sampler" => "campaign_sampler.idcampaign = campaign.idcampaign AND campaign_sampler.iduser = {$id}", ],
             "status" => ['on_going',],
             "box" => $box,
             "inRange" => date("Y-m-d"),
