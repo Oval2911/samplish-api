@@ -4952,14 +4952,15 @@ class User extends ResourceController
             'limit' => ["label"=>"Pagination", "rules"=>"required",],
         ]);
 
+        $fields = ["u.fullname as company", "p.name", "p.birthdate", "p.gender", "p.phone",];
         $filters = [
             "limit" => $this->request->getGet("limit"),
             "order" => $this->request->getGet("order"),
             "search" => $this->request->getGet("search"),
             "role" => $role,
-            "searchable" => ["u.fullname as company", "p.name", "p.birthdate", "p.gender", "p.phone",],
+            "searchable" => $fields,
         ];
-        $fields = [ "idcampaign", "name", "status", "theme", "box_type", "start_date", "end_date", ];
+        $fields[] = "u.iduser";
         $data = $this->User_model->data($fields, $filters);
         
         return $this->respond(

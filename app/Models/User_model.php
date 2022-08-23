@@ -561,7 +561,7 @@ class User_model extends Model
             ->where("u.related_key",$filters["role"])
             ->select($columns);
 
-        $total = $this->dbCanvazer->table('user AS u')
+        $total = $this->dbCanvazer
             ->table("user AS u")
             ->where("u.related_key",$filters["role"])
             ->select("COUNT(u.iduser) as amount");
