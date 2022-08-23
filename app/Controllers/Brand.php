@@ -101,7 +101,7 @@ class Brand extends ResourceController
             "search" => $this->request->getGet("search"),
             "searchable" => [ "brand.name", "brand_category.name", "brand.variant", ],
         ];
-        $fields = [ "brand.idbrand", "brand.name", "brand_category.name as category", "brand.variant", ];
+        $fields = [ "brand.idbrand", "brand.image", "brand.name", "brand_category.name as category", "brand.variant", ];
         $data = $this->BrandModel->datatable($fields, $filters);
 
         return $this->respond(
