@@ -155,9 +155,9 @@ class CampaignModel extends Model
 
         if (array_key_exists('left_join',$filters)) {
             foreach($filters["left_join"] as $k => $v){
-                $data->join($k,$v);
+                $data->join($k,$v,"left");
                 if (array_key_exists('left_join_total',$filters) && array_key_exists($k,$filters["left_join_total"])) {
-                    $total->join($k,$v);
+                    $total->join($k,$v,"left");
                 }
             }
         }
