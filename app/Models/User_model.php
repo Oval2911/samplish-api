@@ -557,7 +557,7 @@ class User_model extends Model
     {        
         return $this->dbcanvazer
             ->table("user AS u")
-            ->join("user_profile AS p","p.iduser = u.iduser")
+            ->join("user_profile AS p","p.iduser = u.iduser","left")
             ->where("u.related_key",$role)
             ->select(["u.fullname as company", "p.name", "p.birthdate", "p.gender", "p.phone",])
             ->get()
