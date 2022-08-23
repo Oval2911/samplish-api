@@ -1098,11 +1098,11 @@ class Campaign extends ResourceController
 
     public function joined()
     {
-        $user = $this->validate_session($this->validation->draft);
+        $this->validate_session($this->validation->draft);
 
         $campaign = $this->CampaignModel->amend_sampler(
             $this->request->getPost("key"),
-            $user["iduser"],
+            $this->request->getPost("user"),
             [ "status_campaign" => "joined", "status_box" => "prepare", ]
         );
 
@@ -1113,11 +1113,11 @@ class Campaign extends ResourceController
 
     public function rejected()
     {
-        $user = $this->validate_session($this->validation->draft);
+        $this->validate_session($this->validation->draft);
 
         $campaign = $this->CampaignModel->amend_sampler(
             $this->request->getPost("key"),
-            $user["iduser"],
+            $this->request->getPost("user"),
             [ "status_campaign" => "rejected", "status_box" => NULL, ]
         );
 
@@ -1128,11 +1128,11 @@ class Campaign extends ResourceController
 
     public function otw()
     {
-        $user = $this->validate_session($this->validation->draft);
+        $this->validate_session($this->validation->draft);
 
         $campaign = $this->CampaignModel->amend_sampler(
             $this->request->getPost("key"),
-            $user["iduser"],
+            $this->request->getPost("user"),
             [ "status_campaign" => "joined", "status_box" => "otw", ]
         );
 
