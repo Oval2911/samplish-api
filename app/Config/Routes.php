@@ -36,123 +36,116 @@ $routes->setAutoRoute(false);
 /*Auth group*/
 
 $routes->group("Auth", function($routes){
-    $routes->post("/login", "App\Auth::login");
-    // $routes->post("/logout", "App\Auth::logout");
-    $routes->post("/register", "App\User::register");
-});
-
-$routes->group("Samplers", function($routes){
-
-    $routes->get("/", "App\Samplers::index");
-    // $routes->post("/logout", "App\Auth::logout");
-  
+    $routes->post("login", "Auth::login");
+    // $routes->post("logout", "Auth::logout");
+    $routes->post("register", "User::register");
 });
 
 // resource
 $routes->group("Resource", function($routes){
-    $routes->get("/", "Resource::index");
+    $routes->get("", "Resource::index");
 });
 
 //Brand 
 $routes->group("Brand", function($routes){
-    $routes->get("/datatable", "App\Brand::datatable");
-    $routes->get("/datatable_all", "App\Brand::datatable_all");
-    $routes->get("/data", "App\Brand::data");
-    $routes->get("/dropdown", "App\Brand::dropdown");
-    $routes->post("/store", "App\Brand::store");
-    $routes->post("/amend", "App\Brand::amend");
-    $routes->post("/destroy", "App\Brand::destroy");
-    $routes->post("/destroys", "App\Brand::destroys");
+    $routes->get("datatable", "Brand::datatable");
+    $routes->get("datatable_all", "Brand::datatable_all");
+    $routes->get("data", "Brand::data");
+    $routes->get("dropdown", "Brand::dropdown");
+    $routes->post("store", "Brand::store");
+    $routes->post("amend", "Brand::amend");
+    $routes->post("destroy", "Brand::destroy");
+    $routes->post("destroys", "Brand::destroys");
 });
 
 //Brand Category
 $routes->group("Brand_Category", function($routes){
-    $routes->get("/datatable", "App\Brand_Category::datatable");
-    $routes->get("/data", "App\Brand_Category::data");
-    $routes->get("/dropdown", "App\Brand_Category::dropdown");
-    $routes->post("/store", "App\Brand_Category::store");
-    $routes->post("/amend", "App\Brand_Category::amend");
-    $routes->post("/destroy", "App\Brand_Category::destroy");
-    $routes->post("/destroys", "App\Brand_Category::destroys");
+    $routes->get("datatable", "Brand_Category::datatable");
+    $routes->get("data", "Brand_Category::data");
+    $routes->get("dropdown", "Brand_Category::dropdown");
+    $routes->post("store", "Brand_Category::store");
+    $routes->post("amend", "Brand_Category::amend");
+    $routes->post("destroy", "Brand_Category::destroy");
+    $routes->post("destroys", "Brand_Category::destroys");
 });
 
 //Area
 $routes->group("Area", function($routes){
-    $routes->get("/datatable", "App\Area::datatable");
-    $routes->get("/data", "App\Area::data");
-    $routes->get("/dropdown", "App\Area::dropdown");
-    $routes->post("/store", "App\Area::store");
-    $routes->post("/amend", "App\Area::amend");
-    $routes->post("/destroy", "App\Area::destroy");
-    $routes->post("/destroys", "App\Area::destroys");
+    $routes->get("datatable", "Area::datatable");
+    $routes->get("data", "Area::data");
+    $routes->get("dropdown", "Area::dropdown");
+    $routes->post("store", "Area::store");
+    $routes->post("amend", "Area::amend");
+    $routes->post("destroy", "Area::destroy");
+    $routes->post("destroys", "Area::destroys");
 });
 
 //Community
 $routes->group("Community", function($routes){
-    $routes->get("/datatable", "App\Community::datatable");
-    $routes->get("/data", "App\Community::data");
-    $routes->get("/dropdown", "App\Community::dropdown");
-    $routes->post("/store", "App\Community::store");
-    $routes->post("/amend", "App\Community::amend");
-    $routes->post("/destroy", "App\Community::destroy");
-    $routes->post("/destroys", "App\Community::destroys");
+    $routes->get("datatable", "Community::datatable");
+    $routes->get("data", "Community::data");
+    $routes->get("dropdown", "Community::dropdown");
+    $routes->post("store", "Community::store");
+    $routes->post("amend", "Community::amend");
+    $routes->post("destroy", "Community::destroy");
+    $routes->post("destroys", "Community::destroys");
 });
 
 //Interest
 $routes->group("Interest", function($routes){
-    $routes->get("/datatable", "App\Interest::datatable");
-    $routes->get("/data", "App\Interest::data");
-    $routes->get("/dropdown", "App\Interest::dropdown");
-    $routes->post("/store", "App\Interest::store");
-    $routes->post("/amend", "App\Interest::amend");
-    $routes->post("/destroy", "App\Interest::destroy");
-    $routes->post("/destroys", "App\Interest::destroys");
+    $routes->get("datatable", "Interest::datatable");
+    $routes->get("data", "Interest::data");
+    $routes->get("dropdown", "Interest::dropdown");
+    $routes->post("store", "Interest::store");
+    $routes->post("amend", "Interest::amend");
+    $routes->post("destroy", "Interest::destroy");
+    $routes->post("destroys", "Interest::destroys");
 });
 
 //Tone & Manner
 $routes->group("Tone_Manner", function($routes){
-    $routes->get("/dropdown", "App\Tone_Manner::dropdown");
+    $routes->get("dropdown", "Tone_Manner::dropdown");
 });
 
 //Area
 $routes->group("Campaign", function($routes){
-    $routes->get("/datatable", "App\Campaign::datatable");
-    $routes->get("/datatable_payment", "App\Campaign::datatable_payment");
-    $routes->get("/datatable_all_company", "App\Campaign::datatable_all_company");
-    $routes->get("/datatable_admin_payment_company", "App\Campaign::datatable_admin_payment_company");
-    $routes->get("/datatable_overview", "App\Campaign::datatable_overview");
-    $routes->get("/datatable_on_going", "App\Campaign::datatable_on_going");
-    $routes->get("/datatable_upcoming", "App\Campaign::datatable_upcoming");
-    $routes->get("/datatable_overview_sampler", "App\Campaign::datatable_overview_sampler");
-    $routes->get("/data", "App\Campaign::data");
-    $routes->get("/data_sampler", "App\Campaign::data_sampler");
-    $routes->get("/data_payment", "App\Campaign::data_payment");
-    $routes->get("/dropdown_mix", "App\Campaign::dropdown_mix");
-    $routes->post("/store", "App\Campaign::store");
-    $routes->post("/amend", "App\Campaign::amend");
-    $routes->post("/amend_payment", "App\Campaign::amend_payment");
-    $routes->post("/amend_brands", "App\Campaign::amend_brands");
-    $routes->post("/destroy", "App\Campaign::destroy");
-    $routes->post("/join", "App\Campaign::join");
-    $routes->post("/join_sampler", "App\Campaign::join_sampler");
-    $routes->post("/draft", "App\Campaign::draft");
-    $routes->post("/wait_confirm", "App\Campaign::wait_confirm");
-    $routes->post("/reject", "App\Campaign::reject");
-    $routes->post("/confirm", "App\Campaign::confirm");
-    $routes->post("/nego", "App\Campaign::nego");
-    $routes->post("/wait_pay", "App\Campaign::wait_pay");
-    $routes->post("/joined", "App\Campaign::joined");
-    $routes->post("/not_received", "App\Campaign::not_received");
+    $routes->get("datatable", "Campaign::datatable");
+    $routes->get("datatable_payment", "Campaign::datatable_payment");
+    $routes->get("datatable_all_company", "Campaign::datatable_all_company");
+    $routes->get("datatable_admin_payment_company", "Campaign::datatable_admin_payment_company");
+    $routes->get("datatable_overview", "Campaign::datatable_overview");
+    $routes->get("datatable_on_going", "Campaign::datatable_on_going");
+    $routes->get("datatable_upcoming", "Campaign::datatable_upcoming");
+    $routes->get("datatable_overview_sampler", "Campaign::datatable_overview_sampler");
+    $routes->get("data", "Campaign::data");
+    $routes->get("data_sampler", "Campaign::data_sampler");
+    $routes->get("data_payment", "Campaign::data_payment");
+    $routes->get("dropdown_mix", "Campaign::dropdown_mix");
+    $routes->post("store", "Campaign::store");
+    $routes->post("amend", "Campaign::amend");
+    $routes->post("amend_payment", "Campaign::amend_payment");
+    $routes->post("amend_brands", "Campaign::amend_brands");
+    $routes->post("destroy", "Campaign::destroy");
+    $routes->post("join", "Campaign::join");
+    $routes->post("join_sampler", "Campaign::join_sampler");
+    $routes->post("draft", "Campaign::draft");
+    $routes->post("wait_confirm", "Campaign::wait_confirm");
+    $routes->post("reject", "Campaign::reject");
+    $routes->post("confirm", "Campaign::confirm");
+    $routes->post("nego", "Campaign::nego");
+    $routes->post("wait_pay", "Campaign::wait_pay");
+    $routes->post("joined", "Campaign::joined");
+    $routes->post("not_received", "Campaign::not_received");
 });
 
 //Profile
 $routes->group("Profile", function($routes){
-    $routes->get("/data", "App\Profile::data");
-    $routes->post("/amend_profile", "App\Profile::amend_profile");
-    $routes->post("/amend_address", "App\Profile::amend_address");
-    $routes->post("/amend_social", "App\Profile::amend_social");
-    $routes->post("/amend_family", "App\Profile::amend_family");
-    $routes->post("/amend_interest_community", "App\Profile::amend_interest_community");
+    $routes->get("data", "Profile::data");
+    $routes->post("amend_profile", "Profile::amend_profile");
+    $routes->post("amend_address", "Profile::amend_address");
+    $routes->post("amend_social", "Profile::amend_social");
+    $routes->post("amend_family", "Profile::amend_family");
+    $routes->post("amend_interest_community", "Profile::amend_interest_community");
 });
 
 /*
