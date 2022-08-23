@@ -209,8 +209,13 @@ class CampaignModel extends Model
         }
 
         if (array_key_exists('box',$filters)) {
-            $data->where("campaign.box_type",$filters["box"]);
-            $total->where("campaign.box_type",$filters["box"]);
+            if($filters["box"]==""){
+                $data->where("campaign.box_type IS NOT NULL");
+                $total->where("campaign.box_type IS NOT NULL");
+            }else{
+                $data->where("campaign.box_type",$filters["box"]);
+                $total->where("campaign.box_type",$filters["box"]);
+            }
         }
 
         if (array_key_exists('inRange',$filters)) {
