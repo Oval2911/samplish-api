@@ -5,7 +5,7 @@ use CodeIgniter\Model;
 class CampaignModel extends Model
 {
 
-    protected $dbCanvazer;
+    protected $dbCanvazer, $query_brand, $query_mix, $query_union;
 
     public function __construct()
     {
@@ -16,6 +16,34 @@ class CampaignModel extends Model
 
         helper("text");
 
+        $this->query_brand = function($columns, $user, $status, $type, $inRange){
+            return "SELECT $columns
+                FROM campaign AS c
+                JOIN area AS a ON a.idarea = c.idarea
+                WHERE
+                    c.iduser = {$user}
+                    AND c.status = {$status}
+                    AND c.box_type = {$type}
+                    AND c.start_date >= {$inRange}
+                    AND c.end_date <= {$inRange}";
+        };
+        $this->query_mix = function($columns, $user, $status, $type, $inRange){
+            return "SELECT $columns
+                FROM campaign AS c
+                JOIN area AS a ON a.idarea = c.idarea
+                JOIN campaign_brand AS cb ON cb.idcampaign = c.idcampaign
+                JOIN brand AS b ON b.idbrand = c.idbrand
+                WHERE
+                    b.iduser = {$user}
+                    AND c.status = {$status}
+                    AND c.box_type = {$type}
+                    AND c.start_date >= {$inRange}
+                    AND c.end_date <= {$inRange}
+                GROUP BY c.idcampaign";
+        };
+        $this->query_union = function($un1, $un2){
+            return "SELECT * FROM ( ($un1) UNION ($un2) ) q";
+        };
     }
 
     public function get_campaign($columns=["*"], $filter=[])
@@ -216,6 +244,57 @@ class CampaignModel extends Model
             "data" => $data->get()->getResultArray(),
             "total" => $total,
             "total_pages" => round($total / $filters['limit']['n_item']),
+        ];
+    }
+
+    public function datatable_company_union($filters = [])
+    {
+        $searchable = "c.name, c.desc, a.name as area, c.box_type, c.start_date, c.end_date";
+        $columns = $searchable . ", c.idcampaign, c.updatedat";
+        $count = "COUNT(c.idcampaign) as amount";
+        $status  = $this->dbCanvazer->escape("on_going");
+        $brand  = $this->dbCanvazer->escape("brand");
+        $mix  = $this->dbCanvazer->escape("mix");
+        $user  = $this->dbCanvazer->escape($filters["user"]);
+        $inRange  = $this->dbCanvazer->escape($filters["inRange"]);
+        $limit  = $this->dbCanvazer->escape($filters['limit']['n_item']);
+        $offset  = $this->dbCanvazer->escape($filters['limit']['page'] * $filters['limit']['n_item']);
+
+        $data = $this->query_union(
+            $this->query_brand($columns, $user, $status, $brand, $inRange),
+            $this->query_mix($columns, $user, $status, $mix, $inRange),
+        );
+        $total = $this->query_union(
+            $this->query_brand($count, $user, $status, $brand, $inRange),
+            $this->query_mix($count, $user, $status, $mix, $inRange),
+        );
+
+        if ($filters['search']!=null) {
+            $where = "(";
+            foreach(explode(", ",$searchable) as $k => $col){
+                $v  = $this->dbCanvazer->escape("%".$filters['search']."%");
+                $where .= $k==0 ? "" : " OR ";
+                $where .= $col ." LIKE {$v}";
+            }
+            $where .= ")";
+            
+            $data .= " WHERE $where ";
+            $total .= " WHERE $where ";
+        }
+
+        $data .= " LIMIT $limit OFFSET $offset ";
+
+        $isOrder = is_array($filters['order']) && array_key_exists("column",$filters['order']) && array_key_exists("direction",$filters['order']);
+        if ($isOrder) $data .= " ORDER BY " .$filters['order']['column']. " " .$filters['order']['direction'] ." ";
+        else $data .= " ORDER BY updatedat DESC";
+
+        $data = $this->dbCanvazer->query($data);
+        $total = $this->dbCanvazer->query($total)[0]['amount'];
+
+        return (object)[
+            "data" => $data,
+            "total" => $total,
+            "total_pages" => round($total / $limit),
         ];
     }
 

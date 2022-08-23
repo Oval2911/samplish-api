@@ -280,19 +280,16 @@ class Campaign extends ResourceController
     {
         $user = $this->validate_session($this->validation->datatable);
 
-        $fields = [ "campaign.name", "campaign.desc", "area.name as area", "campaign.box_type", "campaign.start_date", "campaign.end_date", ];
         $filters = [
             "limit" => $this->request->getGet("limit"),
             "order" => $this->request->getGet("order"),
             "search" => $this->request->getGet("search"),
             "user" => $user["iduser"],
-            "searchable" => $fields,
-            "join" => [ "area" => "area.idarea = campaign.idarea", ],
-            "status" => ['on_going',],
+            "inRange" => date("Y-m-d"),
         ];
 
         $fields[] = "campaign.idcampaign";
-        $data = $this->CampaignModel->datatable($fields, $filters);
+        $data = $this->CampaignModel->datatable_company_union($filters);
 
         return $this->respond(
             tempResponse(
