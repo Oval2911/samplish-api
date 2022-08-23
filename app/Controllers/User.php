@@ -4945,11 +4945,42 @@ class User extends ResourceController
         return $string;
     }
 
+    private function datatable($role){
+        $this->validate_session([
+            'u' => ["label"=>"User", "rules"=>"required",],
+            'token' => ["label"=>"Access Token", "rules"=>"required",],
+            'limit' => ["label"=>"Pagination", "rules"=>"required",],
+        ]);
+
+        $filters = [
+            "limit" => $this->request->getGet("limit"),
+            "order" => $this->request->getGet("order"),
+            "search" => $this->request->getGet("search"),
+            "role" => $role,
+            "searchable" => ["u.fullname as company", "p.name", "p.birthdate", "p.gender", "p.phone",],
+        ];
+        $fields = [ "idcampaign", "name", "status", "theme", "box_type", "start_date", "end_date", ];
+        $data = $this->User_model->data($fields, $filters);
+        
+        return $this->respond(
+            tempResponse(
+                '00000',
+                [
+                    'page' => $filters["limit"]["page"],
+                    'per_page' => $filters["limit"]["n_item"],
+                    'total' => $data->total,
+                    'total_pages' => $data->total_pages,
+                    'records' => $data->data,
+                ]
+            )
+        );
+    }
+
     public function sampler(){
-        return $this->respond( tempResponse('00000', $this->User_model->data("sampler")) );
+        return $this->datatable("sampler");
     }
 
     public function company(){
-        return $this->respond( tempResponse('00000', $this->User_model->data("company")) );
+        return $this->datatable("company");
     }
 }

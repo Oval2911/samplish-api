@@ -552,16 +552,46 @@ class User_model extends Model
 
         return $random_number;
     }
-    
-    public function data($role)
-    {        
-        return $this->dbcanvazer
+
+    public function data($columns = ['*'], $filters = [])
+    {
+        $data = $this->dbCanvazer
             ->table("user AS u")
             ->join("user_profile AS p","p.iduser = u.iduser","left")
-            ->where("u.related_key",$role)
-            ->select(["u.fullname as company", "p.name", "p.birthdate", "p.gender", "p.phone",])
-            ->get()
-            ->getResultArray();
+            ->where("u.related_key",$filters["role"])
+            ->select($columns);
+
+        $total = $this->dbCanvazer->table('user AS u')
+            ->table("user AS u")
+            ->where("u.related_key",$filters["role"])
+            ->select("COUNT(u.iduser) as amount");
+
+        if ($filters['search']!=null) {
+            $where = "(";
+            foreach($filters["searchable"] as $k => $col){
+                $v  = $this->dbCanvazer->escape("%".$filters['search']."%");
+                $where .= $k==0 ? "" : " OR ";
+                $where .= $col ." LIKE {$v}";
+            }
+            $where .= ")";
+            
+            $data->where($where);
+            $total->where($where);
+        }
+
+        $data->limit($filters['limit']['n_item'], $filters['limit']['page'] * $filters['limit']['n_item']);
+
+        $isOrder = is_array($filters['order']) && array_key_exists("column",$filters['order']) && array_key_exists("direction",$filters['order']);
+        if ($isOrder) $data->orderBy($filters['order']['column'], $filters['order']['direction']);
+        else $data->orderBy("campaign.updatedat", "desc");
+
+        $total = $total->get()->getResultArray()[0]['amount'];
+
+        return (object)[
+            "data" => $data->get()->getResultArray(),
+            "total" => $total,
+            "total_pages" => round($total / $filters['limit']['n_item']),
+        ];
     }
 
 }
