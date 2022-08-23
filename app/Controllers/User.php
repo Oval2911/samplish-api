@@ -4954,9 +4954,9 @@ class User extends ResourceController
 
         $fields = ["u.fullname as company", "p.name", "p.birthdate", "p.gender", "p.phone",];
         $filters = [
-            "limit" => $this->request->getGet("limit"),
-            "order" => $this->request->getGet("order"),
-            "search" => $this->request->getGet("search"),
+            "limit" => $this->request->getPost("limit"),
+            "order" => $this->request->getPost("order"),
+            "search" => $this->request->getPost("search"),
             "role" => $role,
             "searchable" => $fields,
         ];
