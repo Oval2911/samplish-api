@@ -350,10 +350,11 @@ class Campaign extends ResourceController
     {
         $user = $this->validate_session($this->validation->datatable);
         $key = $user["related_key"];
+        $id = $user["iduser"];
         $box = false;
 
         if($key=="company") $box = "mix";
-        elseif($key=="sampler") $box = "brand";
+        elseif($key=="sampler") $box = "";
         else return $this->respond( tempResponse('00104') );
         
         $fields = [ "campaign.name", "campaign.desc", "area.name as area", "campaign.box_type", "campaign.start_date", "campaign.end_date", ];
@@ -363,6 +364,7 @@ class Campaign extends ResourceController
             "search" => $this->request->getGet("search"),
             "searchable" => $fields,
             "join" => [ "area" => "area.idarea = campaign.idarea", ],
+            "left_join" => [ "campaign_sampler" => "campaign_sampler.idcampaign = campaign.idcampaign AND campaign_sampler.iduser = {$id}", ],
             "status" => ['on_going',],
             "box" => $box,
             "notInRange" => date("Y-m-d"),
