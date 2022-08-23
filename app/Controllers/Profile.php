@@ -83,8 +83,11 @@ class Profile extends ResourceController
         return $this->respond(
             tempResponse("00000",(object)[
                 "profile" => (object)[
-                    "name" => $user->fullname,
+                    "company" => $user->fullname,
+                    "name" => $profile->name,
+                    "phone" => $profile ? $profile->phone : null,
                     "nomor" => $profile ? $profile->nomor : null,
+                    "photo" => $profile ? $profile->photo : null,
                     "ktp" => $profile ? $profile->ktp : null,
                     "selfie_ktp" => $profile ? $profile->selfie_ktp : null,
                     "gender" => $profile ? $profile->gender : null,
@@ -105,6 +108,7 @@ class Profile extends ResourceController
                     "tw" => $profile ? $profile->tw : null,
                     "in" => $profile ? $profile->in : null,
                     "tk" => $profile ? $profile->tk : null,
+                    "wa" => $profile ? $profile->wa : null,
                 ],
                 "family" => (object)[
                     "status" => $profile ? $profile->status : null,
@@ -123,31 +127,42 @@ class Profile extends ResourceController
     public function amend_profile()
     {
         $user = $this->validate_session($this->validation->amend_profile);
+        $role = $user["related_key"];
+        $r = $this->request;
 
-        $key = $this->_data( $this->request->getPost("key"), $user );
+        $key = $this->_data( $r->getPost("key"), $user );
 
-        $ktp = $this->request->getFile('ktp');
+        $photo = $r->getFile('photo');
+        if($photo && !$photo->hasMoved()) {
+            $store = $photo->store();
+            $file = new File(WRITEPATH .'uploads/'. $store);
+            $photo = $store;
+        }
+        $ktp = $r->getFile('ktp');
         if($ktp && !$ktp->hasMoved()) {
             $store = $ktp->store();
             $file = new File(WRITEPATH .'uploads/'. $store);
             $ktp = $store;
         }
-        $selfie_ktp = $this->request->getFile('selfie_ktp');
+        $selfie_ktp = $r->getFile('selfie_ktp');
         if($selfie_ktp && !$selfie_ktp->hasMoved()) {
             $store = $selfie_ktp->store();
             $file = new File(WRITEPATH .'uploads/'. $store);
             $selfie_ktp = $store;
         }
 
-        $user = [ "fullname" => $this->request->getPost("name"), ];
+        $user = [ "fullname" => $role=="sampler" ? $r->getPost("name") : $r->getPost("company"), ];
         $profile = [
             "iduser" => $key,
-            "nomor" => $this->request->getPost("nomor"),
-            "gender" => $this->request->getPost("gender"),
-            "birthdate" => $this->request->getPost("birthdate"),
+            "name" => $r->getPost("name"),
+            "nomor" => $r->getPost("nomor"),
+            "gender" => $r->getPost("gender"),
+            "birthdate" => $r->getPost("birthdate"),
+            "phone" => $r->getPost("phone"),
         ];
         if($ktp!=null) $profile["ktp"] = $ktp;
         if($selfie_ktp!=null) $profile["selfie_ktp"] = $selfie_ktp;
+        if($photo!=null) $profile["photo"] = $photo;
 
         $_profile = $this->Profile->get_profile([ "iduser", ], [ "filter" => ["iduser" => $key] ]);
         if( !($_profile!=null && count($_profile)==1) ){
@@ -189,14 +204,22 @@ class Profile extends ResourceController
         $user = $this->validate_session($this->validation->amend_social);
 
         $key = $this->_data( $this->request->getPost("key"), $user );
-
-        $data = $this->Profile->amend($key, [
+        $profile = [
             "ig" => $this->request->getPost("ig"),
             "tw" => $this->request->getPost("tw"),
             "fb" => $this->request->getPost("fb"),
             "in" => $this->request->getPost("in"),
             "tk" => $this->request->getPost("tk"),
-        ]);
+            "wa" => $this->request->getPost("wa"),
+        ];
+
+        $_profile = $this->Profile->get_profile([ "iduser", ], [ "filter" => ["iduser" => $key] ]);
+        if( !($_profile!=null && count($_profile)==1) ){
+            $profile["iduser"] = $key;
+            $data = $this->Profile->store($profile);
+        }else{
+            $data = $this->Profile->amend($key, $profile);
+        }
         
         $code = $data==false ? "00003" : "00000";
 
@@ -208,8 +231,7 @@ class Profile extends ResourceController
         $user = $this->validate_session($this->validation->amend_family);
 
         $key = $this->_data( $this->request->getPost("key"), $user );
-
-        $data = $this->Profile->amend($key, [
+        $profile = [
             "status" => $this->request->getPost("status"),
             "child" => $this->request->getPost("child"),
             "is60th" => $this->request->getPost("is60th"),
@@ -218,7 +240,15 @@ class Profile extends ResourceController
             "isAnimal" => $this->request->getPost("isAnimal"),
             "animalType" => $this->request->getPost("animalType"),
             "income" => $this->request->getPost("income"),
-        ]);
+        ];
+
+        $_profile = $this->Profile->get_profile([ "iduser", ], [ "filter" => ["iduser" => $key] ]);
+        if( !($_profile!=null && count($_profile)==1) ){
+            $profile["iduser"] = $key;
+            $data = $this->Profile->store($profile);
+        }else{
+            $data = $this->Profile->amend($key, $profile);
+        }
         
         $code = $data==false ? "00003" : "00000";
 

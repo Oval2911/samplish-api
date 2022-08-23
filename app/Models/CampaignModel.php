@@ -260,7 +260,7 @@ class CampaignModel extends Model
     public function datatable_company_union($filters = [])
     {
         $searchable = "c.name, c.desc, a.name as area, c.box_type, c.start_date, c.end_date, c.status, c.theme";
-        $columns = $searchable . ", c.idcampaign, c.updatedat";
+        $columns = $searchable . ", c.idcampaign, c.updatedat, c.photo";
         $count = "COUNT(c.idcampaign) as amount";
         $status  = $this->dbCanvazer->escape("on_going");
         $brand  = $this->dbCanvazer->escape("brand");

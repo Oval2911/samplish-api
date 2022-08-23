@@ -329,7 +329,10 @@ class Campaign extends ResourceController
         elseif($key=="sampler") $box = "";
         else return $this->respond( tempResponse('00104') );
 
-        $fields = [ "campaign.name", "campaign.desc", "area.name as area", "campaign.box_type", "campaign.start_date", "campaign.end_date", "campaign_sampler.status_campaign", "campaign_sampler.status_box" ];
+        $fields = [
+            "campaign.name", "campaign.desc", "area.name as area", "campaign.box_type", "campaign.start_date", "campaign.end_date",
+            "campaign_sampler.status_campaign", "campaign_sampler.status_box",
+        ];
         $filters = [
             "limit" => $this->request->getGet("limit"),
             "order" => $this->request->getGet("order"),
@@ -343,6 +346,7 @@ class Campaign extends ResourceController
         ];
 
         $fields[] = "campaign.idcampaign";
+        $fields[] = "campaign.photo";
         $data = $this->CampaignModel->datatable($fields, $filters);
 
         return $this->respond(
@@ -370,7 +374,10 @@ class Campaign extends ResourceController
         elseif($key=="sampler") $box = "";
         else return $this->respond( tempResponse('00104') );
         
-        $fields = [ "campaign.name", "campaign.desc", "area.name as area", "campaign.box_type", "campaign.start_date", "campaign.end_date", ];
+        $fields = [
+            "campaign.name", "campaign.desc", "area.name as area", "campaign.box_type", "campaign.start_date", "campaign.end_date",
+            "campaign_sampler.status_campaign", "campaign_sampler.status_box",
+        ];
         $filters = [
             "limit" => $this->request->getGet("limit"),
             "order" => $this->request->getGet("order"),
@@ -384,6 +391,7 @@ class Campaign extends ResourceController
         ];
 
         $fields[] = "campaign.idcampaign";
+        $fields[] = "campaign.photo";
         $data = $this->CampaignModel->datatable($fields, $filters);
 
         return $this->respond(
