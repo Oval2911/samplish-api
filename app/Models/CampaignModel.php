@@ -15,35 +15,35 @@ class CampaignModel extends Model
         // $this->dbCommerce = db_connect("ecommerce");
 
         helper("text");
+    }
 
-        $this->query_brand = function($columns, $user, $status, $type, $inRange){
-            return "SELECT $columns
-                FROM campaign AS c
-                JOIN area AS a ON a.idarea = c.idarea
-                WHERE
-                    c.iduser = {$user}
-                    AND c.status = {$status}
-                    AND c.box_type = {$type}
-                    AND c.start_date >= {$inRange}
-                    AND c.end_date <= {$inRange}";
-        };
-        $this->query_mix = function($columns, $user, $status, $type, $inRange){
-            return "SELECT $columns
-                FROM campaign AS c
-                JOIN area AS a ON a.idarea = c.idarea
-                JOIN campaign_brand AS cb ON cb.idcampaign = c.idcampaign
-                JOIN brand AS b ON b.idbrand = c.idbrand
-                WHERE
-                    b.iduser = {$user}
-                    AND c.status = {$status}
-                    AND c.box_type = {$type}
-                    AND c.start_date >= {$inRange}
-                    AND c.end_date <= {$inRange}
-                GROUP BY c.idcampaign";
-        };
-        $this->query_union = function($un1, $un2){
-            return "SELECT * FROM ( ($un1) UNION ($un2) ) q";
-        };
+    private function query_brand($columns, $user, $status, $type, $inRange){
+        return "SELECT $columns
+            FROM campaign AS c
+            JOIN area AS a ON a.idarea = c.idarea
+            WHERE
+                c.iduser = {$user}
+                AND c.status = {$status}
+                AND c.box_type = {$type}
+                AND c.start_date >= {$inRange}
+                AND c.end_date <= {$inRange}";
+    }
+    private function query_mix($columns, $user, $status, $type, $inRange){
+        return "SELECT $columns
+            FROM campaign AS c
+            JOIN area AS a ON a.idarea = c.idarea
+            JOIN campaign_brand AS cb ON cb.idcampaign = c.idcampaign
+            JOIN brand AS b ON b.idbrand = c.idbrand
+            WHERE
+                b.iduser = {$user}
+                AND c.status = {$status}
+                AND c.box_type = {$type}
+                AND c.start_date >= {$inRange}
+                AND c.end_date <= {$inRange}
+            GROUP BY c.idcampaign";
+    }
+    private function query_union($un1, $un2){
+        return "SELECT * FROM ( ($un1) UNION ($un2) ) q";
     }
 
     public function get_campaign($columns=["*"], $filter=[])
