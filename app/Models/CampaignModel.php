@@ -5,7 +5,7 @@ use CodeIgniter\Model;
 class CampaignModel extends Model
 {
 
-    protected $dbCanvazer, $query_brand, $query_mix, $query_union;
+    protected $dbCanvazer;
 
     public function __construct()
     {
