@@ -282,11 +282,11 @@ class CampaignModel extends Model
             $total .= " WHERE $where ";
         }
 
-        $data .= " LIMIT $limit OFFSET $offset ";
-
         $isOrder = is_array($filters['order']) && array_key_exists("column",$filters['order']) && array_key_exists("direction",$filters['order']);
         if ($isOrder) $data .= " ORDER BY " .$filters['order']['column']. " " .$filters['order']['direction'] ." ";
         else $data .= " ORDER BY updatedat DESC";
+
+        $data .= " LIMIT $limit OFFSET $offset ";
 
         $data = $this->dbCanvazer->query($data);
         $total = $this->dbCanvazer->query($total)[0]['amount'];
