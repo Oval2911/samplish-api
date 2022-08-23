@@ -153,6 +153,15 @@ class CampaignModel extends Model
             }
         }
 
+        if (array_key_exists('left_join',$filters)) {
+            foreach($filters["left_join"] as $k => $v){
+                $data->join($k,$v);
+                if (array_key_exists('left_join_total',$filters) && array_key_exists($k,$filters["left_join_total"])) {
+                    $total->join($k,$v);
+                }
+            }
+        }
+
         if (array_key_exists('user',$filters)) {
             $data->where("campaign.iduser",$filters["user"]);
             $total->where("campaign.iduser",$filters["user"]);

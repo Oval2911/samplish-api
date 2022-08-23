@@ -309,19 +309,21 @@ class Campaign extends ResourceController
     {
         $user = $this->validate_session($this->validation->datatable);
         $key = $user["related_key"];
+        $id = $user["iduser"];
         $box = false;
 
         if($key=="company") $box = "mix";
-        elseif($key=="sampler") $box = "brand";
+        elseif($key=="sampler") $box = "";
         else return $this->respond( tempResponse('00104') );
 
-        $fields = [ "campaign.name", "campaign.desc", "area.name as area", "campaign.box_type", "campaign.start_date", "campaign.end_date", ];
+        $fields = [ "campaign.name", "campaign.desc", "area.name as area", "campaign.box_type", "campaign.start_date", "campaign.end_date", "campaign.status_campaign", "campaign.status_box" ];
         $filters = [
             "limit" => $this->request->getGet("limit"),
             "order" => $this->request->getGet("order"),
             "search" => $this->request->getGet("search"),
             "searchable" => $fields,
             "join" => [ "area" => "area.idarea = campaign.idarea", ],
+            "left_join" => [ "campaign_sampler" => "campaign_sampler.idcampaign = campaign.idcampaign AND campaign_sampelr.iduser = {$id}", ],
             "status" => ['on_going',],
             "box" => $box,
             "inRange" => date("Y-m-d"),
