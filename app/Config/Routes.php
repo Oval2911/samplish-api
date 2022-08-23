@@ -38,7 +38,7 @@ $routes->setAutoRoute(false);
 $routes->group("Auth", function($routes){
     $routes->post("/login", "App\Auth::login");
     // $routes->post("/logout", "App\Auth::logout");
-    $routes->post("/register", "App\User::register_post");
+    $routes->post("/register", "App\User::register");
 });
 
 $routes->group("Samplers", function($routes){
