@@ -17,7 +17,7 @@ class CampaignModel extends Model
         helper("text");
     }
 
-    private function query_brand($columns, $user, $status, $type, $inRange){
+    private function query_brand($columns, $user, $status, $type){
         return "SELECT $columns
             FROM campaign AS c
             JOIN area AS a ON a.idarea = c.idarea
@@ -26,7 +26,7 @@ class CampaignModel extends Model
                 AND c.status = {$status}
                 AND c.box_type = {$type}";
     }
-    private function query_mix($columns, $user, $status, $type, $inRange){
+    private function query_mix($columns, $user, $status, $type){
         return "SELECT $columns
             FROM campaign AS c
             JOIN area AS a ON a.idarea = c.idarea
@@ -259,24 +259,23 @@ class CampaignModel extends Model
 
     public function datatable_company_union($filters = [])
     {
-        $searchable = "c.name, c.desc, a.name as area, c.box_type, c.start_date, c.end_date";
+        $searchable = "c.name, c.desc, a.name as area, c.box_type, c.start_date, c.end_date, c.status, c.theme";
         $columns = $searchable . ", c.idcampaign, c.updatedat";
         $count = "COUNT(c.idcampaign) as amount";
         $status  = $this->dbCanvazer->escape("on_going");
         $brand  = $this->dbCanvazer->escape("brand");
         $mix  = $this->dbCanvazer->escape("mix");
         $user  = $this->dbCanvazer->escape($filters["user"]);
-        $inRange  = $this->dbCanvazer->escape($filters["inRange"]);
         $limit  = $filters['limit']['n_item'];
         $offset  = $filters['limit']['page'] * $filters['limit']['n_item'];
 
         $data = $this->query_union(
-            $this->query_brand($columns, $user, $status, $brand, $inRange),
-            $this->query_mix($columns, $user, $status, $mix, $inRange),
+            $this->query_brand($columns, $user, $status, $brand),
+            $this->query_mix($columns, $user, $status, $mix),
         );
         $total = $this->query_union(
-            $this->query_brand($count, $user, $status, $brand, $inRange),
-            $this->query_mix($count, $user, $status, $mix, $inRange),
+            $this->query_brand($count, $user, $status, $brand),
+            $this->query_mix($count, $user, $status, $mix),
         );
 
         if ($filters['search']!=null) {

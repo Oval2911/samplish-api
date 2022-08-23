@@ -125,10 +125,8 @@ class Campaign extends ResourceController
             "order" => $this->request->getGet("order"),
             "search" => $this->request->getGet("search"),
             "user" => $user["iduser"],
-            "searchable" => [ "name", "status", "theme", "box_type", "start_date", "end_date", ],
         ];
-        $fields = [ "idcampaign", "name", "status", "theme", "box_type", "start_date", "end_date", ];
-        $data = $this->CampaignModel->datatable($fields, $filters);
+        $data = $this->CampaignModel->datatable_company_union($filters);
 
         return $this->respond(
             tempResponse(
@@ -285,7 +283,6 @@ class Campaign extends ResourceController
             "order" => $this->request->getGet("order"),
             "search" => $this->request->getGet("search"),
             "user" => $user["iduser"],
-            "inRange" => date("Y-m-d"),
         ];
 
         $fields[] = "campaign.idcampaign";
