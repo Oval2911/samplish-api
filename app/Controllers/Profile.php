@@ -63,7 +63,7 @@ class Profile extends ResourceController
     {
         $user = $this->validate_session($this->validation->data);
 
-        $key = $this->_data( $this->request->getPost("key"), $user );
+        $key = $this->_data( $this->request->getPostGet("key"), $user );
 
         $fields = [ "fullname", ];
         $filters = [ "filter" => ["iduser" => $key] ];
