@@ -257,8 +257,8 @@ class CampaignModel extends Model
         $mix  = $this->dbCanvazer->escape("mix");
         $user  = $this->dbCanvazer->escape($filters["user"]);
         $inRange  = $this->dbCanvazer->escape($filters["inRange"]);
-        $limit  = $this->dbCanvazer->escape($filters['limit']['n_item']);
-        $offset  = $this->dbCanvazer->escape($filters['limit']['page'] * $filters['limit']['n_item']);
+        $limit  = $filters['limit']['n_item'];
+        $offset  = $filters['limit']['page'] * $filters['limit']['n_item'];
 
         $data = $this->query_union(
             $this->query_brand($columns, $user, $status, $brand, $inRange),
