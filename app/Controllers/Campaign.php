@@ -452,8 +452,8 @@ class Campaign extends ResourceController
         $fields = [ "status_campaign", "status_box", ];
         $sampler = $this->CampaignModel->get_campaign_sampler($fields,$filters);
 
-        if( !($sampler!=null && count($sampler)==1) ) return $this->respond( tempResponse("00104") );
-        $sampler = $sampler[0];
+        if( $sampler!=null && count($sampler)==1 ) $sampler = $sampler[0];
+        else $sampler = [ "status_campaign" => null, "status_box" => null, ];
 
         return $this->respond( tempResponse("00000", (object)array_merge($campaign,$sampler)) );
     }
