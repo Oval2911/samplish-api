@@ -122,6 +122,7 @@ $routes->group("Campaign", function($routes){
     $routes->get("datatable_on_going", "Campaign::datatable_on_going");
     $routes->get("datatable_upcoming", "Campaign::datatable_upcoming");
     $routes->get("datatable_overview_sampler", "Campaign::datatable_overview_sampler");
+    $routes->get("datatable_sampler", "Campaign::datatable_sampler");
     $routes->get("data", "Campaign::data");
     $routes->get("data_sampler", "Campaign::data_sampler");
     $routes->get("data_payment", "Campaign::data_payment");
@@ -140,6 +141,8 @@ $routes->group("Campaign", function($routes){
     $routes->post("nego", "Campaign::nego");
     $routes->post("wait_pay", "Campaign::wait_pay");
     $routes->post("joined", "Campaign::joined");
+    $routes->post("rejected", "Campaign::rejected");
+    $routes->post("otw", "Campaign::otw");
     $routes->post("not_received", "Campaign::not_received");
 });
 

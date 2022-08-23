@@ -66,12 +66,15 @@ class Brand extends ResourceController
     public function datatable()
     {
         $user = $this->validate_session($this->validation->datatable);
+        $user = $user["related_key"]=="company"
+            ? $user["iduser"]
+            : $this->request->getGet("key");
 
         $filters = [
             "limit" => $this->request->getGet("limit"),
             "order" => $this->request->getGet("order"),
             "search" => $this->request->getGet("search"),
-            "user" => $user["iduser"],
+            "user" => $user,
             "searchable" => [ "brand.name", "brand_category.name", "brand.variant", ],
         ];
         $fields = [ "brand.idbrand", "brand.name", "brand_category.name as category", "brand.variant", ];

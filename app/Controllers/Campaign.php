@@ -121,16 +121,26 @@ class Campaign extends ResourceController
         $user = $this->validate_session($this->validation->datatable);
 
         if($user["related_key"]=="admin"){
-            $filters = [
-                "limit" => $this->request->getGet("limit"),
-                "order" => $this->request->getGet("order"),
-                "search" => $this->request->getGet("search"),
-                "user" => $user["iduser"],
-                "searchable" => [ "name", "status", "theme", "box_type", "start_date", "end_date", ],
-            ];
-            $fields = [ "idcampaign", "name", "status", "theme", "box_type", "start_date", "end_date", ];
-            $data = $this->CampaignModel->datatable($fields, $filters);
-        }else{
+            if($this->request->getGet("key")){
+                $filters = [
+                    "limit" => $this->request->getGet("limit"),
+                    "order" => $this->request->getGet("order"),
+                    "search" => $this->request->getGet("search"),
+                    "user" => $this->request->getGet("key"),
+                ];
+                $data = $this->CampaignModel->datatable_company_union($filters);
+            }else{
+                $filters = [
+                    "limit" => $this->request->getGet("limit"),
+                    "order" => $this->request->getGet("order"),
+                    "search" => $this->request->getGet("search"),
+                    "user" => $user["iduser"],
+                    "searchable" => [ "name", "status", "theme", "box_type", "start_date", "end_date", ],
+                ];
+                $fields = [ "idcampaign", "name", "status", "theme", "box_type", "start_date", "end_date", ];
+                $data = $this->CampaignModel->datatable($fields, $filters);
+            }
+        }else if($user["related_key"]=="company"){
             $filters = [
                 "limit" => $this->request->getGet("limit"),
                 "order" => $this->request->getGet("order"),
@@ -138,6 +148,8 @@ class Campaign extends ResourceController
                 "user" => $user["iduser"],
             ];
             $data = $this->CampaignModel->datatable_company_union($filters);
+        }else{
+            return $this->respond( tempResponse("00104") );
         }
         
         return $this->respond(
@@ -215,6 +227,38 @@ class Campaign extends ResourceController
         ];
         $fields = [ "idcampaign", "name", "box_type", "service", "payment_due_date", "payment_status", "status", ];
         $data = $this->CampaignModel->datatable($fields, $filters);
+
+        return $this->respond(
+            tempResponse(
+                '00000',
+                [
+                    'page' => $filters["limit"]["page"],
+                    'per_page' => $filters["limit"]["n_item"],
+                    'total' => $data->total,
+                    'total_pages' => $data->total_pages,
+                    'records' => $data->data,
+                ]
+            )
+        );
+    }
+
+    public function datatable_sampler()
+    {
+        $this->validate_session($this->validation->datatable);
+
+        $fields = [ "u.fullname AS name", "p.gender", "p.birthdate"];
+        $filters = [
+            "limit" => $this->request->getGet("limit"),
+            "order" => $this->request->getGet("order"),
+            "search" => $this->request->getGet("search"),
+            "campaign" => $this->request->getGet("campaign"),
+            "searchable" => $fields,
+        ];
+
+        $fields[] = "c.status_campaign";
+        $fields[] = "c.status_box";
+        $fields[] = "c.iduser";
+        $data = $this->CampaignModel->datatable_sampler($fields, $filters);
 
         return $this->respond(
             tempResponse(
@@ -1044,6 +1088,7 @@ class Campaign extends ResourceController
             "idcampaign" => $req->getPost("key"),
             "iduser" => $user["iduser"],
             "status_campaign" => "check",
+            "status_box" => NULL,
         ]);
 
         if($data==false) return $this->respond( tempResponse("00104", false, "Invalid data") );
@@ -1059,6 +1104,36 @@ class Campaign extends ResourceController
             $this->request->getPost("key"),
             $user["iduser"],
             [ "status_campaign" => "joined", "status_box" => "prepare", ]
+        );
+
+        if($campaign==false) return $this->respond( tempResponse("00003") );
+
+        return $this->respond( tempResponse("00000") );
+    }
+
+    public function rejected()
+    {
+        $user = $this->validate_session($this->validation->draft);
+
+        $campaign = $this->CampaignModel->amend_sampler(
+            $this->request->getPost("key"),
+            $user["iduser"],
+            [ "status_campaign" => "rejected", "status_box" => NULL, ]
+        );
+
+        if($campaign==false) return $this->respond( tempResponse("00003") );
+
+        return $this->respond( tempResponse("00000") );
+    }
+
+    public function otw()
+    {
+        $user = $this->validate_session($this->validation->draft);
+
+        $campaign = $this->CampaignModel->amend_sampler(
+            $this->request->getPost("key"),
+            $user["iduser"],
+            [ "status_campaign" => "joined", "status_box" => "otw", ]
         );
 
         if($campaign==false) return $this->respond( tempResponse("00003") );
