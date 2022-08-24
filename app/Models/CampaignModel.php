@@ -30,8 +30,8 @@ class CampaignModel extends Model
         return "SELECT $columns
             FROM campaign AS c
             JOIN area AS a ON a.idarea = c.idarea
-            JOIN campaign_brand AS cb ON cb.idcampaign = c.idcampaign
-            JOIN brand AS b ON b.idbrand = cb.idbrand
+            LEFT JOIN campaign_brand AS cb ON cb.idcampaign = c.idcampaign
+            LEFT JOIN brand AS b ON b.idbrand = cb.idbrand
             WHERE
                 b.iduser = {$user}
                 AND c.status = {$status}
