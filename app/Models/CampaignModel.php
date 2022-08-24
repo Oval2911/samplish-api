@@ -17,13 +17,12 @@ class CampaignModel extends Model
         helper("text");
     }
 
-    private function query_brand($columns, $user, $status, $type){
+    private function query_brand($columns, $user, $type){
         return "SELECT $columns
             FROM campaign AS c
             JOIN area AS a ON a.idarea = c.idarea
             WHERE
                 c.iduser = {$user}
-                AND c.status = {$status}
                 AND c.box_type = {$type}";
     }
     private function query_mix($columns, $user, $status, $type){
@@ -270,11 +269,11 @@ class CampaignModel extends Model
         $offset  = $filters['limit']['page'] * $filters['limit']['n_item'];
 
         $data = $this->query_union(
-            $this->query_brand($columns, $user, $status, $brand),
+            $this->query_brand($columns, $user, $brand),
             $this->query_mix($columns, $user, $status, $mix),
         );
         $total = $this->query_union(
-            $this->query_brand($count, $user, $status, $brand),
+            $this->query_brand($count, $user, $brand),
             $this->query_mix($count, $user, $status, $mix),
         );
 
