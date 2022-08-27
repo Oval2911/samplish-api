@@ -80,7 +80,7 @@ class Profile extends ResourceController
         $address = $this->Profile->get_address($fields,$filters);
         $address = $address!=null && count($address)==1 ? (object)$address[0] : false;
         
-        $fields = [ "*", ];
+        $fields = [ "idcommunity", ];
         $community = $this->Profile->get_communities($fields,$filters);
         $community = $community!=null ? $community : [];
 
