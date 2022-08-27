@@ -78,6 +78,21 @@ class ProfileModel extends Model
         return null;
     }
 
+    public function get_interests($columns = array('*'), $filter = array())
+    {
+
+        $builder = $this->dbCanvazer->table('user_interests')
+            ->select($columns);
+
+        if (isset($filter['filter'])) $builder->where($filter['filter']);
+
+        $query = $builder->get();
+        $result = $query->getResultArray();
+
+        if ($result) return $result;
+        return null;
+    }
+
     public function store($data)
     {
         $this->dbCanvazer->table('user_profile')->insert($data);

@@ -83,6 +83,10 @@ class Profile extends ResourceController
         $fields = [ "idcommunity", ];
         $community = $this->Profile->get_communities($fields,$filters);
         $community = $community!=null ? $community : [];
+        
+        $fields = [ "idinterest", ];
+        $interest = $this->Profile->get_interests($fields,$filters);
+        $interest = $interest!=null ? $interest : [];
 
         return $this->respond(
             tempResponse("00000",(object)[
@@ -125,6 +129,7 @@ class Profile extends ResourceController
                     "income" => $profile ? $profile->income : null,
                 ],
                 "community" => $community,
+                "interest" => $interest,
             ])
         );
     }
