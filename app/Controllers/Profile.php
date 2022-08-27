@@ -79,6 +79,10 @@ class Profile extends ResourceController
         $fields = [ "address", "rt", "rw", "city", "kec", "kel", "pos", ];
         $address = $this->Profile->get_address($fields,$filters);
         $address = $address!=null && count($address)==1 ? (object)$address[0] : false;
+        
+        $fields = [ "*", ];
+        $community = $this->Profile->get_communities($fields,$filters);
+        $community = $community!=null ? $community : [];
 
         return $this->respond(
             tempResponse("00000",(object)[
@@ -120,6 +124,7 @@ class Profile extends ResourceController
                     "animalType" => $profile ? $profile->animalType : null,
                     "income" => $profile ? $profile->income : null,
                 ],
+                "community" => $community,
             ])
         );
     }
