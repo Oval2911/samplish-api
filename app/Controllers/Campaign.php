@@ -646,6 +646,13 @@ class Campaign extends ResourceController
             $logo = $store;
         }
 
+        $photo = $req->getFile('photo');
+        if($photo && !$photo->hasMoved()) {
+            $store = $photo->store();
+            $file = new File(WRITEPATH .'uploads/'. $store);
+            $photo = $store;
+        }
+
         $campaignData = [
             "iduser" => $user["iduser"],
             "createdat" => date("Y-m-d H:i:s"),
@@ -672,6 +679,7 @@ class Campaign extends ResourceController
 
         if($document_brief!=null) $campaignData["document_brief"] = $document_brief;
         if($logo!=null) $campaignData["logo"] = $logo;
+        if($photo!=null) $campaignData["photo"] = $photo;
             
         $campaign = $this->CampaignModel->store($campaignData);
 
@@ -744,6 +752,13 @@ class Campaign extends ResourceController
             $logo = $store;
         }
 
+        $photo = $req->getFile('photo');
+        if($photo && !$photo->hasMoved()) {
+            $store = $photo->store();
+            $file = new File(WRITEPATH .'uploads/'. $store);
+            $photo = $store;
+        }
+
         $campaignData = [
             "iduser" => $user["iduser"],
             "updatedat" => date("Y-m-d H:i:s"),
@@ -769,6 +784,7 @@ class Campaign extends ResourceController
 
         if($document_brief!=null) $campaignData["document_brief"] = $document_brief;
         if($logo!=null) $campaignData["logo"] = $logo;
+        if($photo!=null) $campaignData["photo"] = $photo;
 
         $this->CampaignModel->amend($campaign, $campaignData);
 
