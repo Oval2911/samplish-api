@@ -90,18 +90,16 @@ class ProfileModel extends Model
 
     public function store_community($data)
     {
-        $data["id"] = uniqid();
         $this->dbCanvazer->table('user_community')->insert($data);
 
-        return $this->dbCanvazer->affectedRows() ? $data["id"] : false;
+        return $this->dbCanvazer->affectedRows() ? true : false;
     }
 
     public function store_interest($data)
     {
-        $data["id"] = uniqid();
         $this->dbCanvazer->table('user_interests')->insert($data);
 
-        return $this->dbCanvazer->affectedRows() ? $data["id"] : false;
+        return $this->dbCanvazer->affectedRows() ? true : false;
     }
 
     public function amend($id, $data)
