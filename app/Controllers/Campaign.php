@@ -505,7 +505,7 @@ class Campaign extends ResourceController
 
     public function data_sampler()
     {
-        $this->validate_session($this->validation->data);
+        $user = $this->validate_session($this->validation->data);
 
         $id = $this->request->getGet("key");
         $fields = [ "logo", "name", "theme", "box_type", "desc", "feedback_due_date", ];
@@ -516,6 +516,7 @@ class Campaign extends ResourceController
         $campaign = $campaign[0];
 
         $fields = [ "status_campaign", "status_box", ];
+        $filters["filter"]["iduser"] = $user["iduser"];
         $sampler = $this->CampaignModel->get_campaign_sampler($fields,$filters);
 
         if( $sampler!=null && count($sampler)==1 ) $sampler = $sampler[0];
