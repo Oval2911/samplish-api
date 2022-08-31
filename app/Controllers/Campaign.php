@@ -677,6 +677,7 @@ class Campaign extends ResourceController
         if($req->getPost("event")!=null) $campaignData["event"] = $req->getPost("event");
         if($req->getPost("feedback_due_date")!=null) $campaignData["feedback_due_date"] = $req->getPost("feedback_due_date");
         if($req->getPost("target_market")!=null) $campaignData["target_market"] = $req->getPost("target_market");
+        if($req->getPost("inbound_date")!=null) $campaignData["inbound_date"] = $req->getPost("inbound_date");
 
         if($document_brief!=null) $campaignData["document_brief"] = $document_brief;
         if($logo!=null) $campaignData["logo"] = $logo;
