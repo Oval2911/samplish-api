@@ -452,6 +452,36 @@ class Campaign extends ResourceController
         );
     }
 
+    public function datatable_admin_assign()
+    {
+        $this->validate_session($this->validation->datatable);
+
+        $fields = [ "user.fullname", "campaign.name", "campaign.box_type", "campaign.status", "campaign.start_date", "campaign.end_date", "campaign.feedback_due_date", "campaign.payment_status", "campaign.payment_due_date", ];
+        $filters = [
+            "limit" => $this->request->getGet("limit"),
+            "order" => $this->request->getGet("order"),
+            "search" => $this->request->getGet("search"),
+            "status" => "on_going",
+            "searchable" => $fields,
+        ];
+
+        $fields[] = "campaign.idcampaign";
+        $data = $this->CampaignModel->datatable_all_company($fields, $filters);
+
+        return $this->respond(
+            tempResponse(
+                '00000',
+                [
+                    'page' => $filters["limit"]["page"],
+                    'per_page' => $filters["limit"]["n_item"],
+                    'total' => $data->total,
+                    'total_pages' => $data->total_pages,
+                    'records' => $data->data,
+                ]
+            )
+        );
+    }
+
     public function data()
     {
         $this->validate_session($this->validation->data);
@@ -785,6 +815,7 @@ class Campaign extends ResourceController
         if($req->getPost("event")!=null) $campaignData["event"] = $req->getPost("event");
         if($req->getPost("feedback_due_date")!=null) $campaignData["feedback_due_date"] = $req->getPost("feedback_due_date");
         if($req->getPost("target_market")!=null) $campaignData["target_market"] = $req->getPost("target_market");
+        if($req->getPost("inbound_date")!=null) $campaignData["inbound_date"] = $req->getPost("inbound_date");
 
         if($document_brief!=null) $campaignData["document_brief"] = $document_brief;
         if($logo!=null) $campaignData["logo"] = $logo;

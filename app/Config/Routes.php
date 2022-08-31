@@ -123,6 +123,7 @@ $routes->group("Campaign", function($routes){
     $routes->get("datatable_upcoming", "Campaign::datatable_upcoming");
     $routes->get("datatable_overview_sampler", "Campaign::datatable_overview_sampler");
     $routes->get("datatable_sampler", "Campaign::datatable_sampler");
+    $routes->get("datatable_admin_assign", "Campaign::datatable_admin_assign");
     $routes->get("data", "Campaign::data");
     $routes->get("data_sampler", "Campaign::data_sampler");
     $routes->get("data_payment", "Campaign::data_payment");
