@@ -4960,7 +4960,7 @@ class User extends ResourceController
             "role" => $role,
             "searchable" => $fields,
         ];
-        $fields[] = "u.iduser";
+        $fields[] = "u.related_id";
         $data = $this->User_model->data($fields, $filters);
         
         return $this->respond(
