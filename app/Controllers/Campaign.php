@@ -478,6 +478,7 @@ class Campaign extends ResourceController
             "digital_campaign",
             "event",
             "feedback_due_date",
+            "inbound_date",
         ];
         $filters = [ "filter" => ["idcampaign" => $id] ];
         $campaign = $this->CampaignModel->get_campaign($fields,$filters);
