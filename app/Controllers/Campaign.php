@@ -514,7 +514,7 @@ class Campaign extends ResourceController
 
     public function datatable_sampler_feedback()
     {
-        $this->validate_session($this->validation->datatable);
+        $user = $this->validate_session($this->validation->datatable);
 
         $fields = [ "campaign.name", "campaign.box_type", "campaign.feedback_due_date", ];
         $filters = [
@@ -523,7 +523,8 @@ class Campaign extends ResourceController
             "search" => $this->request->getGet("search"),
             "searchable" => $fields,
             "campaign" => $this->request->getGet("campaign"),
-            "status_box" => [ "review", "done", ],
+            // "status_box" => [ "review", "done", ],
+            "user_sampler" => $user["iduser"],
             "left_join" => [
                 "campaign_sampler" => "campaign_sampler.idcampaign = campaign.idcampaign",
             ],
