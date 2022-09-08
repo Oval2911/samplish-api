@@ -528,7 +528,7 @@ class Campaign extends ResourceController
             "join" => [
                 "campaign_sampler" => "campaign_sampler.idcampaign = campaign.idcampaign",
             ],
-            "join_total" => [ "campaign_sampler", ],
+            "join_total" => [ "campaign_sampler" => true, ],
         ];
 
         $fields[] = "campaign.idcampaign as key";
