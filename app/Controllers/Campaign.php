@@ -486,13 +486,13 @@ class Campaign extends ResourceController
     {
         $this->validate_session($this->validation->datatable);
 
-        $fields = [ "b.name", "b.variant", "u.fullname" ];
+        $fields = [ "b.name", "c.variant", "u.fullname" ];
         $filters = [
             "limit" => $this->request->getGet("limit"),
             "order" => $this->request->getGet("order"),
             "search" => $this->request->getGet("search"),
             "searchable" => $fields,
-            "campaign" => $this->request->getGet("key"),
+            "campaign" => $this->request->getGet("campaign"),
         ];
 
         $fields[] = "b.idbrand as key";
