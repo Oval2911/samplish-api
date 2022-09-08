@@ -525,10 +525,10 @@ class Campaign extends ResourceController
             "campaign" => $this->request->getGet("campaign"),
             // "status_box" => [ "review", "done", ],
             "user_sampler" => $user["iduser"],
-            "left_join" => [
+            "join" => [
                 "campaign_sampler" => "campaign_sampler.idcampaign = campaign.idcampaign",
             ],
-            "left_join_total" => [ "campaign_sampler", ],
+            "join_total" => [ "campaign_sampler", ],
         ];
 
         $fields[] = "campaign.idcampaign as key";
