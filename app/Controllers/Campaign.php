@@ -516,7 +516,7 @@ class Campaign extends ResourceController
     {
         $this->validate_session($this->validation->datatable);
 
-        $fields = [ "campaign.name", "campaign.box_type", "campaign_sampler.status_box", "campaign.feedback_due_date", ];
+        $fields = [ "campaign.name", "campaign.box_type", "campaign.feedback_due_date", ];
         $filters = [
             "limit" => $this->request->getGet("limit"),
             "order" => $this->request->getGet("order"),
@@ -532,6 +532,7 @@ class Campaign extends ResourceController
 
         $fields[] = "campaign.idcampaign as key";
         $fields[] = "(SELECT COUNT(idbrand) FROM campaign_brand WHERE idcampaign = campaign.idcampaign) AS items";
+        $fields[] = "campaign_sampler.status_box";
         $data = $this->CampaignModel->datatable($fields, $filters);
 
         return $this->respond(
