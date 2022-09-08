@@ -524,10 +524,10 @@ class Campaign extends ResourceController
             "searchable" => $fields,
             "campaign" => $this->request->getGet("campaign"),
             "status_box" => [ "review", "done", ],
-            "join" => [
+            "left_join" => [
                 "campaign_sampler" => "campaign_sampler.idcampaign = campaign.idcampaign",
             ],
-            "join_total" => [ "campaign_sampler", ],
+            "left_join_total" => [ "campaign_sampler", ],
         ];
 
         $fields[] = "campaign.idcampaign as key";
