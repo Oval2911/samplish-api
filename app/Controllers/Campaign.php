@@ -523,8 +523,8 @@ class Campaign extends ResourceController
             "search" => $this->request->getGet("search"),
             "searchable" => $fields,
             "campaign" => $this->request->getGet("campaign"),
-            // "status_box" => [ "review", "done", ],
-            // "user_sampler" => $user["iduser"],
+            "status_box" => [ "review", "done", ],
+            "user_sampler" => $user["iduser"],
             "join" => [
                 "campaign_sampler" => "campaign_sampler.idcampaign = campaign.idcampaign",
             ],
