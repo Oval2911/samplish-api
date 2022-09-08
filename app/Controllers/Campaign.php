@@ -482,6 +482,36 @@ class Campaign extends ResourceController
         );
     }
 
+    public function datatable_brands()
+    {
+        $this->validate_session($this->validation->datatable);
+
+        $fields = [ "b.name", "b.variant", "u.fullname" ];
+        $filters = [
+            "limit" => $this->request->getGet("limit"),
+            "order" => $this->request->getGet("order"),
+            "search" => $this->request->getGet("search"),
+            "searchable" => $fields,
+            "campaign" => $this->request->getGet("key"),
+        ];
+
+        $fields[] = "b.idbrand as key";
+        $data = $this->CampaignModel->datatable_brands($fields, $filters);
+
+        return $this->respond(
+            tempResponse(
+                '00000',
+                [
+                    'page' => $filters["limit"]["page"],
+                    'per_page' => $filters["limit"]["n_item"],
+                    'total' => $data->total,
+                    'total_pages' => $data->total_pages,
+                    'records' => $data->data,
+                ]
+            )
+        );
+    }
+
     public function data()
     {
         $this->validate_session($this->validation->data);
@@ -1150,14 +1180,21 @@ class Campaign extends ResourceController
     public function joined()
     {
         $this->validate_session($this->validation->draft);
+        $users = [];
+        $user = $this->request->getPost("user");
 
-        $campaign = $this->CampaignModel->amend_sampler(
-            $this->request->getPost("key"),
-            $this->request->getPost("user"),
-            [ "status_campaign" => "joined", "status_box" => "prepare", ]
-        );
+        if( is_array($user) ) $users = $user;
+        else $users[] = $user;
 
-        if($campaign==false) return $this->respond( tempResponse("00003") );
+        foreach($users as $user){
+            $campaign = $this->CampaignModel->amend_sampler(
+                $this->request->getPost("key"),
+                $user,
+                [ "status_campaign" => "joined", "status_box" => "prepare", ]
+            );
+
+            if($campaign==false) return $this->respond( tempResponse("00003") );
+        }
 
         return $this->respond( tempResponse("00000") );
     }

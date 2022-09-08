@@ -247,6 +247,11 @@ class CampaignModel extends Model
         if ($isOrder) $data->orderBy($filters['order']['column'], $filters['order']['direction']);
         else $data->orderBy("campaign.updatedat", "desc");
 
+        if(array_key_exists("group",$filters)){
+            $data->groupBy($filters["group"]);
+            $total->groupBy($filters["group"]);
+        }
+
         $total = $total->get()->getResultArray()[0]['amount'];
 
         return (object)[
@@ -417,6 +422,45 @@ class CampaignModel extends Model
         $total = $this->dbCanvazer->table('campaign_sampler AS c')
             ->where("c.idcampaign", $filters["campaign"])
             ->select("COUNT(c.iduser) as amount");
+
+        if ($filters['search']!=null) {
+            $where = "(";
+            foreach($filters["searchable"] as $k => $col){
+                $v  = $this->dbCanvazer->escape("%".$filters['search']."%");
+                $where .= $k==0 ? "" : " OR ";
+                $where .= $col ." LIKE {$v}";
+            }
+            $where .= ")";
+            
+            $data->where($where);
+            $total->where($where);
+        }
+
+        $data->limit($filters['limit']['n_item'], $filters['limit']['page'] * $filters['limit']['n_item']);
+
+        $isOrder = is_array($filters['order']) && array_key_exists("column",$filters['order']) && array_key_exists("direction",$filters['order']);
+        if ($isOrder) $data->orderBy($filters['order']['column'], $filters['order']['direction']);
+
+        $total = $total->get()->getResultArray()[0]['amount'];
+
+        return (object)[
+            "data" => $data->get()->getResultArray(),
+            "total" => $total,
+            "total_pages" => round($total / $filters['limit']['n_item']),
+        ];
+    }
+
+    public function datatable_brands($columns = ['*'], $filters = [])
+    {
+        $data = $this->dbCanvazer->table('campaign_brand AS c')
+            ->join("brand AS b","b.idbrand = c.idbrand")
+            ->join("user AS u","u.iduser = b.iduser")
+            ->where("c.idcampaign", $filters["campaign"])
+            ->select($columns);
+
+        $total = $this->dbCanvazer->table('campaign_brand AS c')
+            ->where("c.idcampaign", $filters["campaign"])
+            ->select("COUNT(b.idbrand) as amount");
 
         if ($filters['search']!=null) {
             $where = "(";
