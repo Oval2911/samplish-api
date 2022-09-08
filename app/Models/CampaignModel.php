@@ -137,11 +137,9 @@ class CampaignModel extends Model
 
     public function datatable($columns = ['*'], $filters = [])
     {
-        $data = $this->dbCanvazer->table('campaign')
-            ->select($columns);
+        $data = $this->dbCanvazer->table('campaign');
 
-        $total = $this->dbCanvazer->table('campaign')
-            ->select("COUNT(campaign.idcampaign) as amount");
+        $total = $this->dbCanvazer->table('campaign');
 
         if (array_key_exists('join',$filters)) {
             foreach($filters["join"] as $k => $v){
@@ -160,6 +158,9 @@ class CampaignModel extends Model
                 }
             }
         }
+
+        $data->select($columns);
+        $total->select("COUNT(campaign.idcampaign) as amount");
 
         if (array_key_exists('user',$filters)) {
             $data->where("campaign.iduser",$filters["user"]);
