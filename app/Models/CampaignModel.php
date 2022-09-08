@@ -171,6 +171,24 @@ class CampaignModel extends Model
             $total->where("campaign_sampler.iduser",$filters["user_sampler"]);
         }
 
+        if (array_key_exists('status_box',$filters)) {
+            if(is_array($filters["status_box"])){
+                $where = "(";
+                foreach($filters["status_box"] as $k => $v){
+                    $v  = $this->dbCanvazer->escape($v);
+                    $where .= $k==0 ? "" : " OR ";
+                    $where .= "campaign_sampler.status_box={$v}";
+                }
+                $where .= ")";
+                
+                $data->where($where);
+                $total->where($where);
+            }else{
+                $data->where("campaign_sampler.status_box",$filters["status_box"]);
+                $total->where("campaign_sampler.status_box",$filters["status_box"]);
+            }
+        }
+
         if (array_key_exists('status',$filters)) {
             if(is_array($filters["status"])){
                 $where = "(";

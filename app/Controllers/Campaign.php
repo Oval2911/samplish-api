@@ -512,6 +512,42 @@ class Campaign extends ResourceController
         );
     }
 
+    public function datatable_sampler_feedback()
+    {
+        $this->validate_session($this->validation->datatable);
+
+        $fields = [ "campaign.name", "campaign.box_type", "campaign_sampler.status_box", "campaign.feedback_due_date", ];
+        $filters = [
+            "limit" => $this->request->getGet("limit"),
+            "order" => $this->request->getGet("order"),
+            "search" => $this->request->getGet("search"),
+            "searchable" => $fields,
+            "campaign" => $this->request->getGet("campaign"),
+            "status_box" => [ "review", "done", ],
+            "join" => [
+                "campaign_sampler" => "campaign_sampler.idcampaign = campaign.idcampaign",
+            ],
+            "join_total" => [ "campaign_sampler", ],
+        ];
+
+        $fields[] = "campaign.idcampaign as key";
+        $fields[] = "(SELECT COUNT(idbrand) FROM campaign_brand WHERE idcampaign = campaign.idcampaign) AS items";
+        $data = $this->CampaignModel->datatable($fields, $filters);
+
+        return $this->respond(
+            tempResponse(
+                '00000',
+                [
+                    'page' => $filters["limit"]["page"],
+                    'per_page' => $filters["limit"]["n_item"],
+                    'total' => $data->total,
+                    'total_pages' => $data->total_pages,
+                    'records' => $data->data,
+                ]
+            )
+        );
+    }
+
     public function data()
     {
         $this->validate_session($this->validation->data);
@@ -569,7 +605,7 @@ class Campaign extends ResourceController
         $user = $this->validate_session($this->validation->data);
 
         $id = $this->request->getGet("key");
-        $fields = [ "logo", "name", "theme", "box_type", "desc", "feedback_due_date", ];
+        $fields = [ "photo", "logo", "name", "theme", "box_type", "desc", "feedback_due_date", ];
         $filters = [ "filter" => ["idcampaign" => $id] ];
         $campaign = $this->CampaignModel->get_campaign($fields,$filters);
 
