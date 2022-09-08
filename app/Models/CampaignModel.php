@@ -460,7 +460,7 @@ class CampaignModel extends Model
 
         $total = $this->dbCanvazer->table('campaign_brand AS c')
             ->where("c.idcampaign", $filters["campaign"])
-            ->select("COUNT(b.idbrand) as amount");
+            ->select("COUNT(c.idbrand) as amount");
 
         if ($filters['search']!=null) {
             $where = "(";
