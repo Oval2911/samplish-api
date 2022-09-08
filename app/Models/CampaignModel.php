@@ -270,8 +270,6 @@ class CampaignModel extends Model
             $data->groupBy($filters["group"]);
             $total->groupBy($filters["group"]);
         }
-        $data->get()->getResultArray();
-        print_r($this->dbCanvazer->last_query());die;
 
         $total = $total->get()->getResultArray()[0]['amount'];
 
