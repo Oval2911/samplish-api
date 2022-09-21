@@ -7,13 +7,27 @@ use App\Models\SamplersModel;
 class Samplers extends ResourceController
 {
     use ResponseTrait;
+
+    public function __construct()
+    {
+        date_default_timezone_set('Asia/Jakarta');
+
+        $this->validation = (object)[
+            "datatable" => [
+                'u' => ["label"=>"User", "rules"=>"required",],
+                'token' => ["label"=>"Access Token", "rules"=>"required",]
+            ]
+        ];
+    }
+
     // get all product
     public function index()
     {
+        $this->validate_session($this->validation->datatable);
         $model = new SamplersModel(); 
         $params = array(
-            "page" => $this->request->getGet("page"),
-            "per_page" => $this->request->getGet("per_page"),
+            "page" => $this->request->getGet("limit[page]"),
+            "per_page" => $this->request->getGet("limit[n_item]"),
             "search" => $this->request->getGet("search")
         );
         $data = $model->get_sampler($params);
