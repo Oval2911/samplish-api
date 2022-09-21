@@ -10,15 +10,17 @@ class Samplers extends ResourceController
     // get all product
     public function index()
     {
-        $model = new SamplersModel();
-        $data = $model->get_sampler(array('*'), array());
+        $model = new SamplersModel(); 
+        $params = array(
+            "page" => $this->request->getGet("page"),
+            "per_page" => $this->request->getGet("per_page"),
+            "search" => $this->request->getGet("search")
+        );
+        $data = $model->get_sampler($params);
         if($data){ 
         $response = [
-            'status'   => 201,
-            'error'    => null,
-            'messages' => [
-                'success' => 'Data Found'
-            ], 
+            'errorcode'   => "00000",
+            'errormsg'    => "OK",
             'data'     => $data,
         ];
             return $this->respond($response, 200);

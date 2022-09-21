@@ -159,6 +159,11 @@ $routes->group("Profile", function($routes){
     $routes->post("amend_interest_community", "Profile::amend_interest_community");
 });
 
+//Sampler
+$routes->group("Sampler", function($routes){
+    $routes->get("", "Samplers::index");
+});
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing

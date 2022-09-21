@@ -18,36 +18,67 @@ class SamplersModel extends Model
 
     }
 
-    public function get_sampler($columns = array('*'), $filter = array())
+    public function get_sampler($params)
     {
+        $builder = $this->dbCanvazer->table('user');
+        $builder->select('user.iduser, user.fullname, user_profile.birthdate, user_profile.gender,  user_profile.amount60th as SES, user_profile.status, usampler.address, user.related_id');
+        $builder->join('usampler', 'user.related_id = usampler.idUsampler', 'left');
+        $builder->join('user_profile', 'user.iduser = user_profile.iduser', 'left');
+        $builder->where('usampler.is_join',0);
 
-        $builder = $this->dbCanvazer->table('usampler');
-        $builder->select($columns);
-
-        if (isset($filter['filter'])) {
-            $builder->where($filter['filter']);
-        }
-        if (isset($filter['filternot'])) {
-            $builder->where($filter['filternot']);
-        }
-        if (isset($filter['filterLike'])) {
-            $builder->like($filter['filterLike']);
-        }
-
-        if (isset($filter['limit'])) {
-            $builder->limit($filter['limit']['n_item'], $filter['limit']['page'] * $filter['limit']['n_item']);
+        if(isset($params['search'])){
+            $search = $params['search'];
+            $builder->like('user.fullname', $search);
+            $builder->orLike('user_profile.birthdate', $search);
+            $builder->orLike('user_profile.gender', $search);
+            $builder->orLike('user_profile.amount60th', $search);
+            $builder->orLike('user_profile.status', $search);
+            $builder->orLike('usampler.address', $search);
         }
 
-        if (isset($filter['sort'])) {
-            foreach ($filter['sort'] as $key => $value) {
-                $builder->order_by($key, $value);
-            }
+        $per_page = 20; 
+        $offset = 0;
+        $page = 1; 
+        if(isset($params['per_page'])){
+           $per_page = $params['per_page'];
         }
+        if(isset($params['page'])){
+            $page = $params['page'];
+            $offset = ($page-1)*$per_page;
+        }
+
+        $builder->limit($per_page, $offset);
+    
         $query = $builder->get();
-//                                    echo $builder->last_query();
-        //                            echo '<br>';
         if ($query->getResultArray() > 0) {
-            $result = $query->getResultArray();
+            $data = $query->getResultArray();
+
+            $builder = $this->dbCanvazer->table('user');
+            $builder->select('COUNT(user.iduser) as total');
+            $builder->join('usampler', 'user.related_id = usampler.idUsampler', 'left');
+            $builder->join('user_profile', 'user.iduser = user_profile.iduser', 'left');
+            $builder->where('usampler.is_join',0);
+            if(isset($params['search'])){
+                $search = $params['search'];
+                $builder->like('user.fullname', $search);
+                $builder->orLike('user_profile.birthdate', $search);
+                $builder->orLike('user_profile.gender', $search);
+                $builder->orLike('user_profile.amount60th', $search);
+                $builder->orLike('user_profile.status', $search);
+                $builder->orLike('usampler.address', $search);
+            }
+            
+            $query = $builder->get();
+            $total = $query->getResultArray();
+            $total = $total[0]["total"];
+
+            $result = array(
+                "page"=>$page,
+                "per_page"=>$per_page,
+                "total"=>$total,
+                "total_pages"=>ceil($total/$per_page),
+                "records"=>$data
+            );
             return $result;
         } else {
             return false;
