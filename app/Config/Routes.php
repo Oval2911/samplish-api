@@ -147,6 +147,9 @@ $routes->group("Campaign", function($routes){
     $routes->post("rejected", "Campaign::rejected");
     $routes->post("otw", "Campaign::otw");
     $routes->post("not_received", "Campaign::not_received");
+    $routes->post("arrived", "Campaign::arrived");
+    $routes->post("review", "Campaign::review");
+    $routes->post("done", "Campaign::done");
 });
 
 //Profile

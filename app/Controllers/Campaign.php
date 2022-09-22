@@ -1210,7 +1210,11 @@ class Campaign extends ResourceController
             "status_box" => NULL,
         ]);
 
-        if($data==false) return $this->respond( tempResponse("00104", false, "Invalid data") );
+        if($data){
+            $this->CampaignModel->update_status_join($user["iduser"],1);
+        }else{
+            return $this->respond( tempResponse("00104", false, "Invalid data") );
+        }
         
         return $this->respond( tempResponse("00000", true) );
     }
@@ -1231,6 +1235,8 @@ class Campaign extends ResourceController
                 [ "status_campaign" => "joined", "status_box" => "prepare", ]
             );
 
+            $this->CampaignModel->update_status_join($user,1);
+
             if($campaign==false) return $this->respond( tempResponse("00003") );
         }
 
@@ -1247,6 +1253,8 @@ class Campaign extends ResourceController
             [ "status_campaign" => "rejected", "status_box" => NULL, ]
         );
 
+        $this->CampaignModel->update_status_join($req->getPost("user"),0);
+
         if($campaign==false) return $this->respond( tempResponse("00003") );
 
         return $this->respond( tempResponse("00000") );
@@ -1256,13 +1264,21 @@ class Campaign extends ResourceController
     {
         $this->validate_session($this->validation->draft);
 
-        $campaign = $this->CampaignModel->amend_sampler(
-            $this->request->getPost("key"),
-            $this->request->getPost("user"),
-            [ "status_campaign" => "joined", "status_box" => "otw", ]
-        );
+        $users = [];
+        $user = $this->request->getPost("user");
 
-        if($campaign==false) return $this->respond( tempResponse("00003") );
+        if( is_array($user) ) $users = $user;
+        else $users[] = $user;
+
+        foreach($users as $user){
+            $campaign = $this->CampaignModel->amend_sampler(
+                $this->request->getPost("key"),
+                $user,
+                [ "status_campaign" => "joined", "status_box" => "otw", ]
+            );
+
+            if($campaign==false) return $this->respond( tempResponse("00003") );
+        }
 
         return $this->respond( tempResponse("00000") );
     }
@@ -1278,6 +1294,79 @@ class Campaign extends ResourceController
         );
 
         if($campaign==false) return $this->respond( tempResponse("00003") );
+
+        return $this->respond( tempResponse("00000") );
+    }
+
+    public function arrived()
+    {
+        $this->validate_session($this->validation->draft);
+
+        $users = [];
+        $user = $this->request->getPost("user");
+
+        if( is_array($user) ) $users = $user;
+        else $users[] = $user;
+
+        foreach($users as $user){
+            $campaign = $this->CampaignModel->amend_sampler(
+                $this->request->getPost("key"),
+                $user,
+                [ "status_campaign" => "joined", "status_box" => "arrived", ]
+            );
+
+            $due_date = date('Y-m-d',strtotime("+7 day"));
+            var_dump($due_date);
+            $this->CampaignModel->update_due_date($this->request->getPost("key"),$due_date);            
+
+            if($campaign==false) return $this->respond( tempResponse("00003") );
+        }
+
+        return $this->respond( tempResponse("00000") );
+    }
+
+    public function review()
+    {
+        $this->validate_session($this->validation->draft);
+
+        $users = [];
+        $user = $this->request->getPost("user");
+
+        if( is_array($user) ) $users = $user;
+        else $users[] = $user;
+
+        foreach($users as $user){
+            $campaign = $this->CampaignModel->amend_sampler(
+                $this->request->getPost("key"),
+                $user,
+                [ "status_campaign" => "joined", "status_box" => "review", ]
+            );
+
+            if($campaign==false) return $this->respond( tempResponse("00003") );
+        }
+
+        return $this->respond( tempResponse("00000") );
+    }
+
+    public function done()
+    {
+        $this->validate_session($this->validation->draft);
+
+        $users = [];
+        $user = $this->request->getPost("user");
+
+        if( is_array($user) ) $users = $user;
+        else $users[] = $user;
+
+        foreach($users as $user){
+            $campaign = $this->CampaignModel->amend_sampler(
+                $this->request->getPost("key"),
+                $user,
+                [ "status_campaign" => "joined", "status_box" => "done", ]
+            );
+
+            if($campaign==false) return $this->respond( tempResponse("00003") );
+        }
 
         return $this->respond( tempResponse("00000") );
     }

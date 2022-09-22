@@ -539,6 +539,20 @@ class CampaignModel extends Model
         return $this->dbCanvazer->affectedRows() ? true : false;
     }
 
+    public function update_status_join($id,$bool)
+    {
+        $data = $this->dbCanvazer->table('user')->select('*')->where('iduser',$id);
+        $idUsampler = $data->get()->getResultArray()[0]['related_id'];
+        $this->dbCanvazer->table('usampler')->where("idUsampler",$idUsampler)->update(array("is_join"=>$bool));
+        return $this->dbCanvazer->affectedRows() ? true : false;
+    }
+
+    public function update_due_date($id_campaign,$duedate)
+    {
+        $this->dbCanvazer->table('campaign')->where("idcampaign",$id_campaign)->update(array("feedback_due_date"=>$duedate));
+        return $this->dbCanvazer->affectedRows() ? true : false;
+    }
+
     public function amend($id, $data)
     {
         $this->dbCanvazer->table('campaign')->where("idcampaign",$id)->update($data);
