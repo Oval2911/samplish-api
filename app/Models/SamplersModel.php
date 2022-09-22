@@ -18,7 +18,46 @@ class SamplersModel extends Model
 
     }
 
-    public function get_sampler($params)
+    public function get_sampler($columns = array('*'), $filter = array())
+    {
+
+        $builder = $this->dbCanvazer->table('usampler');
+        $builder->select($columns);
+
+        if (isset($filter['filter'])) {
+            $builder->where($filter['filter']);
+        }
+        if (isset($filter['filternot'])) {
+            $builder->where($filter['filternot']);
+        }
+        if (isset($filter['filterLike'])) {
+            $builder->like($filter['filterLike']);
+        }
+
+        if (isset($filter['limit'])) {
+            $builder->limit($filter['limit']['n_item'], $filter['limit']['page'] * $filter['limit']['n_item']);
+        }
+
+        if (isset($filter['sort'])) {
+            foreach ($filter['sort'] as $key => $value) {
+                $builder->order_by($key, $value);
+            }
+        }
+        $query = $builder->get();
+//                                    echo $builder->last_query();
+        //                            echo '<br>';
+        if ($query->getResultArray() > 0) {
+            $result = $query->getResultArray();
+            return $result;
+        } else {
+            return false;
+        }
+    }
+
+// [END_GET_FUNCTIONS]
+
+//get detail sampler 
+public function get_new_sampler($params)
     {
         $builder = $this->dbCanvazer->table('user');
         $builder->select('user.iduser, user.fullname, user_profile.birthdate, user_profile.gender,  user_profile.amount60th as SES, user_profile.status, usampler.address, user.related_id');
@@ -85,7 +124,6 @@ class SamplersModel extends Model
         }
     }
 
-// [END_GET_FUNCTIONS]
 
 // [START_UPDATE_FUNCTIONS]
 

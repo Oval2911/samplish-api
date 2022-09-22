@@ -30,7 +30,7 @@ class Samplers extends ResourceController
             "per_page" => $this->request->getGet("limit[n_item]"),
             "search" => $this->request->getGet("search")
         );
-        $data = $model->get_sampler($params);
+        $data = $model->get_new_sampler($params);
         if($data){ 
         $response = [
             'errorcode'   => "00000",
